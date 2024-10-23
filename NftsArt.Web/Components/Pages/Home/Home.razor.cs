@@ -4,6 +4,7 @@ using NftsArt.Model.Dtos.Auction;
 using NftsArt.Model.Dtos.Nft;
 using NftsArt.Model.Dtos.User;
 using NftsArt.Model.Enums;
+using NftsArt.Model.Mapping;
 
 namespace NftsArt.Web.Components.Pages.Home;
 
@@ -16,21 +17,23 @@ public partial class Home
 
     private AuctionDetailDto? Auction { get; set; }
     private NftStatus AuctionStatus { get; set; }
-
-    private readonly decimal EthToUsdRate = 2637.91M;
-    private readonly decimal BtcToUsdRate = 68156.61M;
-
-    private decimal UsdConversionRate;
+    private bool isTermsAccepted = true;
 
     private List<UserDetailDto>? Collectors { get; set; }
 
-    private bool isTermsAccepted = true;
 
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+        await LoadPopularNfts();
+        await LoadAuction();
         await LoadCollectors();
+
+        if (Auction != null)
+        {
+            AuctionStatus = Auction.Nft.GetAuctionStatus();
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -48,6 +51,26 @@ public partial class Home
         if (res.IsSuccess && res.Data != null)
         {
             Collectors = res.Data;
+        }
+    }
+
+    private async Task LoadPopularNfts()
+    {
+        var res = await ApiClient.GetFromJsonAsync<List<NftSummaryDto>>($"api/nft/popular");
+
+        if (res.IsSuccess && res.Data != null)
+        {
+            PopularNfts = res.Data;
+        }
+    }
+
+    private async Task LoadAuction()
+    {
+        var res = await ApiClient.GetFromJsonAsync<AuctionDetailDto>($"api/auction/popular");
+
+        if (res != null && res.IsSuccess)
+        {
+            Auction = res.Data;
         }
     }
 

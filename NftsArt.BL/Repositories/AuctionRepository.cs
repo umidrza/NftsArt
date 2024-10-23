@@ -16,6 +16,7 @@ public interface IAuctionRepository
     Task<Result<AuctionDetailDto>> DeleteAsync(int id);
     Task<Result<AuctionDetailDto>> PurchaseAsync(string userId, int auctionId, int quantity);
     Task<List<Bid>> GetBidsAsync(int id);
+    Task<Auction?> GetPopularAsync();
 }
 
 public class AuctionRepository(AppDbContext context) : IAuctionRepository
@@ -180,5 +181,16 @@ public class AuctionRepository(AppDbContext context) : IAuctionRepository
             .Include(b => b.Bidder)
             .AsNoTracking()
             .ToListAsync();
+    }
+
+    public async Task<Auction?> GetPopularAsync()
+    {
+        return await context.Auctions
+            .Include(a => a.Seller)
+                .ThenInclude(u => u.Avatar)
+            .Include(a => a.Nft)
+            .Where(a => a.StartTime < DateTime.Now && a.EndTime > DateTime.Now && a.Quantity > 0)
+            .OrderBy(a => a.EndTime)
+            .FirstOrDefaultAsync();
     }
 }

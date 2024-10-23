@@ -12,11 +12,12 @@ namespace NftsArt.BL.Repositories;
 public interface INftRepository
 {
     Task<IEnumerable<Nft>> GetAllAsync(NftQueryDto query);
+    Task<IEnumerable<Nft>> GetAllByUserAsync(string userId);
+    Task<IEnumerable<Nft>> GetPopularsAsync();
     Task<Nft?> GetByIdAsync(int id);
     Task<Result<NftSummaryDto>> CreateAsync(NftCreateDto newNft, string userId);
     Task<Result<NftSummaryDto>> UpdateAsync(int id, NftUpdateDto updatedNft);
     Task<Result<NftSummaryDto>> DeleteAsync(int id);
-    Task<IEnumerable<Nft>> GetAllByUserAsync(string userId);
     Task<Result<Like>> LikeAsync(string userId, int nftId);
     Task<int> GetLikesCountAsync(int nftId);
     Task<bool> HasUserLikedAsync(string userId, int nftId);
@@ -179,6 +180,20 @@ public class NftRepository(AppDbContext context) : INftRepository
             .Include(n => n.Auction)
                 .ThenInclude(a => a.Seller)
             .AsNoTracking()
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<Nft>> GetPopularsAsync()
+    {
+        return await context.Nfts
+            .Include(n => n.Creator)
+                .ThenInclude(u => u.Avatar)
+            .Include(n => n.Auction)
+                .ThenInclude(a => a.Seller)
+            .Include(n => n.Likes)
+            .AsNoTracking()
+            .OrderByDescending(n => n.Likes.Count())
+            .Take(4)
             .ToListAsync();
     }
 

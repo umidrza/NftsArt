@@ -143,13 +143,11 @@
                                             {
                                                 <p class="auction-text-grey">Current bid</p>
                                                 <h4 class="auction-text-black eth">@Auction.CurrentBid @Auction.Currency</h4>
-                                                <p class="auction-text-grey usd">@((UsdConversionRate * Auction.CurrentBid).ToString("F2")) USD</p>
                                             }
                                             else
                                             {
                                                 <p class="auction-text-grey">Buy now price</p>
                                                 <h4 class="auction-text-black eth">@Auction.Price @Auction.Currency</h4>
-                                                <p class="auction-text-grey usd">@((UsdConversionRate * Auction.Price).ToString("F2")) USD</p>
                                             }
                                         </div>
                                         @if (AuctionStatus == NftStatus.Listed)

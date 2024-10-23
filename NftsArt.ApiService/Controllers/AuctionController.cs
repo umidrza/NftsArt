@@ -34,6 +34,16 @@ public class AuctionController(IAuctionRepository auctionRepo) : ControllerBase
         return Ok(Result<AuctionDetailDto>.Success(auction.ToDetailDto()));
     }
 
+    [HttpGet("popular")]
+    public async Task<ActionResult<Result<AuctionDetailDto>>> GetPopularAuction()
+    {
+        var auction = await auctionRepo.GetPopularAsync();
+        if (auction == null)
+            return NotFound(Result<AuctionDetailDto>.Failure("Auction not found"));
+
+        return Ok(Result<AuctionDetailDto>.Success(auction.ToDetailDto()));
+    }
+
     [HttpPost("{nftId:int}")]
     [Authorize]
     public async Task<ActionResult<Result<AuctionDetailDto>>> CreateAuction([FromRoute] int nftId, [FromBody] AuctionCreateDto createAuctionDto)

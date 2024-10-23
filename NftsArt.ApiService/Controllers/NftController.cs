@@ -34,6 +34,15 @@ public class NftController(INftRepository nftRepo) : ControllerBase
         return Ok(Result<NftDetailDto>.Success(nft.ToDetailDto()));
     }
 
+    [HttpGet("popular")]
+    public async Task<ActionResult<Result<List<NftSummaryDto>>>> GetHomeNfts()
+    {
+        var nfts = (await nftRepo.GetPopularsAsync())
+                    .Select(c => c.ToSummaryDto()).ToList();
+
+        return Ok(Result<List<NftSummaryDto>>.Success(nfts));
+    }
+
     [HttpPost]
     [Authorize]
     public async Task<ActionResult<Result<NftSummaryDto>>> CreateNft([FromBody] NftCreateDto createNftDto)
