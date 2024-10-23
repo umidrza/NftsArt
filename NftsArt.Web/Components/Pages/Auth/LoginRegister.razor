@@ -1,0 +1,209 @@
+﻿@page "/auth"
+
+@* @layout EmptyLayout *@
+
+<PageTitle>Login | Register</PageTitle>
+
+<main>
+    <section class="form-section">
+        <div class="container">
+            <div class="form-container">
+                <div class="register-form-title">
+                    <h2 class="section-title">Register</h2>
+                </div>
+                <EditForm Model="@registerDto" OnValidSubmit="HandleRegister" FormName="Register" class="form" id="register-form">
+                    <DataAnnotationsValidator />
+
+                    <div class="form-previews">
+                        @if (Avatars != null && Avatars.Count() > 0)
+                        {
+                            <div class="form-preview">
+                                <h4 class="form-subtitle">Preview</h4>
+                                <div class="avatar-preview">
+                                    <div class="avatar">
+                                        <img class="avatar-img" src="@selectedAvatar" />
+                                    </div>
+                                    <h3 class="register-fullname">@registerDto.FullName</h3>
+                                </div>
+                                <div class="form-control">
+                                    <InputNumber class="hidden" id="avatar-input" @bind-Value="registerDto.AvatarId" />
+                                    <ValidationMessage For="@(() => registerDto.AvatarId)" />
+                                </div>
+                            </div>
+                            <div class="form-preview">
+                                <h4 class="form-subtitle">Choose avatar</h4>
+                                <div class="new-avatars">
+                                    @foreach (var avatar in Avatars)
+                                    {
+                                        <div class="avatar" @onclick="() => SelectAvatar(avatar)">
+                                            <img class="avatar-img" src="@avatar.ImageUrl" />
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="form-inputs-container">
+                        <div class="form-inputs">
+                            @if (!string.IsNullOrEmpty(registerError))
+                            {
+                                <div class="validation-message">@registerError</div>
+                            }
+
+                            <div class="form-control">
+                                <div class="form-input-box">
+                                    <InputText id="fullNameInput" @bind-Value="registerDto.FullName" class="form-input" placeholder="Full Name" required />
+                                    <label for="fullname" class="form-label">Full Name</label>
+                                </div>
+                                <ValidationMessage For="@(() => registerDto.FullName)" />
+                            </div>
+
+                            <div class="form-control">
+                                <div class="form-input-box">
+                                    <InputText id="register-username" @bind-Value="registerDto.UserName" class="form-input" placeholder="Username" required />
+                                    <label for="username" class="form-label">Username</label>
+                                </div>
+                                <ValidationMessage For="@(() => registerDto.UserName)" />
+                            </div>
+
+                            <div class="form-control">
+                                <div class="form-input-box">
+                                    <InputText type="email" id="email" @bind-Value="registerDto.Email" class="form-input" placeholder="Email" required />
+                                    <label for="email" class="form-label">Email</label>
+                                </div>
+                                <ValidationMessage For="@(() => registerDto.Email)" />
+                            </div>
+
+                            <div class="form-control">
+                                <div class="form-input-box">
+                                    <InputText id="password1" @bind-Value="registerDto.Password" class="form-input"
+                                               type="@((isPasswordVisible) ? "text" : "password")" placeholder="Password" required />
+                                    <label for="password1" class="form-label">Password</label>
+                                    <i class="fa-regular @(isPasswordVisible ? "fa-eye" : "fa-eye-slash") password-show-btn"
+                                       @onclick="() => isPasswordVisible = !isPasswordVisible"></i>
+                                </div>
+                                <ValidationMessage For="@(() => registerDto.Password)" />
+                            </div>
+
+                            <div class="form-control">
+                                <div class="form-input-box">
+                                    <InputText id="password2" @bind-Value="registerDto.ConfirmPassword" class="form-input"
+                                               type="@((isPasswordVisible) ? "text" : "password")" placeholder="Confirm Password" required />
+                                    <label for="password2" class="form-label">Confirm Password</label>
+                                    <i class="fa-regular @(isPasswordVisible ? "fa-eye" : "fa-eye-slash") password-show-btn"
+                                       @onclick="() => isPasswordVisible = !isPasswordVisible"></i>
+                                </div>
+                                <ValidationMessage For="@(() => registerDto.ConfirmPassword)" />
+                            </div>
+                        </div>
+
+                        <div class="form-buttons">
+                            <button type="submit" class="form-button btn-green">Register</button>
+                        </div>
+
+                        <div class="form-checkboxes">
+                            <div class="form-info">
+                                <label class="form-label">Have an account already?</label>
+                                <h5 @onclick="ToggleLoginPopup" id="login-btn">Log in</h5>
+                            </div>
+                        </div>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </section>
+
+    <section class="popup-section @(isLoginPopupVisible ? "active" : "")" id="login-popup">
+        <div class="popup">
+            <h2 class="popup-title">Login</h2>
+
+            <EditForm Model="@loginDto" OnValidSubmit="HandleLogin" FormName="Login" class="login-form">
+                <DataAnnotationsValidator />
+
+                <div class="form-control">
+                    <div class="form-input-box">
+                        <InputText @bind-Value="loginDto.UserName" id="username" class="form-input" required />
+                        <label for="username" class="form-label">Username</label>
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <ValidationMessage For="@(() => loginDto.UserName)" />
+                </div>
+
+                <div class="form-control">
+                    <div class="form-input-box">
+                        <InputText @bind-Value="loginDto.Password" id="password" class="form-input"
+                                   type="@((isPasswordVisible) ? "text" : "password")"  required />
+                        <label for="password" class="form-label">Password</label>
+                        <i class="fa-regular @(isPasswordVisible ? "fa-eye" : "fa-eye-slash") password-show-btn"
+                           @onclick="() => isPasswordVisible = !isPasswordVisible"></i>
+                    </div>
+                    <ValidationMessage For="@(() => loginDto.Password)" />
+                </div>
+
+                @if (!string.IsNullOrEmpty(loginError))
+                {
+                    <div class="validation-message">@loginError</div>
+                }
+
+                <button type="submit" class="btn-green">Login</button>
+                <button type="button" class="btn-outline-green">Forgot Password?</button>
+
+                <div class="register-link">
+                    <p>Don't have an account? <span id="register-btn" @onclick="ToggleLoginPopup">Register</span></p>
+                </div>
+            </EditForm>
+        </div>
+    </section>
+
+    <section class="popup-section" id="forgot-password-popup">
+        <div class="popup">
+            <h2 class="popup-title">Forgot Password</h2>
+            <form method="post" id="forgot-password-form" class="popup-form">
+                <div class="form-control">
+                    <label for="email" class="form-label">Enter your email address:</label>
+                    <input type="email" name="email" id="forgot-password-email" class="form-input" placeholder="Type here..." required>
+                </div>
+                <button type="submit" class="btn-green">Send Verification Code</button>
+            </form>
+        </div>
+    </section>
+
+    <section class="popup-section" id="verify-code-popup">
+        <div class="popup">
+            <h2 class="popup-title">Verify Code</h2>
+            <form method="post" id="verify-code-form" class="popup-form">
+                <div class="form-control">
+                    <label for="token" class="form-label">Verification Code:</label>
+                    <input type="text" name="token" id="token" class="form-input" placeholder="Type here..." required>
+                </div>
+                <button type="submit" class="btn-green">Verify Code</button>
+            </form>
+        </div>
+    </section>
+
+    <section class="popup-section" id="reset-password-popup">
+        <div class="popup">
+            <h2 class="popup-title">Reset Password</h2>
+            <form method="post" id="reset-password-form" class="popup-form">
+
+                <div class="form-control">
+                    <div class="form-input-box">
+                        <input type="password" name="new-password1" id="new-password1" class="form-input" required>
+                        <label for="password" class="form-label">New Password</label>
+                        <i class="fa-regular fa-eye-slash password-show-btn"></i>
+                    </div>
+                </div>
+                <div class="form-control">
+                    <div class="form-input-box">
+                        <input type="password" name="new-password2" id="new-password2" class="form-input" required>
+                        <label for="password" class="form-label">Confirm New Password</label>
+                        <i class="fa-regular fa-eye-slash password-show-btn"></i>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-green">Reset Password</button>
+            </form>
+        </div>
+    </section>
+</main>

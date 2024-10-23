@@ -1,0 +1,142 @@
+﻿@page "/wallet"
+
+<PageTitle>Connect Wallet</PageTitle>
+
+<main>
+    <section class="connect-wallet-section">
+        <div class="container">
+            <div class="connect-wallet">
+                <div class="connect-wallet-desc">
+                    <h2 class="section-title">Connect Wallet</h2>
+                    <p class="section-desc">
+                        If you don't have a wallet yet, you can select a provider and create one now.
+                    </p>
+                </div>
+                <div class="connect-wallet-tabs">
+                    <div class="connect-wallet-tab">
+                        <input type="radio" name="blockchain" id="Bitcoin" value="Bitcoin" class="hidden">
+                        <label for="Bitcoin" class="connect-wallet-tab-text">Bitcoin</label>
+                    </div>
+                    <div class="connect-wallet-tab">
+                        <input type="radio" name="blockchain" id="Ethereum" value="Ethereum" class="hidden" checked>
+                        <label for="Ethereum" class="connect-wallet-tab-text">Ethereum</label>
+                    </div>
+                    <div class="connect-wallet-tab">
+                        <input type="radio" name="blockchain" id="Solana" value="Solana" class="hidden">
+                        <label for="Solana" class="connect-wallet-tab-text">Solana</label>
+                    </div>
+                    <div class="connect-wallet-tab">
+                        <input type="radio" name="blockchain" id="Tezos" value="Tezos" class="hidden">
+                        <label for="Tezos" class="connect-wallet-tab-text">Tezos</label>
+                    </div>
+                    <div class="connect-wallet-tab">
+                        <input type="radio" name="blockchain" id="Polygon" value="Polygon" class="hidden">
+                        <label for="Polygon" class="connect-wallet-tab-text">Polygon</label>
+                    </div>
+                </div>
+                <div class="connect-wallet-list">
+                    <div class="wallet">
+                        <div class="wallet-image">
+                            <img src="/img/providers/metamask.png" alt="">
+                        </div>
+                        <div class="wallet-desc">
+                            <input type="radio" name="provider" id="provider_1" value="1" class="hidden">
+                            <label for="provider_1" class="wallet-name">MetaMask</label>
+                            <p class="wallet-info">Popular</p>
+                        </div>
+                    </div>
+                    <div class="wallet">
+                        <div class="wallet-image">
+                            <img src="/img/providers/phantom.png" alt="">
+                        </div>
+                        <div class="wallet-desc">
+                            <input type="radio" name="provider" id="provider_2" value="2" class="hidden">
+                            <label for="provider_2" class="wallet-name">Phantom</label>
+                            <p class="wallet-info">Solana</p>
+                        </div>
+                    </div>
+                    <div class="wallet">
+                        <div class="wallet-image">
+                            <img src="/img/providers/coinbase-coin.png" alt="">
+                        </div>
+                        <div class="wallet-desc">
+                            <input type="radio" name="provider" id="provider_3" value="3" class="hidden">
+                            <label for="provider_3" class="wallet-name">CoinBase</label>
+                            <p class="wallet-info"></p>
+                        </div>
+                    </div>
+                    <div class="wallet">
+                        <div class="wallet-image">
+                            <img src="/img/providers/walletconnect.png" alt="">
+                        </div>
+                        <div class="wallet-desc">
+                            <input type="radio" name="provider" id="provider_4" value="4" class="hidden">
+                            <label for="provider_4" class="wallet-name">WalletConnect</label>
+                            <p class="wallet-info"></p>
+                        </div>
+                    </div>
+                    <div class="wallet">
+                        <div class="wallet-image">
+                            <img src="/img/providers/trust-wallet.png" alt="">
+                        </div>
+                        <div class="wallet-desc">
+                            <input type="radio" name="provider" id="provider_5" value="5" class="hidden">
+                            <label for="provider_5" class="wallet-name">TrustWallet</label>
+                            <p class="wallet-info"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="popup-section">
+        <div class="popup">
+            <div class="popup-logo-header">
+                <div class="popup-logo">
+                    <div class="wallet">
+                        <div class="wallet-image">
+                            <img src="/img/providers/metamask.png" alt="">
+                        </div>
+                        <div class="wallet-desc">
+                            <h3 class="wallet-name">MetaMask</h3>
+                            <p class="wallet-info">Etherium</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="popup-header">
+                    <h3 class="popup-title">Sign this petition?</h3>
+                    <p class="popup-desc">Sign a message using your wallet <br> to continue</p>
+                </div>
+            </div>
+            <div class="popup-detail">
+                <div class="popup-user-wallet">
+                    <div class="avatar">
+                        <img class="avatar-img" src="/img/avatars/avatar4.jpeg">
+                    </div>
+                    <div class="popup-wallet-desc">
+                        <h4 class="popup-user-name">Lincoln George</h4>
+                        <div class="popup-wallet-detail">
+                            <p class="popup-wallet-link">0x38682823...4T93</p>
+                            <div class="popup-wallet-connected">Connected</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="popup-subheader">
+                    <h4>Welcome to NFTs Art!</h4>
+                    <p class="popup-desc popup-subheader-desc">
+                        <span class="extra-content" data-length="140">
+                            Click to sign in and accept the NFTs Art Term of Service:
+                            https://example-nftsart.io/terms
+                        </span>
+                        <span class="show-more">Show more</span>
+                    </p>
+                </div>
+            </div>
+            <div class="popup-buttons">
+                <button type="button" class="btn-outline-green" id="wallet-cancel-btn">Cancel</button>
+                <button type="submit" class="btn-green" id="wallet-connect-btn">Connect</button>
+            </div>
+        </div>
+    </section>
+</main>

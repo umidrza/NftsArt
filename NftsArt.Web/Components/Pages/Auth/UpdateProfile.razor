@@ -1,0 +1,119 @@
+﻿@page "/auth/profile"
+
+<PageTitle>Update Profile</PageTitle>
+
+<main>
+    <section class="form-section">
+        <div class="container">
+            <div class="form-container">
+                <div class="register-form-title">
+                    <h2 class="section-title">Update Profile</h2>
+                </div>
+                <EditForm Model="@UpdateDto" OnValidSubmit="HandleSubmit" FormName="UpdateProfile" class="form">
+                    <DataAnnotationsValidator />
+
+                    <div class="form-previews">
+                        @if (Avatars != null && Avatars.Count() > 0)
+                        {
+                            <div class="form-preview">
+                                <h4 class="form-subtitle">Preview</h4>
+                                <div class="avatar-preview">
+                                    <div class="avatar">
+                                        <img class="avatar-img" src="@selectedAvatar" />
+                                    </div>
+                                    <h3 class="register-fullname">@UpdateDto.FullName</h3>
+                                </div>
+                                <div class="form-control">
+                                    <InputNumber class="hidden" id="avatar-input" @bind-Value="UpdateDto.AvatarId" />
+                                    <ValidationMessage For="@(() => UpdateDto.AvatarId)" />
+                                </div>
+                            </div>
+                            <div class="form-preview">
+                                <h4 class="form-subtitle">Choose avatar</h4>
+                                <div class="new-avatars">
+                                    @foreach (var avatar in Avatars)
+                                    {
+                                        <div class="avatar" @onclick="() => SelectAvatar(avatar)">
+                                            <img class="avatar-img" src="@avatar.ImageUrl" />
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="form-inputs-container">
+                        <div class="form-inputs">
+                            @if (!string.IsNullOrEmpty(updateProfileError))
+                            {
+                                <div class="validation-message">@updateProfileError</div>
+                            }
+
+                            <div class="form-control">
+                                <div class="form-input-box">
+                                    <InputText id="fullNameInput" @bind-Value="UpdateDto.FullName" class="form-input" placeholder="Full Name" required />
+                                    <label for="fullname" class="form-label">Full Name</label>
+                                </div>
+                                <ValidationMessage For="@(() => UpdateDto.FullName)" />
+                            </div>
+
+                            <div class="form-control">
+                                <div class="form-input-box">
+                                    <InputText id="register-username" @bind-Value="UpdateDto.UserName" class="form-input" placeholder="Username" required />
+                                    <label for="username" class="form-label">Username</label>
+                                </div>
+                                <ValidationMessage For="@(() => UpdateDto.UserName)" />
+                            </div>
+
+                            <div class="form-control">
+                                <div class="form-input-box">
+                                    <InputText type="email" id="email" @bind-Value="UpdateDto.Email" class="form-input" placeholder="Email" required />
+                                    <label for="email" class="form-label">Email</label>
+                                </div>
+                                <ValidationMessage For="@(() => UpdateDto.Email)" />
+                            </div>
+                        </div>
+
+                        <div class="form-buttons">
+                            <button type="submit" class="form-button btn-green">Update Profile</button>
+                            <button type="button" class="btn-outline-green" id="update-password-button">Update Password?</button>
+                            <button @onclick="HandleLogout" type="button" class="btn-red logout-btn">Logout</button>
+                        </div>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </section>
+
+    <section class="popup-section" id="reset-password-popup">
+        <div class="popup">
+            <h2 class="popup-title">Reset Password</h2>
+            <form method="post" id="reset-password-form" class="popup-form">
+
+                <div class="form-control" id="current-password-input">
+                    <div class="form-input-box">
+                        <input type="password" name="old-password" id="old-password" class="form-input">
+                        <label for="old-password" class="form-label">Current Password</label>
+                        <i class="fa-regular fa-eye-slash password-show-btn"></i>
+                    </div>
+                </div>
+                <div class="form-control">
+                    <div class="form-input-box">
+                        <input type="password" name="new-password1" id="new-password1" class="form-input" required>
+                        <label for="password" class="form-label">New Password</label>
+                        <i class="fa-regular fa-eye-slash password-show-btn"></i>
+                    </div>
+                </div>
+                <div class="form-control">
+                    <div class="form-input-box">
+                        <input type="password" name="new-password2" id="new-password2" class="form-input" required>
+                        <label for="password" class="form-label">Confirm New Password</label>
+                        <i class="fa-regular fa-eye-slash password-show-btn"></i>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-green">Reset Password</button>
+            </form>
+        </div>
+    </section>
+</main>

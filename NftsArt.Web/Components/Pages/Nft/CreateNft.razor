@@ -1,0 +1,142 @@
+﻿@page "/nft/create"
+
+@using NftsArt.Model.Dtos.Nft
+
+@attribute [Authorize]
+
+<PageTitle>Create NFT</PageTitle>
+
+<main>
+    <section class="form-section">
+        <div class="container">
+            <div class="form-container">
+                <h2 class="section-title">Create New Item</h2>
+                <EditForm Model="@NftCreateDto" OnValidSubmit="HandleValidSubmit" FormName="NftCreate" id="nft-create-form" class="form">
+                    <DataAnnotationsValidator />
+
+                    <div class="form-preview">
+                        <h4 class="form-subtitle">Preview</h4>
+                        <div class="nft-form-image">
+                            <img id="uploaded-image" class="@(!hasImage ? "hidden" : "")" src="@uploadedImageSrc" />
+                            <div id="no-new-image" class="@(hasImage ? "hidden" : "")">
+                                <i class="fa-regular fa-image"></i>
+                                <p>Upload file to preview your brand <br> new NFT</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-inputs-container">
+                        <div class="form-inputs">
+                            <!-- Blockchain Selection -->
+                            <div class="form-control">
+                                <label for="blockchain" class="form-label">Blockchain</label>
+                                <InputSelect id="blockchain" class="form-select" @bind-Value="NftCreateDto.Blockchain">
+                                    @foreach (var blockchain in Enum.GetValues<Blockchain>())
+                                    {
+                                        <option value="@blockchain">@blockchain</option>
+                                    }
+                                </InputSelect>
+                                <ValidationMessage For="@(() => NftCreateDto.Blockchain)" />
+                            </div>
+
+                            <!-- Image Upload -->
+                            <div class="form-control">
+                                <label for="image" class="form-label">Upload Image</label>
+                                <div class="upload-image">
+                                    <InputFile id="upload-image-input" accept="image/*" OnChange="HandleImageChange" class="hidden" />
+                                    <button type="button" class="btn-outline-green" onclick="document.getElementById('upload-image-input').click();">Upload Image</button>
+                                    <p class="form-text-grey">PNG, GIF, WEBP, JPEG. Max 100mb.</p>
+                                    <ValidationMessage For="@(() => NftCreateDto.ImageUrl)" />
+                                </div>
+                            </div>
+
+                            <!-- NFT Name -->
+                            <div class="form-control">
+                                <label for="name" class="form-label">Name of NFTs</label>
+                                <InputText id="name" class="form-input" @bind-Value="NftCreateDto.Name" placeholder="Type here..." required />
+                                <ValidationMessage For="@(() => NftCreateDto.Name)" />
+                            </div>
+
+                            <!-- Description -->
+                            <div class="form-control">
+                                <label for="description" class="form-label">Description</label>
+                                <InputTextArea id="description" class="form-textarea" @bind-Value="NftCreateDto.Description" placeholder="Type here..." required />
+                                <ValidationMessage For="@(() => NftCreateDto.Description)" />
+                            </div>
+
+                            <!-- Collection -->
+                            <div class="form-control">
+                                <label for="collection" class="form-label">Choose Collection</label>
+                                <div class="form-collections">
+                                    <a href="/collection/create">
+                                        <div class="add-collection">
+                                            <i class="fa-solid fa-plus"></i>
+                                        </div>
+                                    </a>
+                                    @if (Collections != null && Collections.Count > 0)
+                                    {
+                                        @foreach (var collection in Collections)
+                                        {
+                                            <div class="form-collection">
+                                                <input type="checkbox" id="@($"collection-{collection.Id}")" class="hidden" 
+                                                               @onchange="(e) => HandleCollectionChange(e, collection.Id)" />
+                                                <label for="@($"collection-{collection.Id}")">
+                                                    <img src="/img/nfts/image3.jpeg" class="form-collection-image" />
+                                                </label>
+                                                <label for="@($"collection-{collection.Id}")" class="form-collection-name">
+                                                    <span>@collection.Name</span>
+                                                </label>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                                <ValidationMessage For="@(() => NftCreateDto.Collections)" />
+                            </div>
+                        </div>
+
+                        <!-- Checkboxes -->
+                        <div class="form-checkboxes">
+                            <div class="form-checkbox">
+                                <div class="form-checkbox-label">
+                                    <label for="marketplace" class="form-label">Put on marketplace</label>
+                                    <p class="form-text-grey">
+                                        Put your new NFT on Rarible's marketplace
+                                    </p>
+                                </div>
+                                <input type="checkbox" id="marketplace" class="form-checkbox-input hidden">
+                                <label class="checkbox-icon" for="marketplace"></label>
+                            </div>
+                            <div class="form-checkbox">
+                                <div class="form-checkbox-label">
+                                    <label for="unlock-purchased" class="form-label">Unlock once purchased</label>
+                                    <p class="form-text-grey">
+                                        Content will be unlocked after successful transaction
+                                    </p>
+                                </div>
+                                <input type="checkbox" id="unlock-purchased" class="form-checkbox-input hidden">
+                                <label class="checkbox-icon" for="unlock-purchased"></label>
+                            </div>
+                            <div class="form-checkbox">
+                                <div class="form-checkbox-label">
+                                    <label for="free-minting" class="form-label">Free minting</label>
+                                    <p class="form-text-grey">
+                                        Buyer will pay gas fees for minting
+                                    </p>
+                                </div>
+                                <div>
+                                    <input type="checkbox" id="free-minting" class="form-checkbox-input">
+                                    <label class="checkbox-icon" for="free-minting"></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="form-buttons">
+                            <button type="submit" class="form-button btn-green">Create item</button>
+                        </div>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </section>
+</main>

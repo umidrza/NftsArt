@@ -1,0 +1,247 @@
+﻿@page "/collection"
+
+<PageTitle>Collection</PageTitle>
+
+<main>
+    <section class="collection-section">
+        <div class="container">
+            <div class="nft-collections">
+                <div class="nft-collections-title">
+                    <h2 class="section-title">Get Popular Collection</h2>
+                </div>
+                @if (Collections == null)
+                {
+                    <h4>Loading...</h4>
+                }
+                else
+                {
+                    <div class="nft-collections-container">
+                        <div class="collection-search">
+                            <div class="collection-search-input">
+                                <input @oninput="HandleSearchChange" type="text" class="search-input" placeholder="Search collections" id="collection-search" name="search" />
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <i @onclick="ClearSearch" class="fa-solid fa-xmark remove-search-btn"></i>
+                            </div>
+                            <div class="collection-select-filter">
+                                <select @onchange="HandleBlockchainChange" name="blockchains" id="blockchains" class="filter-select">
+                                    <option value="">All blockchains</option>
+                                    @foreach (var blockchain in Enum.GetValues<Blockchain>())
+                                    {
+                                        <option value="@blockchain">@blockchain</option>
+                                    }
+                                </select>
+                                <select @onchange="HandleSortChange" class="filter-select" id="sort-by-collection">
+                                    <option value="default">Sort By</option>
+                                    <option value="name-asc">Name: A to Z</option>
+                                    <option value="name-desc">Name: Z to A</option>
+                                </select>
+                            </div>
+                            <div class="collection-grid-switches">
+                                <div class="grid-switch">
+                                    <input type="radio" name="switch" id="switch2" class="hidden" checked>
+                                    <label for="switch2">
+                                        <i class="switch2-icon"></i>
+                                        <i class="switch2-icon"></i>
+                                        <i class="switch2-icon"></i>
+                                        <i class="switch2-icon"></i>
+                                    </label>
+                                </div>
+                                <div class="grid-switch">
+                                    <input type="radio" name="switch" id="switch3" class="hidden">
+                                    <label for="switch3">
+                                        <i class="switch3-icon"></i>
+                                        <i class="switch3-icon"></i>
+                                        <i class="switch3-icon"></i>
+                                        <i class="switch3-icon"></i>
+                                        <i class="switch3-icon"></i>
+                                        <i class="switch3-icon"></i>
+                                        <i class="switch3-icon"></i>
+                                        <i class="switch3-icon"></i>
+                                        <i class="switch3-icon"></i>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="collection-cards-filters">
+                            <div class="collection-filters">
+                                <div class="collection-filter">
+                                    <div class="collection-filter-title">
+                                        <h3>Categories</h3>
+                                    </div>
+                                    <div class="collection-filter-items">
+                                        @foreach (var category in Enum.GetValues<Category>())
+                                        {
+                                            <div class="collection-filter-item">
+                                                <label class="collection-filter-item-text" for="category-@category">@category</label>
+                                                <input type="checkbox" id="category-@category" value="@category" @onchange="(e) => HandleCategoryChange(e, category.ToString())" class="collection-filter-checkbox hidden" name="category">
+                                                <label class="filter-check-icon" for="category-@category">
+                                                    <i class="fa-solid fa-check check-icon"></i>
+                                                </label>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="collection-cards-pagination">
+                                <div class="collection-cards">
+                                    @foreach(var collection in Collections)
+                                    {
+                                        <div class="collection-card">
+                                            <div class="collection-card-desc">
+                                                <div class="collection-card-title">
+                                                    <a href="@GetCollectionUrl(collection.Id)" class="collection-card-name">
+                                                        @collection.Name
+                                                    </a>
+                                                    <p class="collection-card-creator">@collection.Creator.UserName</p>
+                                                </div>
+                                                <div class="collection-card-detail">
+                                                    <div class="collection-creator-stats">
+                                                        <div class="collection-creator-stat">
+                                                            <p>Collections</p>
+                                                            <h5>@collection.Creator.CollectionCount</h5>
+                                                        </div>
+                                                        <div class="collection-creator-stat">
+                                                            <p>Followers</p>
+                                                            <h5 class="creator-followers-count">@collection.Creator.FollowerCount</h5>
+                                                        </div>
+                                                    </div>
+                                                    <AuthorizeView>
+                                                        <Authorized>
+                                                            @if (UserId != null && UserId == collection.Creator.Id)
+                                                            {
+                                                                <a href="@GetCollectionUpdateUrl(collection.Id)">
+                                                                    <button class="btn-green collection-card-btn">Update</button>
+                                                                </a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <button class="btn-green collection-card-btn follow-btn">Follow</button>
+                                                            }
+                                                        </Authorized>
+                                                    </AuthorizeView>
+                                                </div>
+                                            </div>
+                                            @if (collection.Nfts != null && collection.Nfts.Count > 0)
+                                            {
+                                                <div class="collection-card-images">
+                                                    @for (int i = 0; i < Math.Min(collection.Nfts.Count, 3); i++)
+                                                    {
+                                                        <a href="@GetCollectionUrl(collection.Id)" class="collection-card-image">
+                                                            <img src="@collection.Nfts[i].ImageUrl">
+                                                        </a>
+                                                    }
+
+                                                    @if (collection.Nfts.Count >= 4)
+                                                    {
+                                                        <a href="@GetCollectionUrl(collection.Id)" class="collection-card-image">
+                                                            <img src="@collection.Nfts[3].ImageUrl">
+                                                                @if (collection.Nfts.Count >= 5)
+                                                                {
+                                                                    <p class="collection-more-image">+@(collection.Nfts.Count - 4)</p>
+                                                                }
+                                                        </a>
+                                                    }
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="no-images">No nfts</div>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+
+                                @if(TotalPages > 1)
+                                {
+                                    <div class="collection-pagination">
+                                        <a @onclick="PreviousPage">
+                                            <div class="icon-box @(CurrentPage == 1 ? "disabled" : "")" disabled="@DisabledPrevious">
+                                                <i class="fa-solid fa-chevron-left"></i>
+                                            </div>
+                                        </a>
+
+                                        <div class="pagination">
+                                            @for (int i = 1; i <= TotalPages; i++)
+                                            {
+                                                if (i == CurrentPage)
+                                                {
+                                                    <strong class="pagination-number">@i</strong>
+                                                }
+                                                else
+                                                {
+                                                    <a class="pagination-number" @onclick="() => GoToPage(i)" href="#">@i</a>
+                                                }
+                                            }
+                                        </div>
+
+                                        <a @onclick="NextPage">
+                                            <div class="icon-box @(CurrentPage == TotalPages ? "disabled" : "")" disabled="@DisabledNext">
+                                                <i class="fa-solid fa-chevron-right"></i>
+                                            </div>
+                                        </a>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+
+    @if (Collectors != null && Collectors.Count > 0) 
+    {
+        <section class="top-collectors-section">
+            <h2 class="section-title">Our Top Collectors</h2>
+            <div class="top-collectors-list auto-scroll">
+                @for (int i = 0; i < Math.Min(Collectors.Count, 6); i++)
+                {
+                    <div class="top-collector">
+                        <p class="top-collector-place"></p>
+                        <div class="avatar">
+                            <a href="#"><img class="avatar-img" src="@Collectors[i].Avatar?.ImageUrl" alt=""></a>
+                            <div class="avatar-icons">
+                                <div class="verified-icon">
+                                    <i class="star-icon"></i>
+                                    <i class="fa-solid fa-check check-icon"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="top-collector-info">
+                            <h4 class="top-collector-name">@Collectors[i].FullName</h4>
+                            <div class="top-collector-eth">
+                                <i class="fa-brands fa-ethereum"></i>
+                                <p class="eth-value">@Collectors[i].AuctionsSumPrice</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="top-collectors-list auto-scroll">
+                @for (int i = 6; i < Math.Min(Collectors.Count, 12); i++)
+                {
+                    <div class="top-collector">
+                        <p class="top-collector-place"></p>
+                        <div class="avatar">
+                            <a href="#"><img class="avatar-img" src="@Collectors[i].Avatar?.ImageUrl" alt=""></a>
+                            <div class="avatar-icons">
+                                <div class="verified-icon">
+                                    <i class="star-icon"></i>
+                                    <i class="fa-solid fa-check check-icon"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="top-collector-info">
+                            <h4 class="top-collector-name">@Collectors[i].FullName</h4>
+                            <div class="top-collector-eth">
+                                <i class="fa-brands fa-ethereum"></i>
+                                <p class="eth-value">@Collectors[i].AuctionsSumPrice</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+</main>

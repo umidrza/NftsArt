@@ -1,0 +1,77 @@
+﻿@page "/collection/create"
+
+<PageTitle>Create Collection</PageTitle>
+
+<main>
+    <section class="form-section">
+        <div class="container">
+            <div class="form-container">
+                <h2 class="section-title">
+                    Create new Collection
+                </h2> 
+                <EditForm Model="@CollectionCreateDto" OnValidSubmit="HandleValidSubmit" FormName="CollectionCreate" class="form" method="post">
+                     <DataAnnotationsValidator />
+                
+                    @if(Nfts != null && Nfts.Count > 0)
+                    {
+                        <div class="form-control">
+                            <label class="form-label">Select NFTs</label>
+                            <div class="form-collections">
+                                @foreach(var nft in Nfts)
+                                {
+                                    <div class="form-collection">
+                                        <input type="checkbox" id="@($"nft-{nft.Id}")" class="hidden"
+                                               @onchange="(e) => HandleNftChange(e, nft.Id)">
+                                        <label for="@($"nft-{nft.Id}")">
+                                            <img src="@nft.ImageUrl" class="form-collection-image">
+                                        </label>
+                                        <label for="@($"nft-{nft.Id}")" class="form-collection-name">
+                                            <span>@nft.Name</span>
+                                        </label>
+                                    </div>
+                                }
+                            </div>
+                            <ValidationMessage For="@(() => CollectionCreateDto.Nfts)" />
+                        </div>
+                    }
+                
+                    <div class="form-inputs-container">
+                        <div class="form-inputs">
+                            <div class="form-control">
+                                <label for="blockchain" class="form-label">Blockchain</label>
+                                <InputSelect @bind-Value="CollectionCreateDto.Blockchain" id="blockchain" class="form-select">
+                                    @foreach (var blockchain in Enum.GetValues<Blockchain>())
+                                    {
+                                        <option value="@blockchain" class="form-option">@blockchain</option>
+                                    }
+                                </InputSelect>
+                                <ValidationMessage For="@(() => CollectionCreateDto.Blockchain)" />
+                            </div>
+
+                            <div class="form-control">
+                                <label for="name" class="form-label">Name of Collection</label>
+                                <InputText @bind-Value="CollectionCreateDto.Name" class="form-input" placeholder="Type here..." required />
+                                <ValidationMessage For="@(() => CollectionCreateDto.Name)" />
+                            </div>
+                        
+                            <div class="form-control">
+                                <label for="category" class="form-label">Category</label>
+                                <InputSelect @bind-Value="CollectionCreateDto.Category" id="category" class="form-select">
+                                    @foreach (var category in Enum.GetValues<Category>())
+                                    {
+                                        <option value="@category" class="form-option">@category</option>
+                                    }
+                                </InputSelect>
+                                <ValidationMessage For="@(() => CollectionCreateDto.Category)" />
+                            </div>
+                        </div>
+                    
+                        <div class="form-buttons">
+                            <button type="submit" class="form-button btn-green">Create Collection</button>
+                        </div>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </section>
+</main>

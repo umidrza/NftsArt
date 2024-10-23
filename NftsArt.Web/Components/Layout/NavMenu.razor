@@ -1,0 +1,79 @@
+﻿<header>
+    <div class="container">
+        <div class="navbar">
+            <NavLink href="/" class="nav-brand">
+                <h3>NFTs Art</h3>
+            </NavLink>
+            <ul class="nav-links">
+                <li class="nav-item"><NavLink href="/collection" class="nav-link">Collection</NavLink></li>
+                <li class="nav-item"><NavLink href="/roadmap" class="nav-link">Road Map</NavLink></li>
+                <li class="nav-item"><NavLink href="/ourclans" class="nav-link">Our Clans</NavLink></li>
+                <li class="nav-item"><NavLink href="/faq" class="nav-link">FAQ</NavLink></li>
+            </ul>
+            <div class="nav-buttons">
+
+                <AuthorizeView>
+                    <Authorized>
+                        <NavLink class="nav-button" href="/nft/create">
+                            <button class="btn-green">Create</button>
+                        </NavLink>
+                        <div class="avatar nav-button">
+                            <NavLink href="/auth/profile">
+                                <img class="avatar-img" src="@(User != null ? User.Avatar?.ImageUrl : "")" alt="Avatar">
+                            </NavLink>
+                            <div class="avatar-icons">
+                                <div class="verified-icon">
+                                    <i class="star-icon"></i>
+                                    <i class="fa-solid fa-check check-icon"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </Authorized>
+                    <NotAuthorized>
+                         <NavLink class="nav-button" href="/auth">
+                            <button class="btn-green">Login</button>
+                         </NavLink>
+                    </NotAuthorized>
+                </AuthorizeView>
+
+                <button class="nav-menu-icon" id="nav-menu-icon">
+                    <hr />
+                    <hr />
+                </button>
+            </div>
+        </div>
+        <div class="nav-menu" id="nav-menu">
+            <div class="nav-menu-buttons">
+
+                <AuthorizeView>
+                    <Authorized>
+                        <div class="avatar">
+                            <NavLink href="/auth/profile">
+                                <img class="avatar-img" src="@(User != null ? User.Avatar?.ImageUrl : "")" alt="Avatar">
+                            </NavLink>
+                            <div class="avatar-icons">
+                                <div class="verified-icon">
+                                    <i class="star-icon"></i>
+                                    <i class="fa-solid fa-check check-icon"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <NavLink href="/nft/create"><button class="btn-green">Create</button></NavLink>
+                    </Authorized>
+                    <NotAuthorized>
+                        <NavLink href="/auth">
+                            <button class="btn-green">Login</button>
+                        </NavLink>
+                    </NotAuthorized>
+                </AuthorizeView>
+               
+            </div>
+            <ul class="nav-menu-links">
+                <li class="nav-item"><NavLink href="/collection" class="nav-link">Collection</NavLink></li>
+                <li class="nav-item"><NavLink href="/roadmap" class="nav-link">Road Map</NavLink></li>
+                <li class="nav-item"><NavLink href="/ourclans" class="nav-link">Our Clans</NavLink></li>
+                <li class="nav-item"><NavLink href="/faq" class="nav-link">FAQ</NavLink></li>
+            </ul>
+        </div>
+    </div>
+</header>

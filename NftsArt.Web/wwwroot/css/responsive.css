@@ -1,0 +1,1575 @@
+@media screen and (max-width: 1200px) {
+    :root {
+        --phases-gap: 32px;
+        --popular-collection-cards-gap: 24px;
+        --popular-collection-cards-count: 4;
+        --nft-cards-count: 3;
+        --nft-cards-gap: 16px;
+        --collection-cards-count: 2;
+        --collection-cards-gap: 24px;
+        --clan-member-gap: 24px;
+        --clan-member-count: 3;
+        --wallet-gap: 25px;
+        --wallet-count: 5;
+        --collection-filters-cards-gap: 56px;
+    }
+
+    .nav-links {
+        gap: 36px;
+    }
+}
+
+
+@media screen and (max-width: 992px) {
+    :root {
+        --phases-gap: 22px;
+        --popular-collection-cards-gap: 24px;
+        --popular-collection-cards-count: 2;
+        --nft-cards-count: 2;
+        --nft-cards-gap: 16px;
+        --collection-cards-count: 2;
+        --collection-cards-gap: 24px;
+        --clan-member-gap: 24px;
+        --clan-member-count: 2;
+        --wallet-gap: 25px;
+        --wallet-count: 3;
+    }
+
+    .nav-links,
+    .nav-button {
+        display: none;
+    }
+
+    .nav-menu-icon {
+        display: block;
+    }
+
+    .auction,
+    .auction-detail-section .auction,
+    .form {
+        grid-template-columns: 100%;
+    }
+
+    .collection-cards-filters {
+        gap: 32px;
+    }
+
+    .collection-cards-pagination {
+        width: 100%;
+    }
+
+    .collection-creators-filters {
+        width: 100%;
+    }
+
+    .newsletter-faq {
+        flex-direction: column;
+        gap: 80px;
+    }
+
+    .collection-cards-filters {
+        flex-direction: column;
+        gap: 56px
+    }
+
+
+
+    .section-title {
+        font-size: 42px;
+    }
+
+    .section-desc {
+        font-size: 16px;
+    }
+
+    .btn-green,
+    .btn-outline-green {
+        font-size: 16px;
+    }
+
+    .nav-brand h3 {
+        font-size: 30px;
+    }
+
+    .nav-link {
+        font-size: 16px;
+    }
+
+    .footer-logo {
+        font-size: 30px;
+    }
+
+    .footer-desc {
+        font-size: 20px;
+    }
+
+    .footer-link {
+        font-size: 16px;
+    }
+
+    .footer-rights p {
+        font-size: 12px;
+    }
+
+    .hero-title {
+        width: 560px;
+        font-size: 56px;
+        line-height: 66px;
+    }
+
+    .more-avatar span {
+        font-size: 12px;
+    }
+
+    .hero-card .artist-name {
+        font-size: 16px;
+    }
+
+    .hero-card .artist-subinfo {
+        font-size: 14px;
+    }
+
+    .roadmap .phase-title {
+        font-size: 22px;
+    }
+
+    .roadmap .phase-desc {
+        font-size: 12px;
+    }
+
+    .extra-content {
+        font-size: 16px;
+    }
+
+    .auction-action-text {
+        font-size: 14px;
+    }
+
+    .auction-text-black {
+        font-size: 18px;
+    }
+
+    .auction-text-grey {
+        font-size: 12px;
+    }
+
+    .nft-auction-category {
+        font-size: 14px;
+    }
+
+    .nft-auction-name {
+        font-size: 36px;
+    }
+
+    .nft-auction-creator-name,
+    .auction-term {
+        font-size: 14px;
+    }
+
+    .chart-title h3 {
+        font-size: 20px;
+    }
+
+    .chart-subtitle h4 {
+        font-size: 16px;
+    }
+
+    .chart-select {
+        font-size: 14px;
+        width: 120px;
+    }
+
+    .chart-text {
+        font-size: 12px;
+    }
+
+    .sales-nfts-table th {
+        font-size: 12px;
+    }
+
+    .sales-nfts-table td {
+        font-size: 14px;
+    }
+
+    .see-all {
+        font-size: 16px;
+    }
+
+    .top-collector-place,
+    .top-collector-name {
+        font-size: 18px;
+    }
+
+    .top-collector-eth .eth-value {
+        font-size: 16px;
+    }
+
+    .sms-icon {
+        font-size: 16px;
+    }
+
+    .get-in-touch-input {
+        font-size: 16px;
+    }
+
+    .get-in-touch-button {
+        font-size: 16px;
+    }
+
+    .faq-title {
+        font-size: 24px;
+    }
+
+    .faq-question h4 {
+        font-size: 20px;
+    }
+
+    .arrow-icon {
+        font-size: 24px;
+    }
+
+    .collection-creators-title {
+        font-size: 30px;
+    }
+
+    .collection-creator-fullname {
+        font-size: 18px;
+    }
+
+    .collection-creator-username {
+        font-size: 12px;
+    }
+
+    .collection-creator-stat p {
+        font-size: 12px;
+    }
+
+    .collection-creator-stat h5 {
+        font-size: 14px;
+    }
+
+    .collection-card-btn {
+        padding: 8px 24px;
+        font-size: 14px;
+        height: 40px;
+    }
+
+    .collection-filter-title h3,
+    .collection-filter-title .arrow-icon {
+        font-size: 16px;
+    }
+
+    .collection-filter-item-text {
+        font-size: 14px;
+    }
+
+    .filter-select {
+        height: 48px;
+        font-size: 14px;
+    }
+
+    .filter-input {
+        width: 100px;
+        height: 48px;
+        font-size: 14px;
+    }
+
+    .filter-input-text {
+        font-size: 14px;
+    }
+
+    .search-input {
+        font-size: 14px;
+    }
+
+    .collection-card-name {
+        font-size: 16px;
+    }
+
+    .collection-card-creator {
+        font-size: 12px;
+    }
+
+    .collection-cards .no-images {
+        font-size: 16px;
+    }
+
+    .collection-more-image {
+        font-size: 18px;
+    }
+
+    .nft-name {
+        font-size: 20px;
+    }
+
+    .nft-status p {
+        font-size: 14px;
+    }
+
+    .nft-status h4 {
+        font-size: 18px;
+    }
+
+    .nft-time span {
+        font-size: 12px;
+    }
+
+    .form-subtitle {
+        font-size: 16px;
+    }
+
+    .nft-sell-name,
+    .register-fullname {
+        font-size: 20px;
+    }
+
+    #no-new-image i {
+        font-size: 24px;
+    }
+
+    #no-new-image p {
+        font-size: 14px;
+    }
+
+    .nft-sell-price p {
+        font-size: 14px;
+    }
+
+    .nft-sell-price h4 {
+        font-size: 20px;
+    }
+
+    .form-input,
+    .form-textarea {
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+
+    .form-label {
+        font-size: 16px;
+    }
+
+    .form-input-box .form-input:focus+.form-label,
+    .form-input-box .form-input:valid+.form-label {
+        transform: translateY(-120%);
+        font-size: 12px;
+    }
+
+    .form-select {
+        font-size: 14px;
+    }
+
+    .form-option {
+        font-size: 16px;
+    }
+
+    .form-text-grey {
+        font-size: 14px;
+    }
+
+    .form-collection-name span {
+        font-size: 10px;
+    }
+
+    .form-warning {
+        font-size: 16px;
+    }
+
+    .popup-title {
+        font-size: 30px;
+    }
+
+    .popup-desc {
+        font-size: 16px;
+    }
+
+    .popup-wallet-link {
+        font-size: 14px;
+    }
+
+    .login-form .forgot-password {
+        font-size: 14.5px;
+    }
+
+    .login-form .register-link {
+        font-size: 14.5px;
+    }
+
+    #login-btn {
+        font-size: 16px;
+    }
+
+    .notfound h1 {
+        font-size: 210px;
+    }
+
+    .notfound h2 {
+        font-size: 40px;
+    }
+
+    .clan-member-clan-name {
+        font-size: 14px;
+    }
+
+    .clan-member-name {
+        font-size: 16px;
+    }
+
+    .clan-member-job {
+        font-size: 12px;
+    }
+
+    .connect-wallet-tab-text {
+        font-size: 14px;
+    }
+
+    .wallet-name {
+        font-size: 20px;
+    }
+
+    .wallet-info {
+        font-size: 12px;
+    }
+
+    .popup-user-name {
+        font-size: 14px;
+    }
+
+    .popup-subheader h4 {
+        font-size: 18px;
+    }
+
+    .alert {
+        font-size: 16px;
+    }
+}
+
+
+@media screen and (max-width: 768px) {
+    :root {
+        --phases-gap: 22px;
+        --popular-collection-cards-gap: 24px;
+        --popular-collection-cards-count: 2;
+        --nft-cards-count: 2;
+        --nft-cards-gap: 16px;
+        --collection-cards-count: 2;
+        --collection-cards-gap: 24px;
+        --clan-member-gap: 24px;
+        --clan-member-count: 2;
+        --wallet-gap: 25px;
+        --wallet-count: 2;
+    }
+
+    .footer {
+        gap: 24px;
+        flex-direction: column;
+    }
+
+    .footer-links {
+        align-items: flex-start;
+    }
+
+    .gear-icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .hero-card {
+        width: 180px;
+        height: 280px;
+    }
+
+    .hero-card:first-of-type,
+    .hero-card:last-of-type {
+        width: 160px;
+        height: 240px;
+    }
+
+    .hero-card:first-of-type {
+        transform: rotate(-15deg) translate(25px, 45px);
+    }
+
+    .hero-card:last-of-type {
+        transform: rotate(15deg) translate(-25px, 45px);
+    }
+
+    .auction-buttons {
+        gap: 16px;
+    }
+
+    .roadmap-phases .phases {
+        flex-direction: column;
+    }
+
+    .roadmap-phases .phase {
+        align-items: flex-start;
+        text-align: left;
+        width: 100%;
+        gap: 6px;
+        margin-left: 50px;
+        text-align: left;
+    }
+
+    .roadmap-line {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        width: 16px;
+        height: 85%;
+    }
+
+    .roadmap-line .roadmap-vector {
+        width: 1px;
+        height: 100%;
+    }
+
+    .collection-search {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        grid-template-rows: 48px 48px;
+        gap: 16px;
+        align-items: center;
+        width: 100%;
+    }
+
+    .collection-select-filter{
+        grid-row: 2;
+        grid-column: span 2;
+    }
+
+    .nft-collections-container:has(.layout-3) .collection-search,
+    .layout-3 .collection-search{
+        grid-template-rows: 48px;
+    }
+
+    .nft-collections-container:has(.layout-3) .collection-select-filter,
+    .layout-3 .collection-select-filter{
+        display: none;
+    }
+
+    .roadmap-section {
+        padding-top: 120px;
+        padding-bottom: 60px;
+    }
+
+    .auction-section {
+        padding: 60px 0;
+    }
+
+    .auction {
+        gap: 40px;
+    }
+
+    .popular-collections-section {
+        padding: 60px 0;
+    }
+
+    .join-section {
+        padding: 80px 0;
+        gap: 40px;
+    }
+
+    .collection-section {
+        padding: 60px 0 80px;
+    }
+
+    .nft-collections {
+        gap: 38px;
+    }
+
+    .newsletter-section {
+        padding: 80px 0;
+    }
+
+    .connect-wallet-section {
+        padding: 60px 0 80px;
+    }
+
+    .section-title {
+        font-size: 28px;
+        line-height: 38px;
+    }
+
+    .section-desc {
+        font-size: 14px;
+    }
+
+    .btn-green,
+    .btn-outline-green {
+        font-size: 14px;
+    }
+
+    .nav-brand h3 {
+        font-size: 28px;
+    }
+
+    .nav-link {
+        font-size: 16px;
+    }
+
+    .footer-logo {
+        font-size: 24px;
+    }
+
+    .footer-desc {
+        font-size: 18px;
+    }
+
+    .footer-link {
+        font-size: 16px;
+    }
+
+    .footer-rights p {
+        font-size: 12px;
+    }
+
+    .hero-title {
+        width: 340px;
+        font-size: 34px;
+        line-height: 46px;
+    }
+
+    .more-avatar span {
+        font-size: 12px;
+    }
+
+    .hero-card .artist-name {
+        font-size: 14px;
+    }
+
+    .hero-card .artist-subinfo {
+        font-size: 12px;
+    }
+
+    .roadmap .phase-title {
+        font-size: 20px;
+    }
+
+    .roadmap .phase-desc {
+        font-size: 12px;
+    }
+
+    .extra-content {
+        font-size: 16px;
+    }
+
+    .auction-action-text {
+        font-size: 14px;
+    }
+
+    .auction-text-black {
+        font-size: 16px;
+    }
+
+    .auction-text-grey {
+        font-size: 12px;
+    }
+
+    .nft-auction-category {
+        font-size: 14px;
+    }
+
+    .nft-auction-name {
+        font-size: 28px;
+    }
+
+    .nft-auction-creator-name,
+    .auction-term {
+        font-size: 12px;
+    }
+
+    .chart-title h3 {
+        font-size: 18px;
+    }
+
+    .chart-subtitle h4 {
+        font-size: 16px;
+    }
+
+    .chart-select {
+        font-size: 12px;
+        width: 120px;
+    }
+
+    .chart-text {
+        font-size: 12px;
+    }
+
+    .sales-nfts-table th {
+        font-size: 8px;
+        padding: 6px;
+    }
+
+    .sales-nfts-table td {
+        font-size: 8px;
+        padding: 6px 8px;
+    }
+
+    .sales-nfts-table button {
+        font-size: 10px;
+        padding: 6px 16px;
+    }
+
+    .see-all {
+        font-size: 14px;
+    }
+
+    .top-collector-place,
+    .top-collector-name {
+        font-size: 16px;
+    }
+
+    .top-collector-eth .eth-value {
+        font-size: 14px;
+    }
+
+    .get-in-touch-input {
+        font-size: 14px;
+    }
+
+    .get-in-touch-button {
+        font-size: 14px;
+    }
+
+    .faq-title {
+        font-size: 22px;
+    }
+
+    .faq-question h4 {
+        font-size: 20px;
+    }
+
+    .arrow-icon {
+        font-size: 22px;
+    }
+
+    .collection-creators-title {
+        font-size: 28px;
+    }
+
+    .collection-creator-fullname {
+        font-size: 18px;
+    }
+
+    .collection-creator-username {
+        font-size: 12px;
+    }
+
+    .collection-creator-stat p {
+        font-size: 12px;
+    }
+
+    .collection-creator-stat h5 {
+        font-size: 12px;
+    }
+
+    .collection-card-btn {
+        padding: 8px 24px;
+        font-size: 12px;
+    }
+
+    .collection-filter-title h3,
+    .collection-filter-title .arrow-icon {
+        font-size: 16px;
+    }
+
+    .collection-filter-item-text {
+        font-size: 14px;
+    }
+
+    .filter-select {
+        height: 48px;
+        font-size: 12px;
+    }
+
+    .filter-input {
+        width: 100px;
+        height: 48px;
+        font-size: 14px;
+    }
+
+    .filter-input-text {
+        font-size: 14px;
+    }
+
+    .search-input {
+        font-size: 14px;
+    }
+
+    .collection-card-name {
+        font-size: 16px;
+    }
+
+    .collection-card-creator {
+        font-size: 12px;
+    }
+
+    .collection-cards .no-images {
+        font-size: 14px;
+    }
+
+    .collection-more-image {
+        font-size: 14px;
+    }
+
+    .nft-name {
+        font-size: 16px;
+    }
+
+    .nft-status p {
+        font-size: 12px;
+    }
+
+    .nft-status h4 {
+        font-size: 16px;
+    }
+
+    .nft-time span {
+        font-size: 12px;
+    }
+
+    .form-subtitle {
+        font-size: 16px;
+    }
+
+    .nft-sell-name,
+    .register-fullname {
+        font-size: 16px;
+    }
+
+    #no-new-image p {
+        font-size: 14px;
+    }
+
+    .nft-sell-price p {
+        font-size: 14px;
+    }
+
+    .nft-sell-price h4 {
+        font-size: 18px;
+    }
+
+    .form-input,
+    .form-textarea {
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+
+    .form-label {
+        font-size: 16px;
+    }
+
+    .form-input-box .form-input:focus+.form-label,
+    .form-input-box .form-input:valid+.form-label {
+        font-size: 12px;
+    }
+
+    .form-select {
+        font-size: 12px;
+    }
+
+    .form-option {
+        font-size: 14px;
+    }
+
+    .form-text-grey {
+        font-size: 12px;
+    }
+
+    .form-collection-name span {
+        font-size: 10px;
+    }
+
+    .form-warning {
+        font-size: 14px;
+    }
+
+    .popup-title {
+        font-size: 26px;
+    }
+
+    .popup-desc {
+        font-size: 14px;
+    }
+
+    .popup-wallet-link {
+        font-size: 14px;
+    }
+
+    .login-form .forgot-password {
+        font-size: 14px;
+    }
+
+    .login-form .register-link {
+        font-size: 14px;
+    }
+
+    #login-btn {
+        font-size: 14px;
+    }
+
+    .notfound h1 {
+        font-size: 210px;
+    }
+
+    .notfound h2 {
+        font-size: 24px;
+    }
+
+    .clan-member-clan-name {
+        font-size: 14px;
+    }
+
+    .clan-member-name {
+        font-size: 16px;
+    }
+
+    .clan-member-job {
+        font-size: 12px;
+    }
+
+    .connect-wallet-tab-text {
+        font-size: 12px;
+    }
+
+    .wallet-name {
+        font-size: 16px;
+    }
+
+    .wallet-info {
+        font-size: 12px;
+    }
+
+    .popup-user-name {
+        font-size: 14px;
+    }
+
+    .popup-subheader h4 {
+        font-size: 18px;
+    }
+
+    .alert {
+        font-size: 14px;
+    }
+}
+
+
+@media screen and (max-width: 576px) {
+    :root {
+        --phases-gap: 24px;
+        --popular-collection-cards-count: 1;
+        --popular-collection-cards-gap: 24px;
+        --nft-cards-count: 1;
+        --nft-cards-gap: 16px;
+        --collection-cards-count: 1;
+        --collection-cards-gap: 24px;
+        --clan-member-gap: 24px;
+        --clan-member-count: 1;
+        --wallet-gap: 25px;
+        --wallet-count: 1;
+    }
+
+    .hero-card {
+        width: 120px;
+        height: 180px;
+        padding: 6px;
+        gap: 6px;
+    }
+
+    .hero-card:first-of-type,
+    .hero-card:last-of-type {
+        width: 110px;
+        height: 150px;
+    }
+
+    .hero-card:first-of-type {
+        transform: rotate(-15deg) translate(10px, 35px);
+    }
+
+    .hero-card:last-of-type {
+        transform: rotate(15deg) translate(-10px, 35px);
+    }
+
+    .hero-card .artist-image {
+        width: 100%;
+        height: calc(100% - 45px);
+    }
+
+    .hero-avatar {
+        width: 32px;
+        height: 32px;
+        margin-left: -8px;
+    }
+
+    .gear-icon {
+        width: 24px;
+        height: 24px;
+    }
+
+    .roadmap-container {
+        grid-template-columns: 100%;
+    }
+
+    .roadmap-container .phase {
+        margin-left: 50px;
+        grid-column: 1;
+        text-align: left;
+    }
+
+    .roadmap-indicator {
+        top: 15px;
+        left: 15px;
+    }
+
+    .popup {
+        padding: 32px;
+        gap: 32px;
+        width: 300px;
+    }
+
+    .popup-header {
+        gap: 2px;
+    }
+
+    .popup-card-image {
+        width: 80px;
+        height: 80px;
+    }
+
+    .popup-card-desc {
+        gap: 4px;
+        width: calc(100% - 80px);
+    }
+
+    .popup-section .nft-detail {
+        padding: 8px;
+        width: 100%;
+        height: 42px;
+    }
+
+    .popup-share-via p{
+        font-size: 10px;
+    }
+
+    .popup-share-via hr {
+        width: 60px;
+    }
+
+    .popup-share-icons i {
+        font-size: 12px;
+    }
+
+    .popup-buttons {
+        gap: 16px;
+    }
+
+    .popup-buttons button{
+        padding: 8px 32px;
+    }
+
+    header .btn-green {
+        padding: 12px 40px;
+    }
+
+    .footer-logo-desc {
+        gap: 8px;
+    }
+
+    .footer-links {
+        gap: 16px;
+    }
+
+    .join-buttons {
+        gap: 16px;
+    }
+
+    .join-button {
+        width: fit-content;
+        padding: 10px 16px;
+    }
+
+    .join-info {
+        gap: 12px;
+    }
+
+    .top-collector {
+        width: 250px;
+        height: 80px;
+        padding: 16px 25px;
+        gap: 12px;
+    }
+
+    .top-collector .avatar {
+        width: 40px;
+        height: 40px;
+    }
+
+    .top-collector .avatar-icons {
+        bottom: 0;
+        right: 0;
+    }
+
+    .top-collector .verified-icon {
+        width: 16px;
+        height: 16px;
+    }
+
+    .top-collectors-section {
+        padding: 40px 0px;
+        gap: 32px;
+    }
+
+    .nft-auction-creator {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .roadmap-section {
+        padding-top: 100px;
+        padding-bottom: 40px;
+    }
+
+    .auction-section {
+        padding: 40px 0;
+    }
+
+    .auction {
+        gap: 32px;
+    }
+
+    .popular-collections-section {
+        padding: 60px 0;
+    }
+
+    .join-section {
+        padding: 80px 0;
+        gap: 32px;
+    }
+
+    .partners-section {
+        padding: 80px 0px;
+        gap: 24px;
+    }
+    
+    .partners-list {
+        gap: 16px;
+    }
+
+    .partner {
+        width: 150px;
+        padding: 16px;
+    }
+
+    .partner img {
+        width: 120px;
+        height: 25px;
+        object-fit: contain;
+    }
+
+    .collection-section {
+        padding: 40px 0 80px;
+    }
+
+    .nft-collections {
+        gap: 32px;
+    }
+
+    .newsletter-section {
+        padding: 60px 0;
+    }
+
+    .connect-wallet-section {
+        padding: 40px 0 80px;
+    }
+
+    .form-section {
+        padding: 60px 0;
+        width: 85%;
+        margin: 0 auto;
+    }
+
+    .popup-wallet-detail{
+        display: none;
+    }
+
+    .popup-user-wallet .avatar{
+        width: 40px;
+        height: 40px;
+    }
+
+    .section-title {
+        font-size: 24px;
+        line-height: 32px;
+    }
+
+    .section-desc {
+        font-size: 12px;
+        line-height: 18px;
+    }
+
+    .btn-green,
+    .btn-outline-green {
+        font-size: 12px;
+    }
+
+    .nav-brand h3 {
+        font-size: 24px;
+    }
+
+    .nav-link {
+        font-size: 14px;
+    }
+
+    .footer-logo {
+        font-size: 24px;
+    }
+
+    .footer-desc {
+        font-size: 16px;
+    }
+
+    .footer-link {
+        font-size: 14px;
+    }
+
+    .footer-rights p {
+        font-size: 10px;
+    }
+
+    .hero-title {
+        width: 300px;
+        font-size: 28px;
+        line-height: 34px;
+    }
+
+    .more-avatar span {
+        font-size: 8px;
+    }
+
+    .hero-card .artist-name {
+        font-size: 10px;
+        line-height: 6px;
+    }
+
+    .hero-card .artist-subinfo {
+        font-size: 9px;
+        line-height: 12px;
+    }
+
+    .roadmap .phase-title {
+        font-size: 20px;
+    }
+
+    .roadmap .phase-desc {
+        font-size: 12px;
+    }
+
+    .extra-content {
+        font-size: 14px;
+    }
+
+    .auction-action-text {
+        font-size: 12px;
+    }
+
+    .auction-text-black {
+        font-size: 14px;
+    }
+
+    .auction-text-grey {
+        font-size: 10px;
+    }
+
+    .nft-auction-category {
+        font-size: 12px;
+    }
+
+    .nft-auction-name {
+        font-size: 24px;
+    }
+
+    .nft-auction-creator-name,
+    .auction-term {
+        font-size: 12px;
+    }
+
+    .chart-title h3 {
+        font-size: 16px;
+    }
+
+    .chart-subtitle h4 {
+        font-size: 14px;
+    }
+
+    .chart-select {
+        font-size: 12px;
+        width: 120px;
+    }
+
+    .chart-text {
+        font-size: 12px;
+    }
+
+    .sales-nfts-table th {
+        font-size: 8px;
+    }
+
+    .sales-nfts-table td {
+        font-size: 9px;
+    }
+
+    .sales-nfts-table button {
+        font-size: 9px;
+        padding: 0px 8px;
+    }
+
+    .see-all {
+        font-size: 12px;
+    }
+
+    .top-collector-place,
+    .top-collector-name {
+        font-size: 14px;
+    }
+
+    .top-collector-eth .eth-value {
+        font-size: 12px;
+    }
+
+    .get-in-touch-input {
+        font-size: 12px;
+        padding: 10px 12px 10px 45px;
+    }
+
+    .get-in-touch-button {
+        font-size: 12px;
+        padding: 10px 24px;
+    }
+
+    .faq-title {
+        font-size: 20px;
+    }
+
+    .faq-question h4 {
+        font-size: 18px;
+    }
+
+    .arrow-icon {
+        font-size: 20px;
+    }
+
+    .collection-creators-title {
+        font-size: 28px;
+    }
+
+    .collection-creator-fullname {
+        font-size: 16px;
+    }
+
+    .collection-creator-username {
+        font-size: 10px;
+    }
+
+    .collection-creator-stat p {
+        font-size: 10px;
+    }
+
+    .collection-creator-stat h5 {
+        font-size: 12px;
+    }
+
+    .collection-card-btn {
+        padding: 8px 24px;
+        font-size: 12px;
+    }
+
+    .collection-filter-title h3,
+    .collection-filter-title .arrow-icon {
+        font-size: 14px;
+    }
+
+    .collection-filter-item-text {
+        font-size: 12px;
+    }
+
+    .filter-select {
+        height: 48px;
+        font-size: 10px;
+    }
+
+    .filter-input {
+        width: 100px;
+        height: 48px;
+        font-size: 12px;
+    }
+
+    .filter-input-text {
+        font-size: 12px;
+    }
+
+    .search-input {
+        font-size: 14px;
+    }
+
+    .collection-card-name {
+        font-size: 14px;
+    }
+
+    .collection-card-creator {
+        font-size: 10px;
+    }
+
+    .collection-cards .no-images {
+        font-size: 10px;
+    }
+
+    .collection-more-image {
+        font-size: 10px;
+    }
+
+    .nft-name {
+        font-size: 14px;
+    }
+
+    .nft-status p {
+        font-size: 10px;
+    }
+
+    .nft-status h4 {
+        font-size: 14px;
+        line-height: 16px;
+    }
+
+    .nft-time span {
+        font-size: 10px;
+    }
+
+    .form-subtitle {
+        font-size: 14px;
+    }
+
+    .nft-sell-name,
+    .register-fullname {
+        font-size: 16px;
+    }
+
+    #no-new-image p {
+        font-size: 12px;
+    }
+
+    .nft-sell-price p {
+        font-size: 12px;
+    }
+
+    .nft-sell-price h4 {
+        font-size: 14px;
+    }
+
+    .form-input,
+    .form-textarea {
+        font-size: 12px;
+    }
+
+    .form-label {
+        font-size: 14px;
+    }
+
+    .form-input-box .form-input:focus+.form-label,
+    .form-input-box .form-input:valid+.form-label {
+        font-size: 10px;
+    }
+
+    .form-select {
+        font-size: 12px;
+    }
+
+    .form-option {
+        font-size: 14px;
+    }
+
+    .form-text-grey {
+        font-size: 12px;
+    }
+
+    .form-collection-name span {
+        font-size: 10px;
+    }
+
+    .form-warning {
+        font-size: 12px;
+    }
+
+    .popup-title {
+        font-size: 18px;
+        line-height: 36px;
+    }
+
+    .popup-desc {
+        font-size: 12px;
+        line-height: 16px;
+    }
+
+    .popup-wallet-link {
+        font-size: 10px;
+    }
+
+    .login-form .forgot-password {
+        font-size: 12px;
+    }
+
+    .login-form .register-link {
+        font-size: 12px;
+    }
+
+    #login-btn {
+        font-size: 12px;
+    }
+
+    .notfound h1 {
+        font-size: 160px;
+    }
+
+    .notfound h2 {
+        font-size: 14px;
+    }
+
+    .clan-member-clan-name {
+        font-size: 12px;
+    }
+
+    .clan-member-name {
+        font-size: 14px;
+    }
+
+    .clan-member-job {
+        font-size: 10px;
+    }
+
+    .connect-wallet-tab-text {
+        font-size: 10px;
+    }
+
+    .wallet-name {
+        font-size: 14px;
+    }
+
+    .wallet-info {
+        font-size: 10px;
+    }
+
+    .popup-user-name {
+        font-size: 12px;
+    }
+
+    .popup-subheader h4 {
+        font-size: 16px;
+    }
+
+    .alert {
+        font-size: 12px;
+    }
+}

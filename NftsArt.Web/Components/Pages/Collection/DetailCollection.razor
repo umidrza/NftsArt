@@ -1,0 +1,323 @@
+﻿@page "/collection/{Id:int}"
+
+<PageTitle>Collection Detail</PageTitle>
+
+<main>
+    <section class="collection-section">
+        <div class="container">
+            <div class="collection-cards-filters">
+                <div class="collection-creators-filters">
+
+                    <div class="collection-creators">
+                        <h2 class="collection-creators-title">The Best Collectors for <br>NFTs</h2>
+                        @if (Collection != null && Collection.Creator != null)
+                        {
+                            <div class="collection-creator">
+                                <div class="avatar">
+                                    <img class="avatar-img" src="@Collection.Creator.Avatar?.ImageUrl">
+                                    <div class="avatar-icons">
+                                        <div class="verified-icon">
+                                            <i class="star-icon"></i>
+                                            <i class="fa-solid fa-check check-icon"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="collection-creator-desc">
+                                    <div class="collection-creator-info">
+                                        <h4 class="collection-creator-fullname">@Collection.Creator.FullName</h4>
+                                        <p class="collection-creator-username">@Collection.Creator.UserName</p>
+                                    </div>
+                                    <div class="collection-creator-detail">
+                                        <div class="collection-creator-stats">
+                                            <div class="collection-creator-stat">
+                                                <p>Collections</p>
+                                                <h5>@Collection.Creator.CollectionCount</h5>
+                                            </div>
+                                            <div class="collection-creator-stat">
+                                                <p>Followers</p>
+                                                <h5 class="creator-followers-count">@Collection.Creator.FollowerCount</h5>
+                                            </div>
+                                        </div>
+                                        <button class="btn-green collection-card-btn follow-btn" data-user-id="1">Follow</button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="collection-filters">
+                        <div class="collection-filter dropdown">
+                            <div class="collection-filter-title dropdown-btn">
+                                <h3>Status</h3>
+                                <i class="fa-solid fa-chevron-down arrow-icon"></i>
+                            </div>
+                            <div class="collection-filter-items dropdown-content opened">
+                                @foreach (var status in Enum.GetValues<NftStatus>())
+                                {
+                                    <div class="collection-filter-item">
+                                        <label class="collection-filter-item-text" for="status-@status">@status</label>
+                                        <input @onchange="(e) => HandleStatusChange(e, status.ToString())" class="collection-filter-checkbox hidden" id="status-@status" type="checkbox" name="status" value="@status">
+                                        <label class="filter-check-icon" for="status-@status"><i class="fa-solid fa-check check-icon"></i></label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div class="collection-filter dropdown">
+                            <div class="collection-filter-title dropdown-btn">
+                                <h3>Price</h3>
+                                <i class="fa-solid fa-chevron-down arrow-icon"></i>
+                            </div>
+                            <div class="dropdown-content opened">
+                                <div class="collection-filter-items-fd-row">
+                                    <input @oninput="HandleMinValueChange" type="number" class="filter-input" placeholder="Min" id="min-value">
+                                    <p class="filter-input-text">To</p>
+                                    <input @oninput="HandleMaxValueChange" type="number" class="filter-input" placeholder="Max" id="max-value">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="collection-filter dropdown">
+                            <div class="collection-filter-title dropdown-btn">
+                                <h3>Quantity</h3>
+                                <i class="fa-solid fa-chevron-down arrow-icon"></i>
+                            </div>
+                            <div class="collection-filter-items dropdown-content opened">
+                                    <div class="collection-filter-item">
+                                        <label class="collection-filter-item-text" for="quantity-all">All Items</label>
+                                        <input @onchange="() => HandleQuantityChange(null!)" class="collection-filter-radio hidden" id="quantity-all" value="all" type="radio" name="quantity" checked>
+                                        <label class="filter-check-icon" for="quantity-all"><i class="radio-icon"></i></label>
+                                    </div>
+                                @foreach (var quantity in Enum.GetValues<NftQuantity>())
+                                {
+                                    <div class="collection-filter-item">
+                                        <label class="collection-filter-item-text" for="quantity-@quantity">@quantity</label>
+                                        <input @onchange="() => HandleQuantityChange(quantity.ToString())" class="collection-filter-radio hidden" id="quantity-@quantity" value="@quantity" type="radio" name="quantity" >
+                                        <label class="filter-check-icon" for="quantity-@quantity"><i class="radio-icon"></i></label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div class="collection-filter dropdown">
+                            <div class="collection-filter-title dropdown-btn">
+                                <h3>Currency</h3>
+                                <i class="fa-solid fa-chevron-down arrow-icon"></i>
+                            </div>
+                            <div class="collection-filter-items dropdown-content opened">
+                                <div class="collection-filter-item">
+                                    <label class="collection-filter-item-text" for="currency-all">Show all</label>
+                                    <input @onchange="() => HandleCurrencyChange(null!)" class="collection-filter-radio hidden" id="currency-all" type="radio" name="currency" value="all" checked>
+                                    <label class="filter-check-icon" for="currency-all"><i class="radio-icon"></i></label>
+                                </div>
+                                @foreach (var currency in Enum.GetValues<Currency>())
+                                {
+                                    <div class="collection-filter-item">
+                                        <label class="collection-filter-item-text" for="currency-@currency">@currency</label>
+                                        <input @onchange="() => HandleCurrencyChange(currency.ToString())" class="collection-filter-radio hidden" id="currency-@currency" type="radio" name="currency" value="@currency">
+                                        <label class="filter-check-icon" for="currency-@currency"><i class="radio-icon"></i></label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                
+                <div class="collection-cards-pagination">
+
+                    <div class="collection-search">
+                        <div class="collection-search-input">
+                            <input @oninput="HandleSearchChange" type="text" class="search-input" placeholder="Search collections" id="nft-search" name="search">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <i @onclick="ClearSearch" class="fa-solid fa-xmark remove-search-btn hidden"></i>
+                        </div>
+                        <div class="collection-select-filter">
+                            <select @onchange="HandleSortChange" id="sort-by" class="filter-select">
+                                <option value="default">Sort By</option>
+                                <option value="price-asc">Price: Low to High</option>
+                                <option value="price-desc">Price: High to Low</option>
+                                <option value="name-asc">Name: A to Z</option>
+                                <option value="name-desc">Name: Z to A</option>
+                            </select>
+                        </div>
+                        <div class="collection-grid-switches">
+                            <div class="grid-switch">
+                                <input type="radio" name="switch" id="switch1" class="hidden" checked>
+                                <label for="switch1">
+                                    <i class="switch1-icon"></i>
+                                    <i class="switch1-icon"></i>
+                                </label>
+                            </div>
+                            <div class="grid-switch">
+                                <input type="radio" name="switch" id="switch2" class="hidden">
+                                <label for="switch2">
+                                    <i class="switch2-icon"></i>
+                                    <i class="switch2-icon"></i>
+                                    <i class="switch2-icon"></i>
+                                    <i class="switch2-icon"></i>
+                                </label>
+                            </div>
+                            <div class="grid-switch">
+                                <input type="radio" name="switch" id="switch3" class="hidden">
+                                <label for="switch3">
+                                    <i class="switch3-icon"></i>
+                                    <i class="switch3-icon"></i>
+                                    <i class="switch3-icon"></i>
+                                    <i class="switch3-icon"></i>
+                                    <i class="switch3-icon"></i>
+                                    <i class="switch3-icon"></i>
+                                    <i class="switch3-icon"></i>
+                                    <i class="switch3-icon"></i>
+                                    <i class="switch3-icon"></i>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="collection-nft-cards">
+                        @if (Nfts == null)
+                        {
+                            <p><em>Loading...</em></p>
+                        }
+                        else
+                        {
+                            @foreach (var nft in Nfts)
+                            {
+                                <div class="nft-card">
+                                    <a href="@GetNftUrl(nft.Id)">
+                                        <h4 class="nft-name">@nft.Name</h4>
+                                    </a>
+                                    <a href="@GetNftUrl(nft.Id)">
+                                        <div class="nft-card-image">
+                                            <img src="@nft.ImageUrl" class="nft-image">
+                                        </div>
+                                    </a>
+                                    <div class="nft-detail">
+                                        @if (nft.GetAuctionStatus() == NftStatus.Not_On_Sale)
+                                        {
+                                            <div class="nft-status nft-status-not-sale">
+                                                <h4>Not on sale</h4>
+                                            </div>
+                                        }
+                                        else if (nft.GetAuctionStatus() == NftStatus.Not_Started)
+                                        {
+                                            <div class="nft-status nft-status-not-sale">
+                                                <h4>Not Started</h4>
+                                                <p>Starts at: @nft.Auction!.StartTime.ToString("MM/dd/yyyy")</p>
+                                            </div>
+                                        }
+                                        else if (nft.GetAuctionStatus() == NftStatus.Expired)
+                                        {
+                                            <div class="nft-status">
+                                                <p>Highest bid</p>
+                                                <h4 class="nft-price">@nft.Auction!.Price @nft.Auction.Currency</h4>
+                                            </div>
+                                            <div class="nft-time">
+                                                <span class="expired">Expired</span>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="nft-status">
+                                                <p>Highest bid</p>
+                                                <h4 class="nft-price">@nft.Auction!.Price @nft.Auction.Currency</h4>
+                                            </div>
+                                            <div class="nft-time">
+                                                <span class="countdown" data-date="@nft.Auction.EndTime">04:45:32</span>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+
+                    @if(TotalPages > 1)
+                    {
+                        <div class="collection-pagination">
+                            <a @onclick="PreviousPage">
+                                <div class="icon-box @(CurrentPage == 1 ? "disabled" : "")"  disabled="@DisabledPrevious">
+                                    <i class="fa-solid fa-chevron-left"></i>
+                                </div>
+                            </a>
+
+                            <div class="pagination">
+                                @for (int i = 1; i <= TotalPages; i++)
+                                {
+                                    if (i == CurrentPage)
+                                    {
+                                        <strong class="pagination-number">@i</strong>
+                                    }
+                                    else
+                                    {
+                                        <a class="pagination-number" @onclick="() => GoToPage(i)" href="#">@i</a>
+                                    }
+                                }
+                            </div>
+
+                            <a @onclick="NextPage">
+                                <div class="icon-box @(CurrentPage == TotalPages ? "disabled" : "")" disabled="@DisabledNext">
+                                    <i class="fa-solid fa-chevron-right"></i>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    @if (Collectors != null && Collectors.Count > 0)
+    {
+        <section class="top-collectors-section">
+            <h2 class="section-title">Our Top Collectors</h2>
+            <div class="top-collectors-list auto-scroll">
+                @for (int i = 0; i < Math.Min(Collectors.Count, 6); i++)
+                {
+                    <div class="top-collector">
+                        <p class="top-collector-place"></p>
+                        <div class="avatar">
+                            <a href="#"><img class="avatar-img" src="@Collectors[i].Avatar?.ImageUrl" alt=""></a>
+                            <div class="avatar-icons">
+                                <div class="verified-icon">
+                                    <i class="star-icon"></i>
+                                    <i class="fa-solid fa-check check-icon"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="top-collector-info">
+                            <h4 class="top-collector-name">@Collectors[i].FullName</h4>
+                            <div class="top-collector-eth">
+                                <i class="fa-brands fa-ethereum"></i>
+                                <p class="eth-value">@Collectors[i].AuctionsSumPrice</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="top-collectors-list auto-scroll">
+                @for (int i = 6; i < Math.Min(Collectors.Count, 12); i++)
+                {
+                    <div class="top-collector">
+                        <p class="top-collector-place"></p>
+                        <div class="avatar">
+                            <a href="#"><img class="avatar-img" src="@Collectors[i].Avatar?.ImageUrl" alt=""></a>
+                            <div class="avatar-icons">
+                                <div class="verified-icon">
+                                    <i class="star-icon"></i>
+                                    <i class="fa-solid fa-check check-icon"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="top-collector-info">
+                            <h4 class="top-collector-name">@Collectors[i].FullName</h4>
+                            <div class="top-collector-eth">
+                                <i class="fa-brands fa-ethereum"></i>
+                                <p class="eth-value">@Collectors[i].AuctionsSumPrice</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+</main>

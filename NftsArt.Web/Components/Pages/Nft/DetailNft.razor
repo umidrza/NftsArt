@@ -1,0 +1,443 @@
+﻿@page "/nft/{Id:int}"
+@page "/collection/{CollectionId:int}/nft/{Id:int}"
+
+<PageTitle>NFT Detail</PageTitle>
+
+<main>
+    <section class="auction-detail-section">
+        <div class="container">
+            @if (Nft == null)
+            {
+                <p><em>Loading...</em></p>
+            }
+            else
+            {
+                <div class="auction">
+                    <div class="auction-image">
+                        <img src="@Nft.ImageUrl">
+                        <div class="auction-detail-desc">
+                            <span class="extra-content" data-length="300">
+                                @Nft.Description
+                            </span>
+                            <span class="show-more">Show more</span>
+                        </div>
+                        <div class="auction-actions">
+                            <div class="auction-action">
+                                <i class="@(LikeStatus.HasUserLiked ? "fa-solid" : "fa-regular") fa-heart like-btn" @onclick="LikeNft"></i>
+                                <p class="auction-action-text like-count">@LikeStatus.LikeCount</p>
+                            </div>
+                            <div class="auction-action auction-share-action">
+                                <i class="fa-solid fa-arrow-up-from-bracket auction-share-btn"></i>
+                                <p class="auction-action-text">Share</p>
+                            </div>
+                            <div class="auction-action">
+                                <i class="fa-solid fa-arrows-rotate" onclick="location.reload();"></i>
+                                <p class="auction-action-text">Refresh</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="auction-desc">
+                        <div class="auction-info">
+                            @if (NftStatus == NftStatus.Listed)
+                            {
+                                <div class="auction-badge">
+                                    <i class="live-icon"></i>
+                                    <h4 class="auction-text-black">Live Now</h4>
+                                </div>
+                            }
+                            <div class="auction-nft-desc">
+                                <div class="nft-auction-detail">
+                                    @if(Collection != null)
+                                    {
+                                        <p class="nft-auction-category">@Collection.Name</p>
+                                    }
+                                    <h2 class="nft-auction-name">@Nft.Name</h2>
+                                </div>
+                                @if(NftStatus != NftStatus.Not_On_Sale && Auction != null)
+                                {
+                                    <div class="auction-details">
+                                        <div class="auction-detail">
+                                            @if (Auction.CurrentBid != null && Auction.CurrentBid > 0)
+                                            {
+                                                <p class="auction-text-grey">Current bid</p>
+                                                <h4 class="auction-text-black eth">@Auction.CurrentBid @Auction.Currency</h4>
+                                                <p class="auction-text-grey usd">@((UsdConversionRate * Auction.CurrentBid)?.ToString("F2")) USD</p>
+                                            }
+                                            else
+                                            {
+                                                <p class="auction-text-grey">Buy now price</p>
+                                                <h4 class="auction-text-black eth">@Auction.Price @Auction.Currency</h4>
+                                                <p class="auction-text-grey usd">@((UsdConversionRate * Auction.Price).ToString("F2")) USD</p>
+                                            }
+                                        </div>
+                                        @if (NftStatus == NftStatus.Listed)
+                                        {
+                                            <div class="auction-detail">
+                                                <p class="auction-text-grey">Auction ending in</p>
+                                                <h4 class="auction-text-black countdown" data-date="@Auction.EndTime"></h4>
+                                                @if (Bids != null)
+                                                {
+                                                    <p class="auction-text-grey">Bids: @Bids.Count</p> 
+                                                }
+                                            </div>
+                                        }
+                                        else if (NftStatus == NftStatus.Expired)
+                                        {
+                                            <div class="auction-detail">
+                                                <p class="auction-text-grey">Auction ended</p>
+                                                <h4 class="auction-text-black">Expired</h4>
+                                                @if (Bids != null)
+                                                {
+                                                    <p class="auction-text-grey">Bids: @Bids.Count</p>
+                                                }
+                                            </div>
+                                        }
+                                        else if (NftStatus == NftStatus.Not_Started)
+                                        {
+                                            <div class="auction-detail">
+                                                <p class="auction-text-grey">Auction starting in</p>
+                                                <h4 class="auction-text-black">@Auction.StartTime.ToString("MM/dd/yyyy")</h4>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                                <div class="nft-auction-creator">
+                                    <div class="nft-auction-card-section">
+                                        <p class="auction-text-grey">Creator</p>
+                                        <div class="auction-nft-card">
+                                            <div class="avatar auction-avatar">
+                                                <a href="#"><img class="avatar-img" src="@Nft.Creator.Avatar?.ImageUrl" alt=""></a>
+                                                <div class="avatar-icons">
+                                                    <div class="verified-icon">
+                                                        <i class="star-icon"></i>
+                                                        <i class="fa-solid fa-check check-icon"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <p class="nft-auction-creator-name">@Nft.Creator.FullName</p>
+                                        </div>
+                                    </div>
+
+                                    @if (Auction != null)
+                                    {
+                                        <div class="nft-auction-card-section">
+                                            <p class="auction-text-grey">Saler</p>
+                                            <div class="auction-nft-card">
+                                                <div class="avatar auction-avatar">
+                                                    <a href="#"><img class="avatar-img" src="@Auction.Seller.Avatar?.ImageUrl" alt=""></a>
+                                                    <div class="avatar-icons">
+                                                        <div class="verified-icon">
+                                                            <i class="star-icon"></i>
+                                                            <i class="fa-solid fa-check check-icon"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <p class="nft-auction-creator-name">@Auction.Seller.FullName</p>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="auction-terms">
+                            <div class="term-check-icon" @onclick="() => isTermsAccepted = !isTermsAccepted">
+                                <i class="fa-solid fa-check check-icon @(isTermsAccepted ? "" : "hidden")"></i>
+                            </div>
+                            <p class="auction-term">I Agree to AllBlocks. Term & Service</p>
+                        </div>
+                        <div class="auction-buttons">
+                            @if (Auction != null)
+                            {
+                                <button class="auction-button btn-green" disabled="@(!isTermsAccepted)">Purchase now</button>
+                                <button class="auction-button btn-outline-green" disabled="@(!isTermsAccepted)">Place a bid</button>
+                            }
+                            else
+                            {
+                                <a href="@GetNftSellUrl()">
+                                    <button class="auction-button btn-outline-green" disabled="@(!isTermsAccepted)">List Item for Sale</button>
+                                </a>
+                            }
+                        </div>
+
+                        <div class="auction-charts">
+                            @if (Auction != null && Bids != null)
+                            {
+                                @if (Bids.Count > 2)
+                                {
+                                    <div class="auction-chart dropdown">
+                                        <div class="chart-title dropdown-btn">
+                                            <h3>Price History</h3>
+                                            <i class="fa-solid fa-arrow-down arrow-icon"></i>
+                                        </div>
+                                        <div class="price-history-chart-container dropdown-content opened">
+                                            <div class="chart-subtitle">
+                                                <h4>All Time Avg. Price</h4>
+                                                <select class="chart-select">
+                                                    <option value="1">7 days</option>
+                                                    <option value="2">1 month</option>
+                                                    <option value="3">1 year</option>
+                                                    <option value="4" selected>All times</option>
+                                                </select>
+                                            </div>
+                                            <div class="price-history-chart">
+                                                <div class="prices">
+                                                    <p class="chart-text">2.5</p>
+                                                    <p class="chart-text">2</p>
+                                                    <p class="chart-text">1.5</p>
+                                                    <p class="chart-text">1</p>
+                                                    <p class="chart-text">0.5</p>
+                                                    <p class="chart-text">0</p>
+                                                </div>
+                                                <div class="dates">
+                                                    <p class="chart-text">15/9</p>
+                                                    <p class="chart-text">16/9</p>
+                                                    <p class="chart-text">17/9</p>
+                                                    <p class="chart-text">18/9</p>
+                                                    <p class="chart-text">19/9</p>
+                                                    <p class="chart-text">20/9</p>
+                                                    <p class="chart-text">21/9</p>
+                                                </div>
+                                                <div class="lines">
+                                                    <div class="line"></div>
+                                                    <div class="line"></div>
+                                                    <div class="line"></div>
+                                                    <div class="line"></div>
+                                                    <div class="line"></div>
+                                                    <div class="line"></div>
+                                                </div>
+                                                <div class="chart">
+                                                    <svg class="chart-line1" xmlns="http://www.w3.org/2000/svg" width="650"
+                                                         height="200" viewBox="0 0 650 200" fill="none">
+                                                        <path d="" fill="url(#paint0_linear_91_2002)" fill-opacity="0.32" />
+                                                        <defs>
+                                                            <linearGradient id="paint0_linear_91_2002" x1="328.351" y1="-10"
+                                                                            x2="328.478" y2="186" gradientUnits="userSpaceOnUse">
+                                                                <stop stop-color="#DCF06B" />
+                                                                <stop offset="1" stop-color="#DCF06B" stop-opacity="0" />
+                                                            </linearGradient>
+                                                        </defs>
+                                                    </svg>
+                                                    <svg class="chart-line2" xmlns="http://www.w3.org/2000/svg" width="650"
+                                                         height="200" viewBox="0 0 650 200" fill="none">
+                                                        <path d="" stroke="#171717" stroke-width="1.5" stroke-linecap="round" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                }
+                                
+                                <div class="auction-chart dropdown">
+                                    <div class="chart-title dropdown-btn">
+                                        <h3>Listings</h3>
+                                        <i class="fa-solid fa-arrow-down arrow-icon"></i>
+                                    </div>
+                                    <div class="dropdown-content opened auction-table">
+                                        <table class="sales-nfts-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Unit Price</th>
+                                                    <th>USD</th>
+                                                    <th>Quantity</th>
+                                                    <th>Expiration</th>
+                                                    <th>From</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="eth">
+                                                        <i class="fa-brands fa-ethereum"></i>
+                                                        0.25 ETH
+                                                    </td>
+                                                    <td class="usd"></td>
+                                                    <td>1</td>
+                                                    <td class="countdown days" data-date="">30 days</td>
+                                                    <td>nolanschleifer</td>
+                                                    <td>
+                                                        <form action="" method="post">
+                                                            <button type="submit" class="btn-outline-green">Buy</button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                                <tr class="spacing">
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="eth">
+                                                        <i class="fa-brands fa-ethereum"></i>
+                                                        0.25 ETH
+                                                    </td>
+                                                    <td class="usd"></td>
+                                                    <td>1</td>
+                                                    <td class="countdown days" data-date="">30 days</td>
+                                                    <td>george</td>
+                                                    <td>
+                                                        <form action="" method="post">
+                                                            <button type="submit" class="btn-outline-green">Buy</button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                                <tr class="spacing">
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="eth">
+                                                        <i class="fa-brands fa-ethereum"></i>
+                                                        0.25 ETH
+                                                    </td>
+                                                    <td class="usd"></td>
+                                                    <td>1</td>
+                                                    <td class="countdown days" data-date="">30 days</td>
+                                                    <td>talan</td>
+                                                    <td>
+                                                        <form action="" method="post">
+                                                            <button type="submit" class="btn-outline-green">Buy</button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                                <tr class="spacing">
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="eth">
+                                                        <i class="fa-brands fa-ethereum"></i>
+                                                        0.25 ETH
+                                                    </td>
+                                                    <td class="usd"></td>
+                                                    <td>1</td>
+                                                    <td class="countdown days" data-date="">30 days</td>
+                                                    <td>jamesdias</td>
+                                                    <td>
+                                                        <form action="" method="post">
+                                                            <button type="submit" class="btn-outline-green">Buy</button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                @if (Bids.Count > 0)
+                                {
+                                    <div class="auction-chart dropdown">
+                                    <div class="chart-title dropdown-btn">
+                                        <h3>Offers</h3>
+                                        <i class="fa-solid fa-arrow-down arrow-icon"></i>
+                                    </div>
+                                    <div class="dropdown-content opened auction-table">
+                                        <table class="sales-nfts-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Unit Price</th>
+                                                    <th>USD</th>
+                                                    <th>Quantity</th>
+                                                    <th>Floor Difference</th>
+                                                    <th>Expiration</th>
+                                                    <th>From</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach(var bid in Bids)
+                                                {
+                                                    <tr>
+                                                        <td class="eth"><i class="fa-brands fa-ethereum"></i>@bid.Price ETH</td>
+                                                        <td class="usd"></td>
+                                                        <td>@bid.Quantity</td>
+                                                        <td class="difference" data-price="@Auction.Price" data-bid-amount="@bid.Price" data-quantity="@bid.Quantity"></td>
+                                                        <td class="countdown days" data-date="@bid.EndTime"></td>
+                                                        <td>@bid.Bidder.UserName</td>
+                                                    </tr>
+                                                    <tr class="spacing">
+                                                        <td></td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                }
+                                
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+
+    @if (Collection != null && Collection.Nfts != null && Collection.Nfts.Count > 0)
+    {
+        <section class="popular-collections-section">
+            <div class="container">
+                <div class="popular-collections">
+                    <div class="popular-collections-header">
+                        <h2 class="section-title">More From This Collection</h2>
+                        <a href="@GetCollectionUrl()" class="see-all">See all</a>
+                    </div>
+                    <div class="popular-collection-cards">
+                        @{
+                            int displayedCount = 0;
+                        }
+
+                        @for (int i = 0; i < Collection.Nfts.Count && displayedCount < 4; i++)
+                        {
+                            if (Collection.Nfts[i].Id == Id)
+                            {
+                                continue;
+                            }
+
+                            <div class="nft-card">
+                                <h4 class="nft-name">@Collection.Nfts[i].Name</h4>
+                                <div class="nft-card-image">
+                                    <img src="@Collection.Nfts[i].ImageUrl" class="nft-image">
+                                </div>
+                                <div class="nft-detail">
+                                    @if (Collection.Nfts[i].GetAuctionStatus() == NftStatus.Not_On_Sale)
+                                    {
+                                        <div class="nft-status nft-status-not-sale">
+                                            <h4>Not on sale</h4>
+                                        </div>
+                                    }
+                                    else if (Collection.Nfts[i].GetAuctionStatus() == NftStatus.Not_Started)
+                                    {
+                                        <div class="nft-status nft-status-not-sale">
+                                            <h4>Not Started</h4>
+                                            <p>Starts at: @Collection.Nfts[i].Auction!.StartTime.ToString("MM/dd/yyyy")</p>
+                                        </div>
+                                    }
+                                    else if (Collection.Nfts[i].GetAuctionStatus() == NftStatus.Expired)
+                                    {
+                                        <div class="nft-status">
+                                            <p>Highest bid</p>
+                                            <h4 class="nft-price">@Collection.Nfts[i].Auction!.Price @Collection.Nfts[i].Auction!.Currency</h4>
+                                        </div>
+                                        <div class="nft-time">
+                                            <span class="expired">Expired</span>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="nft-status">
+                                            <p>Highest bid</p>
+                                            <h4 class="nft-price">@Collection.Nfts[i].Auction!.Price @Collection.Nfts[i].Auction!.Currency</h4>
+                                        </div>
+                                        <div class="nft-time">
+                                            <span class="countdown" data-date="@Collection.Nfts[i].Auction!.EndTime">04:45:32</span>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+
+                            displayedCount++;
+                        }
+                    </div>
+                </div>
+            </div>
+        </section>
+    }
+    
+</main>

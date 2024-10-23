@@ -1,0 +1,81 @@
+﻿@page "/collection/{Id:int}/update"
+
+<PageTitle>Update Collection</PageTitle>
+
+<main>
+    <section class="form-section">
+        <div class="container">
+            <div class="form-container">
+                <h2 class="section-title">
+                    Update Collection
+                </h2>
+                <EditForm Model="@CollectionUpdateDto" OnValidSubmit="HandleValidSubmit" FormName="CollectionUpdate" class="form">
+                    <DataAnnotationsValidator />
+
+                    <div class="form-inputs-container">
+                        <div class="form-inputs">
+                            <div class="form-control">
+                                <label for="blockchain" class="form-label">Blockchain</label>
+                                <InputSelect @bind-Value="CollectionUpdateDto.Blockchain" id="blockchain" class="form-select">
+                                    @foreach (var blockchain in Enum.GetValues<Blockchain>())
+                                    {
+                                        <option value="@blockchain" class="form-option">@blockchain</option>
+                                    }
+                                </InputSelect>
+                                <ValidationMessage For="@(() => CollectionUpdateDto.Blockchain)" />
+                            </div>
+
+                            <div class="form-control">
+                                <label for="name" class="form-label">Name of Collection</label>
+                                <InputText @bind-Value="CollectionUpdateDto.Name" class="form-input" placeholder="Type here..." required />
+                                <ValidationMessage For="@(() => CollectionUpdateDto.Name)" />
+                            </div>
+
+                            <div class="form-control">
+                                <label for="category" class="form-label">Category</label>
+                                <InputSelect @bind-Value="CollectionUpdateDto.Category" id="category" class="form-select">
+                                    @foreach (var category in Enum.GetValues<Category>())
+                                    {
+                                        <option value="@category" class="form-option">@category</option>
+                                    }
+                                </InputSelect>
+                                <ValidationMessage For="@(() => CollectionUpdateDto.Category)" />
+                            </div>
+                        </div>
+
+                        <div class="form-buttons">
+                            <button type="submit" class="form-button btn-green">Update Collection</button>
+                        </div>
+                    </div>
+
+                    @if (Nfts != null && Nfts.Count > 0)
+                    {
+                        <div class="form-control">
+                            <label class="form-label">Select NFTs</label>
+                            <div class="form-collections">
+                                @foreach (var nft in Nfts)
+                                {
+                                    <div class="form-collection">
+                                        <input type="checkbox" id="@($"nft-{nft.Id}")" class="hidden"
+                                               @onchange="(e) => HandleNftChange(e, nft.Id)"
+                                               checked="@CollectionUpdateDto.Nfts.Contains(nft.Id)">
+                                        <label for="@($"nft-{nft.Id}")">
+                                            <img src="@nft.ImageUrl" class="form-collection-image">
+                                        </label>
+                                        <label for="@($"nft-{nft.Id}")" class="form-collection-name">
+                                            <span>@nft.Name</span>
+                                        </label>
+                                    </div>
+                                }
+                            </div>
+                            <ValidationMessage For="@(() => CollectionUpdateDto.Nfts)" />
+                        </div>
+                    }
+                </EditForm>
+
+                <button @onclick="HandleDelete" class="form-button btn-green delete-btn">Delete Collection</button>
+
+            </div>
+        </div>
+    </section>
+</main>

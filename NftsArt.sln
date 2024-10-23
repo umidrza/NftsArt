@@ -1,0 +1,60 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35327.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NftsArt.AppHost", "NftsArt.AppHost\NftsArt.AppHost.csproj", "{015C40AB-9641-4543-81EA-7CC41C5FD598}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NftsArt.ServiceDefaults", "NftsArt.ServiceDefaults\NftsArt.ServiceDefaults.csproj", "{3C5D6C1B-6293-4AE6-9B31-71035A7D07BE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NftsArt.ApiService", "NftsArt.ApiService\NftsArt.ApiService.csproj", "{424501DB-4E9B-4623-AC05-3350C40B840A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NftsArt.Web", "NftsArt.Web\NftsArt.Web.csproj", "{3B41318E-D04B-44FA-A430-84C1D13C756A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NftsArt.BL", "NftsArt.BL\NftsArt.BL.csproj", "{31E041C0-8B3B-43E9-8BEC-F7C8998A5278}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NftsArt.Database", "NftsArt.Database\NftsArt.Database.csproj", "{D13379B9-5EB0-4845-A5C0-0F072AE840B4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NftsArt.Model", "NftsArt.Model\NftsArt.Model.csproj", "{13FDCBBE-8CB3-48D8-AEE3-E13A8424018E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{015C40AB-9641-4543-81EA-7CC41C5FD598}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{015C40AB-9641-4543-81EA-7CC41C5FD598}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{015C40AB-9641-4543-81EA-7CC41C5FD598}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{015C40AB-9641-4543-81EA-7CC41C5FD598}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C5D6C1B-6293-4AE6-9B31-71035A7D07BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C5D6C1B-6293-4AE6-9B31-71035A7D07BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C5D6C1B-6293-4AE6-9B31-71035A7D07BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C5D6C1B-6293-4AE6-9B31-71035A7D07BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{424501DB-4E9B-4623-AC05-3350C40B840A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{424501DB-4E9B-4623-AC05-3350C40B840A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{424501DB-4E9B-4623-AC05-3350C40B840A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{424501DB-4E9B-4623-AC05-3350C40B840A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B41318E-D04B-44FA-A430-84C1D13C756A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B41318E-D04B-44FA-A430-84C1D13C756A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B41318E-D04B-44FA-A430-84C1D13C756A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B41318E-D04B-44FA-A430-84C1D13C756A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31E041C0-8B3B-43E9-8BEC-F7C8998A5278}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31E041C0-8B3B-43E9-8BEC-F7C8998A5278}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31E041C0-8B3B-43E9-8BEC-F7C8998A5278}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31E041C0-8B3B-43E9-8BEC-F7C8998A5278}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D13379B9-5EB0-4845-A5C0-0F072AE840B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D13379B9-5EB0-4845-A5C0-0F072AE840B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D13379B9-5EB0-4845-A5C0-0F072AE840B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D13379B9-5EB0-4845-A5C0-0F072AE840B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13FDCBBE-8CB3-48D8-AEE3-E13A8424018E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13FDCBBE-8CB3-48D8-AEE3-E13A8424018E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13FDCBBE-8CB3-48D8-AEE3-E13A8424018E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13FDCBBE-8CB3-48D8-AEE3-E13A8424018E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3D09312A-0C0A-4AB2-BBE9-54F61104C4D2}
+	EndGlobalSection
+EndGlobal
