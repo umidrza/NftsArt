@@ -2,9 +2,7 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.JSInterop;
-using Newtonsoft.Json;
 using NftsArt.Model.Dtos.User;
-using NftsArt.Model.Helpers;
 
 namespace NftsArt.Web.Components.Layout;
 
@@ -30,11 +28,11 @@ public partial class NavMenu
 
     private async Task LoadUser(string userId)
     {
-        var res = await ApiClient.GetFromJsonAsync<Result>($"api/auth/user/{userId}");
+        var res = await ApiClient.GetFromJsonAsync<UserDetailDto>($"api/auth/user/{userId}");
 
         if (res.IsSuccess && res.Data != null)
         {
-            User = JsonConvert.DeserializeObject<UserDetailDto>(res.Data.ToString());
+            User = res.Data;
         }
     }
 

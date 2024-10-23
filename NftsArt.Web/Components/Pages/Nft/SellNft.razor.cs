@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using Newtonsoft.Json;
 using NftsArt.Model.Dtos.Auction;
-using NftsArt.Model.Dtos.Collection;
 using NftsArt.Model.Dtos.Nft;
-using NftsArt.Model.Helpers;
 
 namespace NftsArt.Web.Components.Pages.Nft;
 
@@ -23,7 +20,7 @@ public partial class SellNft
 
     private async Task HandleValidSubmit()
     {
-        var res = await ApiClient.PostAsync<Result, AuctionCreateDto>($"api/auction/{Id}", AuctionCreateDto);
+        var res = await ApiClient.PostAsync<AuctionSummaryDto, AuctionCreateDto>($"api/auction/{Id}", AuctionCreateDto);
 
         if (res.IsSuccess)
         {
@@ -47,11 +44,11 @@ public partial class SellNft
 
     protected async Task LoadNft()
     {
-        var res = await ApiClient.GetFromJsonAsync<Result>($"api/nft/{Id}");
+        var res = await ApiClient.GetFromJsonAsync<NftDetailDto>($"api/nft/{Id}");
 
         if (res.IsSuccess && res.Data != null)
         {
-            Nft = JsonConvert.DeserializeObject<NftDetailDto>(res.Data.ToString());
+            Nft = res.Data;
         }
     }
 }

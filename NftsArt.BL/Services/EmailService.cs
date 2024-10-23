@@ -7,7 +7,7 @@ namespace NftsArt.BL.Services;
 
 public interface IEmailService
 {
-    Task<Result> SendEmailAsync(string email, string subject, string message);
+    Task<Result<string>> SendEmailAsync(string email, string subject, string message);
 }
 
 public class EmailService : IEmailService
@@ -25,17 +25,17 @@ public class EmailService : IEmailService
         };
     }
 
-    public async Task<Result> SendEmailAsync(string email, string subject, string message)
+    public async Task<Result<string>> SendEmailAsync(string email, string subject, string message)
     {
         try
         {
             var mailMessage = new MailMessage("your-email", email, subject, message);
             await _smtpClient.SendMailAsync(mailMessage);
-            return Result.Success(email, "Email has been sent successfully!");
+            return Result<string>.Success(email, "Email has been sent successfully!");
         }
         catch (Exception ex)
         {
-            return Result.Failure(ex.ToString());
+            return Result<string>.Failure(ex.ToString());
         }
     }
 }

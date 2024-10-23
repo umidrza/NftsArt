@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Newtonsoft.Json;
 using NftsArt.Model.Dtos.Collection;
 using NftsArt.Model.Dtos.Nft;
-using NftsArt.Model.Helpers;
 using NftsArt.Model.Mapping;
 
 namespace NftsArt.Web.Components.Pages.Collection;
@@ -23,7 +21,7 @@ public partial class UpdateCollection : ComponentBase
 
     public async Task HandleValidSubmit()
     {
-        var res = await ApiClient.PutAsync<Result, CollectionUpdateDto>($"/api/collection/{Id}", CollectionUpdateDto);
+        var res = await ApiClient.PutAsync<CollectionSummaryDto, CollectionUpdateDto>($"/api/collection/{Id}", CollectionUpdateDto);
         if (res != null && res.IsSuccess)
         {
             NavigationManager.NavigateTo($"/collection/{Id}");
@@ -39,25 +37,20 @@ public partial class UpdateCollection : ComponentBase
 
     protected async Task LoadCollection()
     {
-        var res = await ApiClient.GetFromJsonAsync<Result>($"/api/collection/{Id}");
-        if (res != null && res.IsSuccess)
+        var res = await ApiClient.GetFromJsonAsync<CollectionDetailDto>($"/api/collection/{Id}");
+        if (res != null && res.IsSuccess && res.Data != null)
         {
-            var collectionDetailDto = JsonConvert.DeserializeObject<CollectionDetailDto>(res.Data.ToString());
-
-            if (collectionDetailDto != null)
-            {
-                CollectionUpdateDto = collectionDetailDto.ToUpdateDto();
-            }
+            CollectionUpdateDto = res.Data.ToUpdateDto();
         }
     }
 
     protected async Task LoadNfts()
     {
-        var res = await ApiClient.GetFromJsonAsync<Result>($"api/nft/my-nfts");
+        var res = await ApiClient.GetFromJsonAsync<List<NftSummaryDto>>($"api/nft/my-nfts");
 
         if (res.IsSuccess && res.Data != null)
         {
-            Nfts = JsonConvert.DeserializeObject<List<NftSummaryDto>>(res.Data.ToString());
+            Nfts = res.Data;
         }
     }
 
@@ -77,7 +70,7 @@ public partial class UpdateCollection : ComponentBase
 
     protected async Task HandleDelete()
     {
-        var res = await ApiClient.DeleteAsync<Result>($"api/collection/{Id}");
+        var res = await ApiClient.DeleteAsync<CollectionSummaryDto>($"api/collection/{Id}");
 
         if (res.IsSuccess)
         {

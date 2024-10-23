@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using Newtonsoft.Json;
 using NftsArt.Model.Dtos.Collection;
 using NftsArt.Model.Dtos.Nft;
 using NftsArt.Model.Dtos.User;
-using NftsArt.Model.Helpers;
 
 namespace NftsArt.Web.Components.Pages.Collection;
 
@@ -45,17 +43,17 @@ public partial class DetailCollection
 
     protected async Task LoadCollection()
     {
-        var res = await ApiClient.GetFromJsonAsync<Result>($"api/collection/{Id}");
+        var res = await ApiClient.GetFromJsonAsync<CollectionDetailDto>($"api/collection/{Id}");
 
         if (res.IsSuccess && res.Data != null)
         {
-            Collection = JsonConvert.DeserializeObject<CollectionDetailDto>(res.Data.ToString());
+            Collection = res.Data;
         }
     }
 
     protected async Task LoadCollectionNfts()
     {
-        var res = await ApiClient.GetFromJsonAsync<Result>(
+        var res = await ApiClient.GetFromJsonAsync<List<NftSummaryDto>>(
             $"api/collection/{Id}/nfts" +
             $"?SearchTerm={QueryModel.SearchTerm}" +
             $"&Statuses={string.Join(",", SelectedStatuses)}" +
@@ -69,17 +67,17 @@ public partial class DetailCollection
 
         if (res.IsSuccess && res.Data != null)
         {
-            Nfts = JsonConvert.DeserializeObject<List<NftSummaryDto>>(res.Data.ToString());
+            Nfts = res.Data;
         }
     }
 
     private async Task LoadCollectors()
     {
-        var res = await ApiClient.GetFromJsonAsync<Result>($"api/auth/collector");
+        var res = await ApiClient.GetFromJsonAsync<List<UserDetailDto>>($"api/auth/collector");
 
         if (res.IsSuccess && res.Data != null)
         {
-            Collectors = JsonConvert.DeserializeObject<List<UserDetailDto>>(res.Data.ToString());
+            Collectors = res.Data;
         }
     }
 

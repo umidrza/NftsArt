@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Newtonsoft.Json;
 using NftsArt.Model.Dtos.Collection;
 using NftsArt.Model.Dtos.Nft;
-using NftsArt.Model.Helpers;
 
 namespace NftsArt.Web.Components.Pages.Collection;
 
@@ -19,7 +17,7 @@ public partial class CreateCollection
 
     public async Task HandleValidSubmit()
     {
-        var res = await ApiClient.PostAsync<Result, CollectionCreateDto>("api/collection", CollectionCreateDto);
+        var res = await ApiClient.PostAsync<CollectionSummaryDto, CollectionCreateDto>("api/collection", CollectionCreateDto);
         if (res != null && res.IsSuccess)
         {
             NavigationManager.NavigateTo("/collection");
@@ -34,11 +32,11 @@ public partial class CreateCollection
 
     protected async Task LoadNfts()
     {
-        var res = await ApiClient.GetFromJsonAsync<Result>($"api/nft/my-nfts");
+        var res = await ApiClient.GetFromJsonAsync<List<NftSummaryDto>>($"api/nft/my-nfts");
 
         if (res.IsSuccess && res.Data != null)
         {
-            Nfts = JsonConvert.DeserializeObject<List<NftSummaryDto>>(res.Data.ToString());
+            Nfts = res.Data;
         }
     }
 

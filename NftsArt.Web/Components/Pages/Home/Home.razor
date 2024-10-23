@@ -112,400 +112,223 @@
         </div>
     </section>
 
-    <section class="auction-section">
-        <div class="container">
-            <div class="auction">
-                <div class="auction-image">
-                    <a href="nft-detail.html">
-                        <img src="/img/nfts/image1.jpeg">
-                    </a>
-                </div>
-                <div class="auction-desc">
-                    <div class="auction-info">
-                        <div class="auction-badge">
-                            <i class="live-icon"></i>
-                            <h4 class="auction-text-black">Live Now</h4>
-                        </div>
-                        <div class="auction-nft-desc">
-                            <div class="nft-auction-detail">
-                                <p class="nft-auction-category">Human Life</p>
-                                <h2 class="nft-auction-name">Human Leaf Cowboy #0123</h2>
-                            </div>
-                            <div class="auction-details">
-                                <div class="auction-detail">
-                                    <p class="auction-text-grey">Current bid</p>
-                                    <h4 class="auction-text-black eth">300 ETH</h4>
-                                    <p class="auction-text-grey usd"></p>
+    @if (Auction != null)
+    {
+        <section class="auction-section">
+            <div class="container">
+                <div class="auction">
+                    <div class="auction-image">
+                        <a href="@GetNftUrl(Auction.Nft.Id))">
+                            <img src="@Auction.Nft.ImageUrl">
+                        </a>
+                    </div>
+                    <div class="auction-desc">
+                        <div class="auction-info">
+                            @if (AuctionStatus == NftStatus.Listed)
+                            {
+                                <div class="auction-badge">
+                                    <i class="live-icon"></i>
+                                    <h4 class="auction-text-black">Live Now</h4>
                                 </div>
-                                <div class="auction-detail">
-                                    <p class="auction-text-grey">Auction ending in</p>
-                                    <h4 class="auction-text-black countdown">03d : 25h : 05m</h4>
-                                    <p class="auction-text-grey">Bids: 25</p>
+                            }
+                            <div class="auction-nft-desc">
+                                <div class="nft-auction-detail">
+                                    <h2 class="nft-auction-name">@Auction.Nft.Name</h2>
                                 </div>
-                            </div>
-                            <div class="nft-auction-creator">
-                                <div class="nft-auction-card-section">
-                                    <p class="auction-text-grey">Creator</p>
-                                    <div class="auction-nft-card">
-                                        <div class="avatar auction-avatar">
-                                            <a href="#">
-                                                <img class="avatar-img" src="/img/avatars/avatar4.jpeg">
-                                            </a>
-                                            <div class="avatar-icons">
-                                                <div class="verified-icon">
-                                                    <i class="star-icon"></i>
-                                                    <i class="fa-solid fa-check check-icon"></i>
+                                @if (AuctionStatus != NftStatus.Not_On_Sale)
+                                {
+                                    <div class="auction-details">
+                                        <div class="auction-detail">
+                                            @if (Auction.CurrentBid > 0)
+                                            {
+                                                <p class="auction-text-grey">Current bid</p>
+                                                <h4 class="auction-text-black eth">@Auction.CurrentBid @Auction.Currency</h4>
+                                                <p class="auction-text-grey usd">@((UsdConversionRate * Auction.CurrentBid).ToString("F2")) USD</p>
+                                            }
+                                            else
+                                            {
+                                                <p class="auction-text-grey">Buy now price</p>
+                                                <h4 class="auction-text-black eth">@Auction.Price @Auction.Currency</h4>
+                                                <p class="auction-text-grey usd">@((UsdConversionRate * Auction.Price).ToString("F2")) USD</p>
+                                            }
+                                        </div>
+                                        @if (AuctionStatus == NftStatus.Listed)
+                                        {
+                                            <div class="auction-detail">
+                                                <p class="auction-text-grey">Auction ending in</p>
+                                                <h4 class="auction-text-black countdown" data-date="@Auction.EndTime"></h4>
+                                            </div>
+                                        }
+                                        else if (AuctionStatus == NftStatus.Expired)
+                                        {
+                                            <div class="auction-detail">
+                                                <p class="auction-text-grey">Auction ended</p>
+                                                <h4 class="auction-text-black">Expired</h4>
+                                            </div>
+                                        }
+                                        else if (AuctionStatus == NftStatus.Not_Started)
+                                        {
+                                            <div class="auction-detail">
+                                                <p class="auction-text-grey">Auction starting in</p>
+                                                <h4 class="auction-text-black">@Auction.StartTime.ToString("MM/dd/yyyy")</h4>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                                <div class="nft-auction-creator">
+                                    <div class="nft-auction-card-section">
+                                        <p class="auction-text-grey">Seller</p>
+                                        <div class="auction-nft-card">
+                                            <div class="avatar auction-avatar">
+                                                <a href="#">
+                                                    <img class="avatar-img" src="@Auction.Seller.Avatar?.ImageUrl">
+                                                </a>
+                                                <div class="avatar-icons">
+                                                    <div class="verified-icon">
+                                                        <i class="star-icon"></i>
+                                                        <i class="fa-solid fa-check check-icon"></i>
+                                                    </div>
                                                 </div>
                                             </div>
+                                            <p class="nft-auction-creator-name">@Auction.Seller.FullName</p>
                                         </div>
-                                        <p class="nft-auction-creator-name">Brandon Ekstrom</p>
-                                    </div>
-                                </div>
-                                <div class="nft-auction-card-section">
-                                    <p class="auction-text-grey">Collection</p>
-                                    <div class="auction-nft-card">
-                                        <div class="avatar auction-avatar">
-                                            <a href="#">
-                                                <img class="avatar-img" src="/img/avatars/avatar.jpeg">
-                                            </a>
-                                            <div class="avatar-icons">
-                                                <div class="verified-icon">
-                                                    <i class="star-icon"></i>
-                                                    <i class="fa-solid fa-check check-icon"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <p class="nft-auction-creator-name">Cooper Bator</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="auction-terms">
-                        <div class="term-check-icon" @onclick="() => isTermsAccepted = !isTermsAccepted">
-                            <i class="fa-solid fa-check check-icon @(isTermsAccepted ? "" : "hidden")"></i>
+                        <div class="auction-terms">
+                            <div class="term-check-icon" @onclick="() => isTermsAccepted = !isTermsAccepted">
+                                <i class="fa-solid fa-check check-icon @(isTermsAccepted ? "" : "hidden")"></i>
+                            </div>
+                            <p class="auction-term">I Agree to AllBlocks. Term & Service</p>
                         </div>
-                        <p class="auction-term">I Agree to AllBlocks. Term & Service</p>
-                    </div>
-                    <div class="auction-buttons">
-                        <button class="auction-button btn-green" disabled="@(!isTermsAccepted)">Purchase now</button>
-                        <button class="auction-button btn-outline-green" disabled="@(!isTermsAccepted)">Place a bid</button>
+                        <div class="auction-buttons">
+                            <button class="auction-button btn-green" disabled="@(!isTermsAccepted)">Purchase now</button>
+                            <button class="auction-button btn-outline-green" disabled="@(!isTermsAccepted)">Place a bid</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    }
 
-    <section class="popular-collections-section">
-        <div class="container">
-            <div class="popular-collections">
-                <div class="popular-collections-header">
-                    <h2 class="section-title">Get Popular Collection</h2>
-                    <a href="#" class="see-all">See all</a>
-                </div>
-                <div class="popular-collection-cards">
-                    <div class="nft-card">
-                        <h4 class="nft-name">Human Leaf #0121</h4>
-                        <div class="nft-card-image">
-                            <img src="/img/nfts/image4.jpeg" alt="" class="nft-image">
-                        </div>
-                        <div class="nft-detail">
-                            <div class="nft-status">
-                                <p>Highest bid</p>
-                                <h4 class="nft-price">0.56 ETH</h4>
-                            </div>
-                            <div class="nft-time">
-                                <span class="countdown">04:45:32</span>
-                            </div>
-                        </div>
+    @if (PopularNfts != null && PopularNfts.Count > 0)
+    {
+        <section class="popular-collections-section">
+            <div class="container">
+                <div class="popular-collections">
+                    <div class="popular-collections-header">
+                        <h2 class="section-title">Get Popular Collection</h2>
+                        <a href="/collection" class="see-all">See all</a>
                     </div>
-                    <div class="nft-card">
-                        <h4 class="nft-name">Human Leaf #0122</h4>
-                        <div class="nft-card-image">
-                            <img src="/img/nfts/image2.jpeg" alt="" class="nft-image">
-                        </div>
-                        <div class="nft-detail">
-                            <div class="nft-status">
-                                <p>Highest bid</p>
-                                <h4 class="nft-price">0.56 ETH</h4>
+                    <div class="popular-collection-cards">
+                        @for (int i = 0; i < Math.Min(PopularNfts.Count, 4); i++)
+                        {
+                            <div class="nft-card">
+                                <h4 class="nft-name">@PopularNfts[i].Name</h4>
+                                <div class="nft-card-image">
+                                    <img src="@PopularNfts[i].ImageUrl" class="nft-image">
+                                </div>
+                                <div class="nft-detail">
+                                    @if (PopularNfts[i].GetAuctionStatus() == NftStatus.Not_On_Sale)
+                                    {
+                                        <div class="nft-status nft-status-not-sale">
+                                            <h4>Not on sale</h4>
+                                        </div>
+                                    }
+                                    else if (PopularNfts[i].GetAuctionStatus() == NftStatus.Not_Started)
+                                    {
+                                        <div class="nft-status nft-status-not-sale">
+                                            <h4>Not Started</h4>
+                                            <p>Starts at: @PopularNfts[i].Auction!.StartTime.ToString("MM/dd/yyyy")</p>
+                                        </div>
+                                    }
+                                    else if (PopularNfts[i].GetAuctionStatus() == NftStatus.Expired)
+                                    {
+                                        <div class="nft-status">
+                                            <p>Highest bid</p>
+                                            <h4 class="nft-price">@PopularNfts[i].Auction!.Price @PopularNfts[i].Auction.Currency</h4>
+                                        </div>
+                                        <div class="nft-time">
+                                            <span class="expired">Expired</span>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="nft-status">
+                                            <p>Highest bid</p>
+                                            <h4 class="nft-price">@PopularNfts[i].Auction!.Price @PopularNfts[i].Auction.Currency</h4>
+                                        </div>
+                                        <div class="nft-time">
+                                            <span class="countdown" data-date="@PopularNfts[i].Auction.EndTime">04:45:32</span>
+                                        </div>
+                                    }
+                                </div>
                             </div>
-                            <div class="nft-time">
-                                <span class="countdown">04:45:32</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="nft-card">
-                        <h4 class="nft-name">Human Leaf #0123</h4>
-                        <div class="nft-card-image">
-                            <img src="/img/nfts/image1.jpeg" alt="" class="nft-image">
-                        </div>
-                        <div class="nft-detail">
-                            <div class="nft-status">
-                                <p>Highest bid</p>
-                                <h4 class="nft-price">0.56 ETH</h4>
-                            </div>
-                            <div class="nft-time">
-                                <span class="countdown">04:45:32</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="nft-card">
-                        <h4 class="nft-name">Human Leaf #0124</h4>
-                        <div class="nft-card-image">
-                            <img src="/img/nfts/image3.jpeg" alt="" class="nft-image">
-                        </div>
-                        <div class="nft-detail">
-                            <div class="nft-status">
-                                <p>Highest bid</p>
-                                <h4 class="nft-price">0.56 ETH</h4>
-                            </div>
-                            <div class="nft-time">
-                                <span class="countdown">04:45:32</span>
-                            </div>
-                        </div>
+                        }
                     </div>
                 </div>
+            </div>
+        </section>
+    }
 
-            </div>
-
-        </div>
-    </section>
-
-    <section class="top-collectors-section">
-        <h2 class="section-title">Our Top Collectors</h2>
-        <div class="top-collectors-list auto-scroll">
-            <div class="top-collector">
-                <p class="top-collector-place"></p>
-                <div class="avatar">
-                    <a href="#"><img class="avatar-img" src="/img/avatars/avatar2.jpeg" alt=""></a>
-                    <div class="avatar-icons">
-                        <div class="verified-icon">
-                            <i class="star-icon"></i>
-                            <i class="fa-solid fa-check check-icon"></i>
+    @if (Collectors != null && Collectors.Count > 4)
+    {
+        <section class="top-collectors-section">
+            <h2 class="section-title">Our Top Collectors</h2>
+            <div class="top-collectors-list auto-scroll">
+                @for (int i = 0; i < Math.Min(Collectors.Count, 6); i++)
+                {
+                    <div class="top-collector">
+                        <p class="top-collector-place"></p>
+                        <div class="avatar">
+                            <a href="#"><img class="avatar-img" src="@Collectors[i].Avatar?.ImageUrl" alt=""></a>
+                            <div class="avatar-icons">
+                                <div class="verified-icon">
+                                    <i class="star-icon"></i>
+                                    <i class="fa-solid fa-check check-icon"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="top-collector-info">
+                            <h4 class="top-collector-name">@Collectors[i].FullName</h4>
+                            <div class="top-collector-eth">
+                                <i class="fa-brands fa-ethereum"></i>
+                                <p class="eth-value">@Collectors[i].AuctionsSumPrice</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="top-collector-info">
-                    <h4 class="top-collector-name">Lincoln George</h4>
-                    <div class="top-collector-eth">
-                        <i class="fa-brands fa-ethereum"></i>
-                        <p class="eth-value">2,798</p>
-                    </div>
-                </div>
+                }
             </div>
-            <div class="top-collector">
-                <p class="top-collector-place"></p>
-                <div class="avatar">
-                    <a href="#"><img class="avatar-img" src="/img/avatars/avatar3.jpeg" alt=""></a>
-                    <div class="avatar-icons">
-                        <div class="verified-icon">
-                            <i class="star-icon"></i>
-                            <i class="fa-solid fa-check check-icon"></i>
+            @if (Collectors.Count > 10)
+            {
+                <div class="top-collectors-list auto-scroll">
+                    @for (int i = 6; i < Math.Min(Collectors.Count, 12); i++)
+                    {
+                        <div class="top-collector">
+                            <p class="top-collector-place"></p>
+                            <div class="avatar">
+                                <a href="#"><img class="avatar-img" src="@Collectors[i].Avatar?.ImageUrl" alt=""></a>
+                                <div class="avatar-icons">
+                                    <div class="verified-icon">
+                                        <i class="star-icon"></i>
+                                        <i class="fa-solid fa-check check-icon"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="top-collector-info">
+                                <h4 class="top-collector-name">@Collectors[i].FullName</h4>
+                                <div class="top-collector-eth">
+                                    <i class="fa-brands fa-ethereum"></i>
+                                    <p class="eth-value">@Collectors[i].AuctionsSumPrice</p>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                    }
                 </div>
-                <div class="top-collector-info">
-                    <h4 class="top-collector-name">Lincoln George</h4>
-                    <div class="top-collector-eth">
-                        <i class="fa-brands fa-ethereum"></i>
-                        <p class="eth-value">2,798</p>
-                    </div>
-                </div>
-            </div>
-            <div class="top-collector">
-                <p class="top-collector-place"></p>
-                <div class="avatar">
-                    <a href="#"><img class="avatar-img" src="/img/avatars/avatar.jpeg" alt=""></a>
-                    <div class="avatar-icons">
-                        <div class="verified-icon">
-                            <i class="star-icon"></i>
-                            <i class="fa-solid fa-check check-icon"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="top-collector-info">
-                    <h4 class="top-collector-name">Lincoln George</h4>
-                    <div class="top-collector-eth">
-                        <i class="fa-brands fa-ethereum"></i>
-                        <p class="eth-value">2,798</p>
-                    </div>
-                </div>
-            </div>
-            <div class="top-collector">
-                <p class="top-collector-place"></p>
-                <div class="avatar">
-                    <a href="#"><img class="avatar-img" src="/img/avatars/avatar4.jpeg" alt=""></a>
-                    <div class="avatar-icons">
-                        <div class="verified-icon">
-                            <i class="star-icon"></i>
-                            <i class="fa-solid fa-check check-icon"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="top-collector-info">
-                    <h4 class="top-collector-name">Lincoln George</h4>
-                    <div class="top-collector-eth">
-                        <i class="fa-brands fa-ethereum"></i>
-                        <p class="eth-value">2,798</p>
-                    </div>
-                </div>
-            </div>
-            <div class="top-collector">
-                <p class="top-collector-place"></p>
-                <div class="avatar">
-                    <a href="#"><img class="avatar-img" src="/img/avatars/avatar.jpeg" alt=""></a>
-                    <div class="avatar-icons">
-                        <div class="verified-icon">
-                            <i class="star-icon"></i>
-                            <i class="fa-solid fa-check check-icon"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="top-collector-info">
-                    <h4 class="top-collector-name">Lincoln George</h4>
-                    <div class="top-collector-eth">
-                        <i class="fa-brands fa-ethereum"></i>
-                        <p class="eth-value">2,798</p>
-                    </div>
-                </div>
-            </div>
-            <div class="top-collector">
-                <p class="top-collector-place"></p>
-                <div class="avatar">
-                    <a href="#"><img class="avatar-img" src="/img/avatars/avatar4.jpeg" alt=""></a>
-                    <div class="avatar-icons">
-                        <div class="verified-icon">
-                            <i class="star-icon"></i>
-                            <i class="fa-solid fa-check check-icon"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="top-collector-info">
-                    <h4 class="top-collector-name">Lincoln George</h4>
-                    <div class="top-collector-eth">
-                        <i class="fa-brands fa-ethereum"></i>
-                        <p class="eth-value">2,798</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="top-collectors-list auto-scroll">
-            <div class="top-collector">
-                <p class="top-collector-place"></p>
-                <div class="avatar">
-                    <a href="#"><img class="avatar-img" src="/img/avatars/avatar4.jpeg" alt=""></a>
-                    <div class="avatar-icons">
-                        <div class="verified-icon">
-                            <i class="star-icon"></i>
-                            <i class="fa-solid fa-check check-icon"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="top-collector-info">
-                    <h4 class="top-collector-name">Lincoln George</h4>
-                    <div class="top-collector-eth">
-                        <i class="fa-brands fa-ethereum"></i>
-                        <p class="eth-value">2,798</p>
-                    </div>
-                </div>
-            </div>
-            <div class="top-collector">
-                <p class="top-collector-place"></p>
-                <div class="avatar">
-                    <a href="#"><img class="avatar-img" src="/img/avatars/avatar2.jpeg" alt=""></a>
-                    <div class="avatar-icons">
-                        <div class="verified-icon">
-                            <i class="star-icon"></i>
-                            <i class="fa-solid fa-check check-icon"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="top-collector-info">
-                    <h4 class="top-collector-name">Lincoln George</h4>
-                    <div class="top-collector-eth">
-                        <i class="fa-brands fa-ethereum"></i>
-                        <p class="eth-value">2,798</p>
-                    </div>
-                </div>
-            </div>
-            <div class="top-collector">
-                <p class="top-collector-place"></p>
-                <div class="avatar">
-                    <a href="#"><img class="avatar-img" src="/img/avatars/avatar.jpeg" alt=""></a>
-                    <div class="avatar-icons">
-                        <div class="verified-icon">
-                            <i class="star-icon"></i>
-                            <i class="fa-solid fa-check check-icon"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="top-collector-info">
-                    <h4 class="top-collector-name">Lincoln George</h4>
-                    <div class="top-collector-eth">
-                        <i class="fa-brands fa-ethereum"></i>
-                        <p class="eth-value">2,798</p>
-                    </div>
-                </div>
-            </div>
-            <div class="top-collector">
-                <p class="top-collector-place"></p>
-                <div class="avatar">
-                    <a href="#"><img class="avatar-img" src="/img/avatars/avatar4.jpeg" alt=""></a>
-                    <div class="avatar-icons">
-                        <div class="verified-icon">
-                            <i class="star-icon"></i>
-                            <i class="fa-solid fa-check check-icon"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="top-collector-info">
-                    <h4 class="top-collector-name">Lincoln George</h4>
-                    <div class="top-collector-eth">
-                        <i class="fa-brands fa-ethereum"></i>
-                        <p class="eth-value">2,798</p>
-                    </div>
-                </div>
-            </div>
-            <div class="top-collector">
-                <p class="top-collector-place"></p>
-                <div class="avatar">
-                    <a href="#"><img class="avatar-img" src="/img/avatars/avatar2.jpeg" alt=""></a>
-                    <div class="avatar-icons">
-                        <div class="verified-icon">
-                            <i class="star-icon"></i>
-                            <i class="fa-solid fa-check check-icon"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="top-collector-info">
-                    <h4 class="top-collector-name">Lincoln George</h4>
-                    <div class="top-collector-eth">
-                        <i class="fa-brands fa-ethereum"></i>
-                        <p class="eth-value">2,798</p>
-                    </div>
-                </div>
-            </div>
-            <div class="top-collector">
-                <p class="top-collector-place"></p>
-                <div class="avatar">
-                    <a href="#"><img class="avatar-img" src="/img/avatars/avatar3.jpeg" alt=""></a>
-                    <div class="avatar-icons">
-                        <div class="verified-icon">
-                            <i class="star-icon"></i>
-                            <i class="fa-solid fa-check check-icon"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="top-collector-info">
-                    <h4 class="top-collector-name">Lincoln George</h4>
-                    <div class="top-collector-eth">
-                        <i class="fa-brands fa-ethereum"></i>
-                        <p class="eth-value">2,798</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+            }
+        </section>
+    }
 
     <section class="newsletter-section">
         <div class="container">

@@ -5,7 +5,7 @@ namespace NftsArt.Model.Dtos.Auction;
 public record class AuctionSummaryDto(
         int Id,
         decimal Price,
-        decimal? CurrentBid,
+        decimal CurrentBid,
         DateTime StartTime,
         DateTime EndTime,
         int Quantity,

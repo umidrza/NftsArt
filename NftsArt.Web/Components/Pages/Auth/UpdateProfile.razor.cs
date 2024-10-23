@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components;
-using Newtonsoft.Json;
 using NftsArt.Model.Dtos.Avatar;
 using NftsArt.Model.Dtos.User;
-using NftsArt.Model.Helpers;
 using NftsArt.Web.Authentication;
 using NftsArt.Model.Mapping;
 using System.IdentityModel.Tokens.Jwt;
@@ -47,26 +45,22 @@ public partial class UpdateProfile
         var userId = authState.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
         if (userId == null) return;
 
-        var res = await ApiClient.GetFromJsonAsync<Result>($"api/auth/user/{userId}");
+        var res = await ApiClient.GetFromJsonAsync<UserDetailDto>($"api/auth/user/{userId}");
 
         if (res.IsSuccess && res.Data != null)
         {
-            User = JsonConvert.DeserializeObject<UserDetailDto>(res.Data.ToString());
-
-            if (User != null)
-            {
-                UpdateDto = User.ToUpdateDto();
-            }
+            User = res.Data;
+            UpdateDto = User.ToUpdateDto();
         }
     }
 
     protected async Task LoadAvatars()
     {
-        var res = await ApiClient.GetFromJsonAsync<Result>($"api/avatar");
+        var res = await ApiClient.GetFromJsonAsync<List<AvatarSummaryDto>>($"api/avatar");
 
         if (res.IsSuccess && res.Data != null)
         {
-            Avatars = JsonConvert.DeserializeObject<List<AvatarSummaryDto>>(res.Data.ToString());
+            Avatars = res.Data;
         }
     }
 
@@ -79,16 +73,14 @@ public partial class UpdateProfile
 
     private async Task HandleSubmit()
     {
-        var result = await ApiClient.PutAsync<Result, UserUpdateDto>("/api/auth/profile", UpdateDto);
-        if (!result.IsSuccess || result.Data == null)
+        var res = await ApiClient.PutAsync<LoginResponseDto, UserUpdateDto>("/api/auth/profile", UpdateDto);
+        if (!res.IsSuccess || res.Data == null)
         {
-            updateProfileError = result.Message;
+            updateProfileError = res.Message;
             return;
         }
 
-        LoginResponseDto loginResponse = JsonConvert.DeserializeObject<LoginResponseDto>(result.Data.ToString());
-
-        await ((CustomAuthStateProvider)AuthStateProvider).MarkUserAsAuthenticated(loginResponse);
+        await ((CustomAuthStateProvider)AuthStateProvider).MarkUserAsAuthenticated(res.Data);
 
         NavigationManager.NavigateTo("/");
     }

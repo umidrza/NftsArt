@@ -14,35 +14,35 @@ public class WalletController(IWalletRepository walletRepo) : ControllerBase
 {
 
     [HttpGet]
-    public async Task<ActionResult<Result>> GetWallets()
+    public async Task<ActionResult<Result<List<WalletSummaryDto>>>> GetWallets()
     {
         var wallets = (await walletRepo.GetAllAsync())
-                    .Select(c => c.ToSummaryDto());
+                    .Select(c => c.ToSummaryDto()).ToList();
 
-        return Ok(Result.Success(wallets));
+        return Ok(Result<List<WalletSummaryDto>>.Success(wallets));
     }
 
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<Result>> GetWallet([FromRoute] int id)
+    public async Task<ActionResult<Result<WalletDetailDto>>> GetWallet([FromRoute] int id)
     {
         var wallet = await walletRepo.GetByIdAsync(id);
         if (wallet == null) 
-            return NotFound(Result.Failure("Wallet not found"));
+            return NotFound(Result<WalletDetailDto>.Failure("Wallet not found"));
 
-        return Ok(Result.Success(wallet.ToDetailDto()));
+        return Ok(Result<WalletDetailDto>.Success(wallet.ToDetailDto()));
     }
 
     [HttpPost]
     [Authorize]
-    public async Task<ActionResult<Result>> CreateWallet([FromBody] WalletCreateDto createWalletDto)
+    public async Task<ActionResult<Result<WalletSummaryDto>>> CreateWallet([FromBody] WalletCreateDto createWalletDto)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (userId == null)
-            return Unauthorized(Result.Failure("User not authenticated"));
+            return Unauthorized(Result<WalletSummaryDto>.Failure("User not authenticated"));
 
         var result = await walletRepo.CreateAsync(createWalletDto, userId);
         if (!result.IsSuccess)
@@ -53,21 +53,21 @@ public class WalletController(IWalletRepository walletRepo) : ControllerBase
 
     [HttpPut("{id:int}")]
     [Authorize]
-    public async Task<ActionResult<Result>> UpdateWallet([FromRoute] int id, [FromBody] WalletUpdateDto updateWalletDto)
+    public async Task<ActionResult<Result<WalletSummaryDto>>> UpdateWallet([FromRoute] int id, [FromBody] WalletUpdateDto updateWalletDto)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
         var wallet = await walletRepo.GetByIdAsync(id);
         if (wallet == null)
-            return NotFound(Result.Failure("Wallet not found"));
+            return NotFound(Result<WalletSummaryDto>.Failure("Wallet not found"));
 
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (userId == null)
-            return Unauthorized(Result.Failure("User not authenticated"));
+            return Unauthorized(Result<WalletSummaryDto>.Failure("User not authenticated"));
 
         if (wallet.UserId != userId)
-            return BadRequest(Result.Failure("You do not have permission to update this Wallet"));
+            return BadRequest(Result<WalletSummaryDto>.Failure("You do not have permission to update this Wallet"));
 
         var result = await walletRepo.UpdateAsync(id, updateWalletDto);
         if (!result.IsSuccess)
@@ -78,18 +78,18 @@ public class WalletController(IWalletRepository walletRepo) : ControllerBase
 
     [HttpDelete("{id:int}")]
     [Authorize]
-    public async Task<ActionResult<Result>> DeleteWallet([FromRoute] int id)
+    public async Task<ActionResult<Result<WalletSummaryDto>>> DeleteWallet([FromRoute] int id)
     {
         var wallet = await walletRepo.GetByIdAsync(id);
         if (wallet == null)
-            return NotFound(Result.Failure("Wallet not found"));
+            return NotFound(Result<WalletSummaryDto>.Failure("Wallet not found"));
 
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (userId == null)
-            return Unauthorized(Result.Failure("User not authenticated"));
+            return Unauthorized(Result<WalletSummaryDto>.Failure("User not authenticated"));
 
         if (wallet.UserId != userId)
-            return BadRequest(Result.Failure("You do not have permission to delete this Wallet"));
+            return BadRequest(Result<WalletSummaryDto>.Failure("You do not have permission to delete this Wallet"));
 
         var result = await walletRepo.DeleteAsync(id);
         if (!result.IsSuccess)

@@ -23,8 +23,8 @@
                         </div>
                         <div class="auction-actions">
                             <div class="auction-action">
-                                <i class="@(LikeStatus.HasUserLiked ? "fa-solid" : "fa-regular") fa-heart like-btn" @onclick="LikeNft"></i>
-                                <p class="auction-action-text like-count">@LikeStatus.LikeCount</p>
+                                <i class="@(isUserLiked ? "fa-solid" : "fa-regular") fa-heart like-btn" @onclick="LikeNft"></i>
+                                <p class="auction-action-text like-count">@likeCount</p>
                             </div>
                             <div class="auction-action auction-share-action">
                                 <i class="fa-solid fa-arrow-up-from-bracket auction-share-btn"></i>
@@ -57,11 +57,11 @@
                                 {
                                     <div class="auction-details">
                                         <div class="auction-detail">
-                                            @if (Auction.CurrentBid != null && Auction.CurrentBid > 0)
+                                            @if (Auction.CurrentBid > 0)
                                             {
                                                 <p class="auction-text-grey">Current bid</p>
                                                 <h4 class="auction-text-black eth">@Auction.CurrentBid @Auction.Currency</h4>
-                                                <p class="auction-text-grey usd">@((UsdConversionRate * Auction.CurrentBid)?.ToString("F2")) USD</p>
+                                                <p class="auction-text-grey usd">@((UsdConversionRate * Auction.CurrentBid).ToString("F2")) USD</p>
                                             }
                                             else
                                             {

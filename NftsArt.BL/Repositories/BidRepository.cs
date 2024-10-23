@@ -10,14 +10,14 @@ namespace NftsArt.BL.Repositories;
 
 public interface IBidRepository
 {
-    Task<IEnumerable<Bid>> GetAllAsync();
+    Task<List<Bid>> GetAllAsync();
     Task<Bid?> GetByIdAsync(int id);
-    Task<Result> CreateAsync(BidCreateDto newBid, string userId, int nftId);
+    Task<Result<BidSummaryDto>> CreateAsync(BidCreateDto newBid, string userId, int nftId);
 }
 
 public class BidRepository(AppDbContext context) : IBidRepository
 {
-    public async Task<IEnumerable<Bid>> GetAllAsync()
+    public async Task<List<Bid>> GetAllAsync()
     {
         return await context.Bids
             .Include(b => b.Auction)
@@ -36,42 +36,42 @@ public class BidRepository(AppDbContext context) : IBidRepository
             .FirstOrDefaultAsync(n => n.Id == id);
     }
 
-    public async Task<Result> CreateAsync(BidCreateDto bidCreateDto, string userId, int auctionId)
+    public async Task<Result<BidSummaryDto>> CreateAsync(BidCreateDto bidCreateDto, string userId, int auctionId)
     {
         var auction = await context.Auctions.FindAsync(auctionId);
         if (auction == null)
-            return Result.Failure("Auction has not found");
+            return Result<BidSummaryDto>.Failure("Auction has not found");
 
         if (DateTime.Now < auction.StartTime)
-            return Result.Failure("Auction has not started.");
+            return Result<BidSummaryDto>.Failure("Auction has not started.");
 
         if (DateTime.Now > auction.EndTime)
-            return Result.Failure("Auction has ended.");
+            return Result<BidSummaryDto>.Failure("Auction has ended.");
 
         if (bidCreateDto.Quantity > auction.Quantity)
-            return Result.Failure("Not enough copies available for the requested quantity.");
+            return Result<BidSummaryDto>.Failure("Not enough copies available for the requested quantity.");
 
         if (bidCreateDto.Amount < auction.CurrentBid)
-            return Result.Failure("You cannot bid lower than the current bid");
+            return Result<BidSummaryDto>.Failure("You cannot bid lower than the current bid");
 
         var buyer = await context.Users
             .Include(u => u.Wallets)
             .FirstOrDefaultAsync(u => u.Id == userId);
 
         if (buyer == null)
-            return Result.Failure("Buyer not found.");
+            return Result<BidSummaryDto>.Failure("Buyer not found.");
 
         var buyerWallets = buyer.Wallets
             .Where(w => w.Blockchain == auction.Nft.Blockchain && w.Currency == auction.Currency)
             .ToList();
 
         if (buyerWallets == null || buyerWallets.Count == 0)
-            return Result.Failure($"No {auction.Nft.Blockchain} blockchain wallet or {auction.Currency} currency");
+            return Result<BidSummaryDto>.Failure($"No {auction.Nft.Blockchain} blockchain wallet or {auction.Currency} currency");
 
         var buyerWallet = buyerWallets.FirstOrDefault(w => w.Balance < bidCreateDto.Amount * bidCreateDto.Quantity);
 
         if (buyerWallet == null)
-            return Result.Failure("Insufficient funds.");
+            return Result<BidSummaryDto>.Failure("Insufficient funds.");
 
 
         var bid = bidCreateDto.ToEntity(userId, auctionId);
@@ -81,6 +81,6 @@ public class BidRepository(AppDbContext context) : IBidRepository
         await context.Bids.AddAsync(bid);
         await context.SaveChangesAsync();
 
-        return Result.Success(bid, "Bid created successfully");
+        return Result<BidSummaryDto>.Success(bid.ToSummaryDto(), "Bid created successfully");
     }
 }

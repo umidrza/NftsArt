@@ -14,9 +14,9 @@ public interface ICollectionRepository
 {
     Task<IEnumerable<Collection>> GetAllAsync(CollectionQueryDto query);
     Task<Collection?> GetByIdAsync(int id);
-    Task<Result> CreateAsync(CollectionCreateDto newCollection, string userId);
-    Task<Result> UpdateAsync(int id, CollectionUpdateDto updatedCollection);
-    Task<Result> DeleteAsync(int id);
+    Task<Result<CollectionSummaryDto>> CreateAsync(CollectionCreateDto newCollection, string userId);
+    Task<Result<CollectionSummaryDto>> UpdateAsync(int id, CollectionUpdateDto updatedCollection);
+    Task<Result<CollectionSummaryDto>> DeleteAsync(int id);
     Task<IEnumerable<Nft>> GetNftsAsync(int id, NftQueryDto query);
     Task<IEnumerable<Collection>> GetAllByUserAsync(string userId);
 }
@@ -97,7 +97,7 @@ public class CollectionRepository(AppDbContext context) : ICollectionRepository
         return collection;
     }
 
-    public async Task<Result> CreateAsync(CollectionCreateDto collectionCreateDto, string userId)
+    public async Task<Result<CollectionSummaryDto>> CreateAsync(CollectionCreateDto collectionCreateDto, string userId)
     {
         var collection = collectionCreateDto.ToEntity(userId);
 
@@ -109,14 +109,14 @@ public class CollectionRepository(AppDbContext context) : ICollectionRepository
         await context.Collections.AddAsync(collection);
         await context.SaveChangesAsync();
 
-        return Result.Success(collection, "Collection created successfully");
+        return Result<CollectionSummaryDto>.Success(collection.ToSummaryDto(), "Collection created successfully");
     }
 
-    public async Task<Result> UpdateAsync(int id, CollectionUpdateDto updatedCollection)
+    public async Task<Result<CollectionSummaryDto>> UpdateAsync(int id, CollectionUpdateDto updatedCollection)
     {
         var collection = await context.Collections.FindAsync(id);
         if (collection == null)
-            return Result.Failure("Collection not found.");
+            return Result<CollectionSummaryDto>.Failure("Collection not found.");
 
         collection.UpdateEntity(updatedCollection);
 
@@ -126,18 +126,18 @@ public class CollectionRepository(AppDbContext context) : ICollectionRepository
             .ToList();
 
         await context.SaveChangesAsync();
-        return Result.Success(collection, "Collection updated successfully.");
+        return Result<CollectionSummaryDto>.Success(collection.ToSummaryDto(), "Collection updated successfully.");
     }
 
-    public async Task<Result> DeleteAsync(int id)
+    public async Task<Result<CollectionSummaryDto>> DeleteAsync(int id)
     {
         var collection = await context.Collections.FindAsync(id);
-        if (collection == null) return Result.Failure("Collection not found.");
+        if (collection == null) return Result<CollectionSummaryDto>.Failure("Collection not found.");
 
         context.Collections.Remove(collection);
         await context.SaveChangesAsync();
 
-        return Result.Success(null!, "Collection deleted successfully.");
+        return Result<CollectionSummaryDto>.Success(null!, "Collection deleted successfully.");
     }
 
     public async Task<IEnumerable<Nft>> GetNftsAsync(int id, NftQueryDto query)

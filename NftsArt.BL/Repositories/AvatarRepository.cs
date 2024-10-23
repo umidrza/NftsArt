@@ -9,16 +9,16 @@ namespace NftsArt.BL.Repositories;
 
 public interface IAvatarRepository
 {
-    Task<IEnumerable<Avatar>> GetAllAsync();
+    Task<List<Avatar>> GetAllAsync();
     Task<Avatar?> GetByIdAsync(int id);
-    Task<Result> CreateAsync(AvatarCreateDto avatarDto);
-    Task<Result> UpdateAsync(int id, AvatarCreateDto avatarDto);
-    Task<Result> DeleteAsync(int id);
+    Task<Result<AvatarSummaryDto>> CreateAsync(AvatarCreateDto avatarDto);
+    Task<Result<AvatarSummaryDto>> UpdateAsync(int id, AvatarCreateDto avatarDto);
+    Task<Result<AvatarSummaryDto>> DeleteAsync(int id);
 }
 
 public class AvatarRepository(AppDbContext context) : IAvatarRepository
 {
-    public async Task<IEnumerable<Avatar>> GetAllAsync()
+    public async Task<List<Avatar>> GetAllAsync()
     {
         return await context.Avatars
             .AsNoTracking()
@@ -31,38 +31,38 @@ public class AvatarRepository(AppDbContext context) : IAvatarRepository
             .FirstOrDefaultAsync(n => n.Id == id);
     }
 
-    public async Task<Result> CreateAsync(AvatarCreateDto avatarCreateDto)
+    public async Task<Result<AvatarSummaryDto>> CreateAsync(AvatarCreateDto avatarCreateDto)
     {
         Avatar avatar = new Avatar() { Url = avatarCreateDto.ImageUrl };
 
         await context.Avatars.AddAsync(avatar);
         await context.SaveChangesAsync();
 
-        return Result.Success(avatar, "Avatar created successfully");
+        return Result<AvatarSummaryDto>.Success(avatar.ToSummaryDto(), "Avatar created successfully");
     }
 
-    public async Task<Result> UpdateAsync(int id, AvatarCreateDto updatedAvatar)
+    public async Task<Result<AvatarSummaryDto>> UpdateAsync(int id, AvatarCreateDto updatedAvatar)
     {
         var avatar = await context.Avatars.FindAsync(id);
         if (avatar == null)
-            return Result.Failure("Avatar not found.");
+            return Result<AvatarSummaryDto>.Failure("Avatar not found.");
 
         avatar.UpdateEntity(updatedAvatar);
 
         await context.SaveChangesAsync();
 
-        return Result.Success(avatar, "Avatar updated successfully.");
+        return Result<AvatarSummaryDto>.Success(avatar.ToSummaryDto(), "Avatar updated successfully.");
     }
 
-    public async Task<Result> DeleteAsync(int id)
+    public async Task<Result<AvatarSummaryDto>> DeleteAsync(int id)
     {
         var avatar = await context.Avatars.FindAsync(id);
         if (avatar == null)
-            return Result.Failure("Avatar not found.");
+            return Result<AvatarSummaryDto>.Failure("Avatar not found.");
 
         context.Avatars.Remove(avatar);
         await context.SaveChangesAsync();
 
-        return Result.Success(null!, "Avatar deleted successfully.");
+        return Result<AvatarSummaryDto>.Success(null!, "Avatar deleted successfully.");
     }
 }

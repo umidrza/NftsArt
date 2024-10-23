@@ -25,6 +25,7 @@ public static class AuctionMapping
             (
                 auction.Id,
                 auction.Price,
+                auction.CurrentBid,
                 auction.StartTime,
                 auction.EndTime,
                 auction.Quantity,

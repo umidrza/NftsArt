@@ -190,7 +190,7 @@
         </div>
     </section>
 
-    @if (Collectors != null && Collectors.Count > 0) 
+    @if (Collectors != null && Collectors.Count > 4) 
     {
         <section class="top-collectors-section">
             <h2 class="section-title">Our Top Collectors</h2>
@@ -218,30 +218,33 @@
                     </div>
                 }
             </div>
-            <div class="top-collectors-list auto-scroll">
-                @for (int i = 6; i < Math.Min(Collectors.Count, 12); i++)
-                {
-                    <div class="top-collector">
-                        <p class="top-collector-place"></p>
-                        <div class="avatar">
-                            <a href="#"><img class="avatar-img" src="@Collectors[i].Avatar?.ImageUrl" alt=""></a>
-                            <div class="avatar-icons">
-                                <div class="verified-icon">
-                                    <i class="star-icon"></i>
-                                    <i class="fa-solid fa-check check-icon"></i>
+            @if (Collectors.Count > 10)
+            {
+                <div class="top-collectors-list auto-scroll">
+                    @for (int i = 6; i < Math.Min(Collectors.Count, 12); i++)
+                    {
+                        <div class="top-collector">
+                            <p class="top-collector-place"></p>
+                            <div class="avatar">
+                                <a href="#"><img class="avatar-img" src="@Collectors[i].Avatar?.ImageUrl" alt=""></a>
+                                <div class="avatar-icons">
+                                    <div class="verified-icon">
+                                        <i class="star-icon"></i>
+                                        <i class="fa-solid fa-check check-icon"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="top-collector-info">
+                                <h4 class="top-collector-name">@Collectors[i].FullName</h4>
+                                <div class="top-collector-eth">
+                                    <i class="fa-brands fa-ethereum"></i>
+                                    <p class="eth-value">@Collectors[i].AuctionsSumPrice</p>
                                 </div>
                             </div>
                         </div>
-                        <div class="top-collector-info">
-                            <h4 class="top-collector-name">@Collectors[i].FullName</h4>
-                            <div class="top-collector-eth">
-                                <i class="fa-brands fa-ethereum"></i>
-                                <p class="eth-value">@Collectors[i].AuctionsSumPrice</p>
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
+                    }
+                </div>
+            }
         </section>
     }
 </main>

@@ -13,27 +13,27 @@ public class AvatarController(IAvatarRepository avatarRepo) : ControllerBase
 {
 
     [HttpGet]
-    public async Task<ActionResult<Result>> GetAvatars()
+    public async Task<ActionResult<Result<List<AvatarSummaryDto>>>> GetAvatars()
     {
         var avatars = (await avatarRepo.GetAllAsync())
-                        .Select(a => a.ToSummaryDto());
+                        .Select(a => a.ToSummaryDto()).ToList();
 
-        return Ok(Result.Success(avatars));
+        return Ok(Result<List<AvatarSummaryDto>>.Success(avatars));
     }
 
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<Result>> GetAvatar([FromRoute] int id)
+    public async Task<ActionResult<Result<AvatarSummaryDto>>> GetAvatar([FromRoute] int id)
     {
         var avatar = await avatarRepo.GetByIdAsync(id);
         if (avatar == null) 
-            return NotFound(Result.Failure("Avatar not found"));
+            return NotFound(Result<AvatarSummaryDto>.Failure("Avatar not found"));
 
-        return Ok(Result.Success(avatar));
+        return Ok(Result<AvatarSummaryDto>.Success(avatar.ToSummaryDto()));
     }
 
     [HttpPost]
-    public async Task<ActionResult<Result>> CreateAvatar([FromBody] AvatarCreateDto createAvatarDto)
+    public async Task<ActionResult<Result<AvatarSummaryDto>>> CreateAvatar([FromBody] AvatarCreateDto createAvatarDto)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
@@ -47,7 +47,7 @@ public class AvatarController(IAvatarRepository avatarRepo) : ControllerBase
 
     [HttpPut("{id:int}")]
     [Authorize]
-    public async Task<ActionResult<Result>> UpdateAvatar([FromRoute] int id, [FromBody] AvatarCreateDto updateAvatarDto)
+    public async Task<ActionResult<Result<AvatarSummaryDto>>> UpdateAvatar([FromRoute] int id, [FromBody] AvatarCreateDto updateAvatarDto)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
@@ -61,7 +61,7 @@ public class AvatarController(IAvatarRepository avatarRepo) : ControllerBase
 
     [HttpDelete("{id:int}")]
     [Authorize(Roles = "Admin")]
-    public async Task<ActionResult<Result>> DeleteAvatar([FromRoute] int id)
+    public async Task<ActionResult<Result<AvatarSummaryDto>>> DeleteAvatar([FromRoute] int id)
     {
         var result = await avatarRepo.DeleteAsync(id);
         if (!result.IsSuccess)

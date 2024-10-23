@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Newtonsoft.Json;
 using NftsArt.Model.Dtos.Avatar;
-using NftsArt.Model.Dtos.Collection;
 using NftsArt.Model.Dtos.User;
-using NftsArt.Model.Helpers;
 using NftsArt.Web.Authentication;
 
 namespace NftsArt.Web.Components.Pages.Auth;
@@ -14,6 +11,7 @@ public partial class LoginRegister
     [Inject] ApiClient ApiClient { get; set; }
     [Inject] NavigationManager NavigationManager { get; set; }
     [Inject] AuthenticationStateProvider AuthStateProvider { get; set; }
+
 
     [SupplyParameterFromForm(FormName = "Register")]
     private RegisterDto registerDto { get; set; } = new RegisterDto();
@@ -46,43 +44,39 @@ public partial class LoginRegister
 
     protected async Task LoadAvatars()
     {
-        var res = await ApiClient.GetFromJsonAsync<Result>($"api/avatar");
+        var res = await ApiClient.GetFromJsonAsync<List<AvatarSummaryDto>>($"api/avatar");
 
         if (res.IsSuccess && res.Data != null)
         {
-            Avatars = JsonConvert.DeserializeObject<List<AvatarSummaryDto>>(res.Data.ToString());
+            Avatars = res.Data;
         }
     }
 
 
     private async Task HandleRegister()
     {
-        var result = await ApiClient.PostAsync<Result, RegisterDto>("/api/auth/register", registerDto);
-        if (!result.IsSuccess || result.Data == null)
+        var res = await ApiClient.PostAsync<LoginResponseDto, RegisterDto>("/api/auth/register", registerDto);
+        if (!res.IsSuccess || res.Data == null)
         {
-            registerError = result.Message;
+            registerError = res.Message;
             return;
         }
 
-        LoginResponseDto loginResponse = JsonConvert.DeserializeObject<LoginResponseDto>(result.Data.ToString());
-
-        await ((CustomAuthStateProvider)AuthStateProvider).MarkUserAsAuthenticated(loginResponse);
+        await ((CustomAuthStateProvider)AuthStateProvider).MarkUserAsAuthenticated(res.Data);
 
         NavigationManager.NavigateTo("/");
     }
 
     private async Task HandleLogin()
     {
-        var result = await ApiClient.PostAsync<Result, LoginDto>("/api/auth/login", loginDto);
-        if (!result.IsSuccess || result.Data == null)
+        var res = await ApiClient.PostAsync<LoginResponseDto, LoginDto>("/api/auth/login", loginDto);
+        if (!res.IsSuccess || res.Data == null)
         {
-            loginError = result.Message;
+            loginError = res.Message;
             return;
         }
 
-        LoginResponseDto loginResponse = JsonConvert.DeserializeObject<LoginResponseDto>(result.Data.ToString());
-
-        await ((CustomAuthStateProvider)AuthStateProvider).MarkUserAsAuthenticated(loginResponse);
+        await ((CustomAuthStateProvider)AuthStateProvider).MarkUserAsAuthenticated(res.Data);
 
         NavigationManager.NavigateTo("/");
     }

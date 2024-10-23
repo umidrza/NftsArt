@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
-using Newtonsoft.Json;
 using NftsArt.Model.Dtos.User;
+using NftsArt.Model.Helpers;
 using System.Net.Http.Headers;
 
 namespace NftsArt.Web;
@@ -18,53 +18,37 @@ public class ApiClient(
         }
     }
 
-    public async Task<T> GetFromJsonAsync<T>(string path)
+    public async Task<Result<T>> GetFromJsonAsync<T>(string path)
     {
         await SetAuthorizeHeader();
-        return await httpClient.GetFromJsonAsync<T>(path);
+        return await httpClient.GetFromJsonAsync<Result<T>>(path);
     }
 
-    public async Task<T1> PostAsync<T1, T2>(string path, T2 postDto)
+    public async Task<Result<T1>> PostAsync<T1, T2>(string path, T2 postDto)
     {
         await SetAuthorizeHeader();
         var res = await httpClient.PostAsJsonAsync(path, postDto);
-        if (res != null && res.IsSuccessStatusCode)
-        {
-            var content = await res.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<T1>(content);
-        }
 
-        return default;
+        if (res == null || !res.IsSuccessStatusCode)
+            return default!;
+        
+        return await res.Content.ReadFromJsonAsync<Result<T1>>();
     }
 
-    public async Task<T> PostAsync<T>(string path)
-    {
-        await SetAuthorizeHeader();
-        var res = await httpClient.PostAsync(path, null!);
-        if (res != null && res.IsSuccessStatusCode)
-        {
-            var content = await res.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<T>(content);
-        }
-
-        return default;
-    }
-
-    public async Task<T1> PutAsync<T1, T2>(string path, T2 postDto)
+    public async Task<Result<T1>> PutAsync<T1, T2>(string path, T2 postDto)
     {
         await SetAuthorizeHeader();
         var res = await httpClient.PutAsJsonAsync(path, postDto);
-        if (res != null && res.IsSuccessStatusCode)
-        {
-            var content = await res.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<T1>(content);
-        }
 
-        return default;
+        if (res == null || !res.IsSuccessStatusCode)
+            return default!;
+
+        return await res.Content.ReadFromJsonAsync<Result<T1>>();
+
     }
-    public async Task<T> DeleteAsync<T>(string path)
+    public async Task<Result<T>> DeleteAsync<T>(string path)
     {
         await SetAuthorizeHeader();
-        return await httpClient.DeleteFromJsonAsync<T>(path);
+        return await httpClient.DeleteFromJsonAsync<Result<T>>(path);
     }
 }

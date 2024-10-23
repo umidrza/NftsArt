@@ -1,27 +1,27 @@
 ﻿namespace NftsArt.Model.Helpers;
 
-public class Result
+public class Result<T>
 {
     public bool IsSuccess { get; set; }
     public string? Message { get; set; }
-    public object? Data { get; set; }
+    public T? Data { get; set; }
 
     public Result() { }
 
-    private Result(bool isSuccess, string message, object data)
+    private Result(bool isSuccess, string message, T data)
     {
         IsSuccess = isSuccess;
         Message = message;
         Data = data;
     }
 
-    public static Result Success(object data, string message = "Operation succeeded")
+    public static Result<T> Success(T data = default!, string message = "Operation succeeded")
     {
-        return new Result(true, message, data);
+        return new Result<T>(true, message, data);
     }
 
-    public static Result Failure(string message)
+    public static Result<T> Failure(string message)
     {
-        return new Result(false, message, null!);
+        return new Result<T>(false, message, default!);
     }
 }

@@ -11,9 +11,9 @@ public interface IWalletRepository
 {
     Task<IEnumerable<Wallet>> GetAllAsync();
     Task<Wallet?> GetByIdAsync(int id);
-    Task<Result> CreateAsync(WalletCreateDto newWallet, string userId);
-    Task<Result> UpdateAsync(int id, WalletUpdateDto updatedWallet);
-    Task<Result> DeleteAsync(int id);
+    Task<Result<WalletSummaryDto>> CreateAsync(WalletCreateDto newWallet, string userId);
+    Task<Result<WalletSummaryDto>> UpdateAsync(int id, WalletUpdateDto updatedWallet);
+    Task<Result<WalletSummaryDto>> DeleteAsync(int id);
 }
 
 public class WalletRepository(AppDbContext context) : IWalletRepository
@@ -37,38 +37,38 @@ public class WalletRepository(AppDbContext context) : IWalletRepository
             .FirstOrDefaultAsync(n => n.Id == id);
     }
 
-    public async Task<Result> CreateAsync(WalletCreateDto walletCreateDto, string userId)
+    public async Task<Result<WalletSummaryDto>> CreateAsync(WalletCreateDto walletCreateDto, string userId)
     {
         var wallet = walletCreateDto.ToEntity(userId);
 
         await context.Wallets.AddAsync(wallet);
         await context.SaveChangesAsync();
 
-        return Result.Success(wallet, "Wallet created successfully");
+        return Result<WalletSummaryDto>.Success(wallet.ToSummaryDto(), "Wallet created successfully");
     }
 
-    public async Task<Result> UpdateAsync(int id, WalletUpdateDto updatedWallet)
+    public async Task<Result<WalletSummaryDto>> UpdateAsync(int id, WalletUpdateDto updatedWallet)
     {
         var wallet = await context.Wallets.FindAsync(id);
         if (wallet == null)
-            return Result.Failure("Wallet not found.");
+            return Result<WalletSummaryDto>.Failure("Wallet not found.");
 
         wallet.UpdateEntity(updatedWallet);
 
         await context.SaveChangesAsync();
 
-        return Result.Success(wallet, "Wallet updated successfully.");
+        return Result<WalletSummaryDto>.Success(wallet.ToSummaryDto(), "Wallet updated successfully.");
     }
 
-    public async Task<Result> DeleteAsync(int id)
+    public async Task<Result<WalletSummaryDto>> DeleteAsync(int id)
     {
         var wallet = await context.Wallets.FindAsync(id);
         if (wallet == null)
-            return Result.Failure("Wallet not found.");
+            return Result<WalletSummaryDto>.Failure("Wallet not found.");
 
         context.Wallets.Remove(wallet);
         await context.SaveChangesAsync();
 
-        return Result.Success(null!, "Wallet deleted successfully.");
+        return Result<WalletSummaryDto>.Success(null!, "Wallet deleted successfully.");
     }
 }
