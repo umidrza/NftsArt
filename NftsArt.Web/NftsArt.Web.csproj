@@ -15,4 +15,8 @@
     <ProjectReference Include="..\NftsArt.ServiceDefaults\NftsArt.ServiceDefaults.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\img\nfts\uploads\" />
+  </ItemGroup>
+
 </Project>

@@ -3,165 +3,180 @@
 <PageTitle>List item for sale</PageTitle>
 
 <main>
-    <section class="form-section">
+    @if (Nft == null)
+    {
         <div class="container">
-            <div class="form-container">
-                <h2 class="section-title">List Item for Sale</h2>
-                <EditForm Model="@AuctionCreateDto" OnValidSubmit="HandleValidSubmit" FormName="NftSell" class="form" id="nft-sell-form">
-                    <DataAnnotationsValidator />
+            <p><em>Loading...</em></p>
+        </div>
+    }
+    else
+    {
+        <section class="form-section">
+            <div class="container">
+                <div class="form-container">
+                    <h2 class="section-title">List Item for Sale</h2>
+                    <EditForm Model="@AuctionCreateDto" OnValidSubmit="HandleValidSubmit" FormName="NftSell" class="form" id="nft-sell-form">
+                        <DataAnnotationsValidator />
 
-                    <div class="form-preview">
-                        @if (Nft != null)
-                        {
-                            <h4 class="form-subtitle">Preview</h4>
-                            <h3 class="nft-sell-name">@Nft.Name</h3>
-                            <div class="nft-form-image">
-                                <img src="@Nft.ImageUrl">
+                        <div class="form-preview">
+                            @if (Nft != null)
+                            {
+                                <h4 class="form-subtitle">Preview</h4>
+                                <h3 class="nft-sell-name">@Nft.Name</h3>
+                                <div class="nft-form-image">
+                                    <img src="@Nft.ImageUrl">
+                                </div>
+                                <div class="nft-sell-price">
+                                    <p>Price</p>
+                                    <h4 id="price-display">@AuctionCreateDto.Price.ToString("F2") @AuctionCreateDto.Currency</h4>
+                                </div>
+                            }
+                        </div>
+                        <div class="form-inputs-container">
+                            <div class="form-inputs">
+                                <div class="form-control">
+                                    <label for="price" class="form-label">Price</label>
+                                    <div class="nft-sell-price-inputs">
+                                        <InputSelect @bind-Value="AuctionCreateDto.Currency" class="form-select">
+                                            @foreach (var currency in Enum.GetValues<Currency>())
+                                            {
+                                                <option value="@currency" class="form-option">@currency</option>
+                                            }
+                                        </InputSelect>
+                                        <InputNumber @bind-Value="AuctionCreateDto.Price" id="price-input" class="form-input"
+                                                     placeholder="Type here..." step="0.01" required />
+                                    </div>
+                                    <ValidationMessage For="@(() => AuctionCreateDto.Currency)" />
+                                    <ValidationMessage For="@(() => AuctionCreateDto.Price)" />
+                                </div>
+
+                                <div class="form-control">
+                                    <label for="schedule-time" class="form-label">Schedule Listing</label>
+                                    <select id="schedule-time" class="form-select">
+                                        <option value="3-month">3 Month</option>
+                                        <option value="6-month" selected>6 Month</option>
+                                        <option value="1-year">1 Year</option>
+                                        <option value="2-year">2 Year</option>
+                                        <option value="5-year">5 Year</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-control-dates">
+                                    <div class="form-control">
+                                        <label for="start-time" class="form-label">Starting</label>
+                                        <InputDate id="start-time" @bind-Value="AuctionCreateDto.StartTime" class="form-input" required />
+                                        <ValidationMessage For="@(() => AuctionCreateDto.StartTime)" />
+                                    </div>
+                                    <div class="form-control">
+                                        <label for="end-time" class="form-label">Ending</label>
+                                        <InputDate id="end-time" @bind-Value="AuctionCreateDto.EndTime" class="form-input" required />
+                                        <ValidationMessage For="@(() => AuctionCreateDto.EndTime)" />
+                                    </div>
+                                </div>
                             </div>
-                            <div class="nft-sell-price">
+                            <div class="form-checkboxes">
+                                <div class="form-info">
+                                    <label class="form-label">
+                                        Service Fee
+                                        <i class="fa-solid fa-circle-info"></i>
+                                    </label>
+                                    <h5>2.5%</h5>
+                                </div>
+                                <div class="form-checkbox">
+                                    <div class="form-checkbox-label">
+                                        <label for="reserve-for-buyer" class="form-label">Reserve for specific buyer</label>
+                                    </div>
+                                    <input type="checkbox" id="reserve-for-buyer" class="form-checkbox-input hidden">
+                                    <label for="reserve-for-buyer" class="checkbox-icon"></label>
+                                </div>
+                            </div>
+                            <div class="form-buttons">
+                                <button class="form-button btn-green" id="complete-listing-btn">Complete Listing</button>
+                            </div>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </section>
+
+        <section class="popup-section @(isListingPopupActive ? "active" : "")" id="listing-popup">
+            <div class="popup">
+                <div class="popup-header">
+                    <h3 class="popup-title">Complete Your Listing</h3>
+                    <p class="popup-desc">Sign a message using your wallet <br> to continue</p>
+                </div>
+                <div class="popup-card">
+                    <div class="popup-card-image">
+                        <img src="@Nft.ImageUrl" class="nft-image">
+                    </div>
+                    <div class="popup-card-desc">
+                        <h4 class="nft-name">@Nft.Name</h4>
+                        <div class="nft-detail">
+                            <div class="nft-highest-bid">
                                 <p>Price</p>
-                                <h4 id="price-display">@AuctionCreateDto.Price.ToString("F2") @AuctionCreateDto.Currency</h4>
+                                <h4 id="popup-price">@AuctionCreateDto.Price @AuctionCreateDto.Currency</h4>
                             </div>
-                        }
-                    </div>
-                    <div class="form-inputs-container">
-                        <div class="form-inputs">
-                            <div class="form-control">
-                                <label for="price" class="form-label">Price</label>
-                                <div class="nft-sell-price-inputs">
-                                    <InputSelect @bind-Value="AuctionCreateDto.Currency" class="form-select">
-                                        @foreach (var currency in Enum.GetValues<Currency>())
-                                        {
-                                            <option value="@currency" class="form-option">@currency</option>
-                                        }
-                                    </InputSelect>
-                                    <InputNumber @bind-Value="AuctionCreateDto.Price" id="price-input" class="form-input"
-                                                 placeholder="Type here..." step="0.01" required />
-                                </div>
-                                <ValidationMessage For="@(() => AuctionCreateDto.Currency)" />
-                                <ValidationMessage For="@(() => AuctionCreateDto.Price)" />
+                            <div class="nft-time">
+                                <span id="popup-end-time" class="countdown" data-date="@AuctionCreateDto.EndTime"></span>
                             </div>
-
-                            <div class="form-control">
-                                <label for="schedule-time" class="form-label">Schedule Listing</label>
-                                <select id="schedule-time" class="form-select">
-                                    <option value="3-month">3 Month</option>
-                                    <option value="6-month" selected>6 Month</option>
-                                    <option value="1-year">1 Year</option>
-                                    <option value="2-year">2 Year</option>
-                                    <option value="5-year">5 Year</option>
-                                </select>
-                            </div>
-
-                            <div class="form-control-dates">
-                                <div class="form-control">
-                                    <label for="start-time" class="form-label">Starting</label>
-                                    <InputDate id="start-time" @bind-Value="AuctionCreateDto.StartTime" class="form-input" required />
-                                    <ValidationMessage For="@(() => AuctionCreateDto.StartTime)" />
-                                </div>
-                                <div class="form-control">
-                                    <label for="end-time" class="form-label">Ending</label>
-                                    <InputDate id="end-time" @bind-Value="AuctionCreateDto.EndTime" class="form-input" required />
-                                    <ValidationMessage For="@(() => AuctionCreateDto.EndTime)" />
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-checkboxes">
-                            <div class="form-info">
-                                <label class="form-label">
-                                    Service Fee
-                                    <i class="fa-solid fa-circle-info"></i>
-                                </label>
-                                <h5>2.5%</h5>
-                            </div>
-                            <div class="form-checkbox">
-                                <div class="form-checkbox-label">
-                                    <label for="reserve-for-buyer" class="form-label">Reserve for specific buyer</label>
-                                </div>
-                                <input type="checkbox" id="reserve-for-buyer" class="form-checkbox-input hidden">
-                                <label for="reserve-for-buyer" class="checkbox-icon"></label>
-                            </div>
-                        </div>
-                        <div class="form-buttons">
-                            <button class="form-button btn-green" id="complete-listing-btn">Complete Listing</button>
-                        </div>
-                    </div>
-                </EditForm>
-            </div>
-        </div>
-    </section>
-
-    <section class="popup-section" id="listing-popup">
-        <div class="popup">
-            <div class="popup-header">
-                <h3 class="popup-title">Complete Your Listing</h3>
-                <p class="popup-desc">Sign a message using your wallet <br> to continue</p>
-            </div>
-            <div class="popup-card">
-                <div class="popup-card-image">
-                    <img src="/img/nfts/image4.jpeg" alt="" class="nft-image">
-                </div>
-                <div class="popup-card-desc">
-                    <h4 class="nft-name">Human Leaf #0121</h4>
-                    <div class="nft-detail">
-                        <div class="nft-highest-bid">
-                            <p>Highest bid</p>
-                            <h4 id="popup-price"></h4>
-                        </div>
-                        <div class="nft-time">
-                            <span id="popup-end-time" class="countdown" data-date=""></span>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="popup-buttons">
-                <button class="btn-green" id="sign-btn">Sign</button>
-            </div>
-        </div>
-    </section>
-
-    <section class="popup-section" id="completed-popup">
-        <div class="popup">
-            <div class="popup-header">
-                <h3 class="popup-title">Your NFT is Listed!</h3>
-                <p class="popup-desc">Awesome! You've listed <span>Human Leaf #0121</span></p>
-            </div>
-            <div class="popup-card">
-                <div class="popup-card-image">
-                    <img src="/img/nfts/image4.jpeg" alt="" class="nft-image">
+                <div class="popup-buttons">
+                    <a href="/wallet">
+                        <button class="btn-green" id="sign-btn">Sign</button>
+                    </a>
                 </div>
-                <div class="popup-card-desc">
-                    <h4 class="nft-name">Human Leaf #0121</h4>
-                    <div class="nft-detail">
-                        <div class="nft-highest-bid">
-                            <p>Highest bid</p>
-                            <h4 id="popup-price">0.56 ETH</h4>
+            </div>
+        </section>
+
+        @if (Wallet != null)
+        {
+            <section class="popup-section @(isCompletedPopupActive ? "active" : "")" id="completed-popup">
+                <div class="popup">
+                    <div class="popup-header">
+                        <h3 class="popup-title">Your NFT is Listed!</h3>
+                        <p class="popup-desc">Awesome! You've listed <span>@Nft.Name</span></p>
+                    </div>
+                    <div class="popup-card">
+                        <div class="popup-card-image">
+                            <img src="@Nft.ImageUrl" class="nft-image">
                         </div>
-                        <div class="nft-time">
-                            <span id="popup-end-time" class="countdown" data-date="">04:45:32</span>
+                        <div class="popup-card-desc">
+                            <h4 class="nft-name">@Nft.Name</h4>
+                            <div class="nft-detail">
+                                <div class="nft-highest-bid">
+                                    <p>Highest bid</p>
+                                    <h4 id="popup-price">@AuctionCreateDto.Price @AuctionCreateDto.Currency</h4>
+                                </div>
+                                <div class="nft-time">
+                                    <span id="popup-end-time" class="countdown" data-date="@AuctionCreateDto.EndTime"></span>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                    <div class="popup-share">
+                        <div class="popup-nft-link">
+                            <p class="popup-wallet-link" data-key="@Wallet.Key">0x38682823...4T93</p>
+                            <i class="fa-regular fa-copy wallet-copy-btn"></i>
+                        </div>
+                        <div class="popup-share-via">
+                            <hr>
+                            <p>Or Share Via</p>
+                            <hr>
+                        </div>
+                        <div class="popup-share-icons">
+                            <i class="fa-brands fa-discord"></i>
+                            <i class="fa-brands fa-twitter"></i>
+                            <i class="fa-brands fa-facebook"></i>
+                        </div>
+                    </div>
+                    <a href="@($"/nft/{Nft.Id}")" class="popup-close-btn">
+                        <i class="fa-solid fa-xmark"></i>
+                    </a>
                 </div>
-            </div>
-            <div class="popup-share">
-                <div class="popup-nft-link">
-                    <p class="popup-wallet-link" data-key="386828234644T93">0x38682823...4T93</p>
-                    <i class="fa-regular fa-copy wallet-copy-btn"></i>
-                </div>
-                <div class="popup-share-via">
-                    <hr>
-                    <p>Or Share Via</p>
-                    <hr>
-                </div>
-                <div class="popup-share-icons">
-                    <i class="fa-brands fa-discord"></i>
-                    <i class="fa-brands fa-twitter"></i>
-                    <i class="fa-brands fa-facebook"></i>
-                </div>
-            </div>
-            <div class="popup-close-btn">
-                <i class="fa-solid fa-xmark"></i>
-            </div>
-        </div>
-    </section>
+            </section>
+        }
+    }
+
 </main>

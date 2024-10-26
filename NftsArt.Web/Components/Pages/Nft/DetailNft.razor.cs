@@ -27,23 +27,27 @@ public partial class DetailNft
     private bool isUserLiked = false;
     private int likeCount = 0;
 
-
-
     private bool isTermsAccepted = true;
 
     private readonly decimal EthToUsdRate = 2637.91M;
     private readonly decimal BtcToUsdRate = 68156.61M;
+    private decimal UsdConversionRate;
 
-    private decimal UsdConversionRate; 
+    private Timer timer;
+    private string CountdownDisplay { get; set; } = "Calculating...";
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
-        await base.OnInitializedAsync();
+        if (CollectionId.HasValue)
+        {
+            await LoadCollection();
+        }
+
         await LoadNft();
-        await LoadLikeStatus();
-        
+
         if (Nft != null)
         {
+            await LoadLikeStatus();
             Auction = Nft.Auction;
             NftStatus = Nft.GetAuctionStatus();
         }
@@ -52,15 +56,12 @@ public partial class DetailNft
         {
             await LoadBids();
             UsdConversionRate = Auction.Currency == Currency.BTC.ToString() ? BtcToUsdRate : EthToUsdRate;
-        }
-    }
+            StartTimer();
 
-    protected override async Task OnParametersSetAsync()
-    {
-        if (CollectionId.HasValue)
-        {
-            await LoadCollection();
+            await JS.InvokeVoidAsync("DropdownScript");
         }
+
+        StateHasChanged();
     }
 
     private async Task LoadNft()
@@ -127,22 +128,49 @@ public partial class DetailNft
         }
     }
 
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    private void StartTimer()
     {
-        if (firstRender)
+        timer = new Timer(UpdateCountdown, null, 0, 60000);
+    }
+
+    private void UpdateCountdown(object state)
+    {
+        var timeDifference = Auction.EndTime - DateTime.Now;
+
+        if (timeDifference.TotalMilliseconds > 0)
         {
-            await JS.InvokeVoidAsync("InitScript");
+            var days = timeDifference.Days;
+            var hours = timeDifference.Hours;
+            var minutes = timeDifference.Minutes;
+
+            CountdownDisplay = Auction.EndTime.Date == DateTime.Today
+                ? $"{hours.ToString("D2")}h : {minutes.ToString("D2")}m"
+                : $"{days}d : {hours.ToString("D2")}h : {minutes.ToString("D2")}m";
         }
+        else
+        {
+            CountdownDisplay = "Expired";
+            timer.Dispose();
+        }
+
+        InvokeAsync(StateHasChanged);
     }
 
-    private string GetNftSellUrl()
+    public void Dispose()
     {
-        return $"/nft/{Id}/sell";
+        timer?.Dispose();
     }
 
-    private string GetCollectionUrl()
+
+    private string CalculateDifference(decimal nftPrice, decimal bidAmount, int quantity)
     {
-        return $"/collection/{Collection?.Id}";
+        if (nftPrice > 0 && bidAmount > 0 && quantity > 0)
+        {
+            decimal percentage = ((bidAmount - (nftPrice * quantity)) / nftPrice) * 100;
+            return percentage > 0
+                ? $"{percentage.ToString("0")}% above"
+                : $"{Math.Abs(percentage).ToString("0")}% below";
+        }
+        return "N/A";
     }
 }

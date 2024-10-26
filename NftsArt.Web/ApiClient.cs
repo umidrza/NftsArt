@@ -18,13 +18,13 @@ public class ApiClient(
         }
     }
 
-    public async Task<Result<T>> GetFromJsonAsync<T>(string path)
+    public async Task<Result<T?>?> GetFromJsonAsync<T>(string path)
     {
         await SetAuthorizeHeader();
-        return await httpClient.GetFromJsonAsync<Result<T>>(path);
+        return await httpClient.GetFromJsonAsync<Result<T?>?>(path);
     }
 
-    public async Task<Result<T1>> PostAsync<T1, T2>(string path, T2 postDto)
+    public async Task<Result<T1?>?> PostAsync<T1, T2>(string path, T2 postDto)
     {
         await SetAuthorizeHeader();
         var res = await httpClient.PostAsJsonAsync(path, postDto);
@@ -32,10 +32,21 @@ public class ApiClient(
         if (res == null || !res.IsSuccessStatusCode)
             return default!;
         
-        return await res.Content.ReadFromJsonAsync<Result<T1>>();
+        return await res.Content.ReadFromJsonAsync<Result<T1?>?>();
     }
 
-    public async Task<Result<T1>> PutAsync<T1, T2>(string path, T2 postDto)
+    public async Task<Result<T1?>?> PostAsync<T1>(string path, HttpContent content)
+    {
+        await SetAuthorizeHeader();
+        var res = await httpClient.PostAsync(path, content);
+
+        if (res == null || !res.IsSuccessStatusCode)
+            return default!;
+
+        return await res.Content.ReadFromJsonAsync<Result<T1?>?>();
+    }
+
+    public async Task<Result<T1?>?> PutAsync<T1, T2>(string path, T2 postDto)
     {
         await SetAuthorizeHeader();
         var res = await httpClient.PutAsJsonAsync(path, postDto);
@@ -43,12 +54,12 @@ public class ApiClient(
         if (res == null || !res.IsSuccessStatusCode)
             return default!;
 
-        return await res.Content.ReadFromJsonAsync<Result<T1>>();
+        return await res.Content.ReadFromJsonAsync<Result<T1?>?>();
 
     }
-    public async Task<Result<T>> DeleteAsync<T>(string path)
+    public async Task<Result<T?>?> DeleteAsync<T>(string path)
     {
         await SetAuthorizeHeader();
-        return await httpClient.DeleteFromJsonAsync<Result<T>>(path);
+        return await httpClient.DeleteFromJsonAsync<Result<T?>?>(path);
     }
 }

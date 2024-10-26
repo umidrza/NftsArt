@@ -29,7 +29,7 @@ public class AuctionController(IAuctionRepository auctionRepo) : ControllerBase
     {
         var auction = await auctionRepo.GetByIdAsync(id);
         if (auction == null) 
-            return NotFound(Result<AuctionDetailDto>.Failure("Auction not found"));
+            return Ok(Result<AuctionDetailDto>.Failure("Auction not found"));
 
         return Ok(Result<AuctionDetailDto>.Success(auction.ToDetailDto()));
     }
@@ -39,7 +39,7 @@ public class AuctionController(IAuctionRepository auctionRepo) : ControllerBase
     {
         var auction = await auctionRepo.GetPopularAsync();
         if (auction == null)
-            return NotFound(Result<AuctionDetailDto>.Failure("Auction not found"));
+            return Ok(Result<AuctionDetailDto>.Failure("Auction not found"));
 
         return Ok(Result<AuctionDetailDto>.Success(auction.ToDetailDto()));
     }
@@ -56,9 +56,6 @@ public class AuctionController(IAuctionRepository auctionRepo) : ControllerBase
             return Unauthorized(Result<AuctionDetailDto>.Failure("User not authenticated"));
 
         var result = await auctionRepo.CreateAsync(createAuctionDto, userId, nftId);
-        if (!result.IsSuccess) 
-            return BadRequest(result);
-
         return Ok(result);
     }
 
@@ -81,9 +78,6 @@ public class AuctionController(IAuctionRepository auctionRepo) : ControllerBase
             return BadRequest(Result<AuctionDetailDto>.Failure("You do not have permission to update this Auction"));
 
         var result = await auctionRepo.UpdateAsync(id, updateAuctionDto);
-        if (!result.IsSuccess)
-            return BadRequest(result);
-
         return Ok(result);
     }
 
@@ -103,9 +97,6 @@ public class AuctionController(IAuctionRepository auctionRepo) : ControllerBase
             return BadRequest(Result<AuctionDetailDto>.Failure("You do not have permission to delete this Auction"));
 
         var result = await auctionRepo.DeleteAsync(id);
-        if (!result.IsSuccess)
-            return NotFound(result);
-
         return Ok(result);
     }
 
@@ -121,9 +112,6 @@ public class AuctionController(IAuctionRepository auctionRepo) : ControllerBase
             return Unauthorized(Result<AuctionDetailDto>.Failure("User not authenticated"));
 
         var result = await auctionRepo.PurchaseAsync(userId, id, quantity);
-        if (!result.IsSuccess)
-            return BadRequest(result);
-
         return Ok(result);
     }
 
@@ -136,5 +124,4 @@ public class AuctionController(IAuctionRepository auctionRepo) : ControllerBase
 
         return Ok(Result<List<BidSummaryDto>>.Success(bids));
     }
-
 }

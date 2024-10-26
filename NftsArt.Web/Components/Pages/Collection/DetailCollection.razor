@@ -182,10 +182,10 @@
                             @foreach (var nft in Nfts)
                             {
                                 <div class="nft-card">
-                                    <a href="@GetNftUrl(nft.Id)">
+                                    <a href="@($"/collection/{Id}/nft/{nft.Id}")">
                                         <h4 class="nft-name">@nft.Name</h4>
                                     </a>
-                                    <a href="@GetNftUrl(nft.Id)">
+                                    <a href="@($"/collection/{Id}/nft/{nft.Id}")">
                                         <div class="nft-card-image">
                                             <img src="@nft.ImageUrl" class="nft-image">
                                         </div>

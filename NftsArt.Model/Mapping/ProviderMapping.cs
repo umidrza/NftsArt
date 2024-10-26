@@ -14,16 +14,6 @@ public static class ProviderMapping
         };
     }
 
-    //public static ProviderDetailDto ToDetailDto(this Provider provider)
-    //{
-    //    return new ProviderDetailDto
-    //        (
-    //            provider.Id,
-    //            provider.Name,
-    //            provider.Image
-    //        );
-    //}
-
     public static ProviderSummaryDto ToSummaryDto(this Provider provider)
     {
         return new ProviderSummaryDto

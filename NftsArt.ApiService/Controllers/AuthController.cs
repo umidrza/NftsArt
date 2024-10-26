@@ -324,9 +324,6 @@ public class AuthController(
             return BadRequest(Result<Follow>.Failure("You cannot follow yourself."));
 
         var result = await userRepo.FollowUser(userId, followDto.FollowingUserId);
-        if (!result.IsSuccess)
-            return BadRequest(result);
-
         return Ok(result);
     }
 

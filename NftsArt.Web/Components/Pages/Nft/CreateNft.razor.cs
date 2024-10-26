@@ -9,7 +9,6 @@ public partial class CreateNft
 {
     [Inject] ApiClient ApiClient { get; set; }
     [Inject] NavigationManager NavigationManager { get; set; }
-    //[Inject] IJSRuntime JS {  get; set; }
 
     [SupplyParameterFromForm]
     private NftCreateDto NftCreateDto { get; set; } = new NftCreateDto();
@@ -23,7 +22,7 @@ public partial class CreateNft
     {
         var res = await ApiClient.PostAsync<NftSummaryDto, NftCreateDto>("api/nft", NftCreateDto);
 
-        if (res.IsSuccess && res.Data != null)
+        if (res != null && res.IsSuccess && res.Data != null)
         {
             var nft = res.Data;
             NavigationManager.NavigateTo($"/nft/{nft.Id}");
@@ -40,7 +39,7 @@ public partial class CreateNft
     {
         var res = await ApiClient.GetFromJsonAsync<List<CollectionSummaryDto>>($"api/collection/my-collections");
 
-        if (res.IsSuccess && res.Data != null)
+        if (res != null && res.IsSuccess && res.Data != null)
         {
             Collections = res.Data;
         }
@@ -51,16 +50,24 @@ public partial class CreateNft
         var file = e.File;
         if (file != null)
         {
-            // Open the stream and read the file completely using a memory stream
-            using var memoryStream = new MemoryStream();
-            await file.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024).CopyToAsync(memoryStream);
+            using var content = new MultipartFormDataContent();
+            using var fileStream = file.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024);
 
-            // Convert the image to a base64 string for display
-            var imageBytes = memoryStream.ToArray();
-            uploadedImageSrc = $"data:{file.ContentType};base64,{Convert.ToBase64String(imageBytes)}";
-            NftCreateDto.ImageUrl = uploadedImageSrc;
-            Console.WriteLine(NftCreateDto.ImageUrl);
-            hasImage = true;
+            var streamContent = new StreamContent(fileStream);
+            content.Add(streamContent, "file", file.Name);
+
+            var res = await ApiClient.PostAsync<string>("api/nft/upload", content);
+
+            if (res != null && res.IsSuccess && res.Data != null)
+            {
+                uploadedImageSrc = res.Data;
+                NftCreateDto.ImageUrl = res.Data;
+                hasImage = true;
+            }
+            else 
+            {
+                hasImage = false;
+            }
         }
         else
         {

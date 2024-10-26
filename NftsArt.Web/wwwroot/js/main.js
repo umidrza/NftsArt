@@ -1,21 +1,5 @@
 function InitScript() {
 
-    document.querySelectorAll('.dropdown').forEach(dropdown => {
-        const dropdownContent = dropdown.querySelector('.dropdown-content');
-        const dropdownButton = dropdown.querySelector('.dropdown-btn');
-        const dropdownIcon = dropdownButton.querySelector('.arrow-icon');
-
-        let toggle = !dropdownContent.classList.contains('opened');
-        dropdownIcon.style.transform = `rotate(${toggle ? 0 : 180}deg)`;
-        dropdownContent.style.height = toggle ? "0px" : dropdownContent.scrollHeight + "px";
-
-        dropdownButton.addEventListener('click', () => {
-            toggle = dropdownContent.style.height !== "0px";
-            dropdownIcon.style.transform = `rotate(${toggle ? 0 : 180}deg)`;
-            dropdownContent.style.height = toggle ? "0px" : dropdownContent.scrollHeight + "px";
-        });
-    });
-
     document.querySelectorAll('.show-more').forEach(moreButton => {
         const textElement = moreButton.parentElement.querySelector('.extra-content');
         const fullText = textElement.innerHTML;
@@ -52,54 +36,6 @@ function InitScript() {
             alert.remove();
         }, 3500);
     });
-
-    document.querySelectorAll('.popup-close-btn').forEach(popupCloseBtn => {
-        popupCloseBtn.addEventListener('click', () => {
-            popupCloseBtn.closest('.popup-section').classList.remove('active');
-        });
-    });
-
-    document.querySelectorAll('.difference').forEach(diffElement => {
-        const nftPrice = parseFloat(diffElement.getAttribute('data-price'));
-        const bidAmount = parseFloat(diffElement.getAttribute('data-bid-amount'));
-        const quantity = parseFloat(diffElement.getAttribute('data-quantity'));
-        const percentage = (((bidAmount - nftPrice * quantity) / nftPrice) * 100).toFixed(0);
-
-        if (nftPrice && bidAmount && quantity) {
-            if (percentage > 0) {
-                diffElement.textContent = `${percentage}% above`;
-            } else {
-                diffElement.textContent = `${Math.abs(percentage)}% below`;
-            }
-        }
-        else {
-            diffElement.textContent = 'N/A'
-        }
-    });
-
-    document.querySelectorAll('.countdown').forEach(countdownElement => {
-        const endTime = new Date(countdownElement.getAttribute('data-date')).getTime();
-        const now = new Date().getTime();
-        const timeDifference = endTime - now;
-
-        if (timeDifference > 0) {
-            const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-
-            if (countdownElement.classList.contains('days')) {
-                countdownString = `${days} days`;
-            }
-            else {
-                countdownString = `${days.toString().padStart(2, '0')}d : ${hours.toString().padStart(2, '0')}h : ${minutes.toString().padStart(2, '0')}m`;
-            }
-            countdownElement.textContent = countdownString;
-
-        } else {
-            countdownElement.textContent = 'Expired';
-            countdownElement.classList.add('expired');
-        }
-    })
 
     document.querySelectorAll('.auto-scroll').forEach((scrollbar, key) => {
         let maxScrollWidth = scrollbar.scrollWidth - scrollbar.clientWidth;
@@ -296,6 +232,24 @@ function NavMenuScript() {
         let isActive = navMenu.classList.contains('active');
         navMenu.style.height = isActive ? navMenu.scrollHeight + "px" : "0px";
         navMenuIcons.forEach((hr, key) => hr.classList.toggle(`rotated-hr${key + 1}`));
+    });
+}
+
+function DropdownScript() {
+    document.querySelectorAll('.dropdown').forEach(dropdown => {
+        const dropdownContent = dropdown.querySelector('.dropdown-content');
+        const dropdownButton = dropdown.querySelector('.dropdown-btn');
+        const dropdownIcon = dropdownButton.querySelector('.arrow-icon');
+
+        let toggle = !dropdownContent.classList.contains('opened');
+        dropdownIcon.style.transform = `rotate(${toggle ? 0 : 180}deg)`;
+        dropdownContent.style.height = toggle ? "0px" : dropdownContent.scrollHeight + "px";
+
+        dropdownButton.addEventListener('click', () => {
+            toggle = dropdownContent.style.height !== "0px";
+            dropdownIcon.style.transform = `rotate(${toggle ? 0 : 180}deg)`;
+            dropdownContent.style.height = toggle ? "0px" : dropdownContent.scrollHeight + "px";
+        });
     });
 }
 

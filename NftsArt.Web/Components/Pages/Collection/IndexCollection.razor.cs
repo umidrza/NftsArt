@@ -40,7 +40,7 @@ public partial class IndexCollection
                 $"&PageNumber={QueryModel.PageNumber}" +
                 $"&PageSize={QueryModel.PageSize}");
 
-        if (res.IsSuccess && res.Data != null)
+        if (res != null && res.IsSuccess)
         {
             Collections = res.Data;
         }
@@ -50,31 +50,21 @@ public partial class IndexCollection
     {
         var res = await ApiClient.GetFromJsonAsync<List<UserDetailDto>>($"api/auth/collector");
 
-        if (res.IsSuccess && res.Data != null)
+        if (res != null && res.IsSuccess)
         {
             Collectors = res.Data;
         }
     }
 
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await JS.InvokeVoidAsync("CollectionScript");
-            await JS.InvokeVoidAsync("InitScript");
-        }
-    }
-
-    private string GetCollectionUrl(int collectionId)
-    {
-        return $"/collection/{collectionId}";
-    }
-
-    private string GetCollectionUpdateUrl(int collectionId)
-    {
-        return $"/collection/{collectionId}/update";
-    }
+    //protected override async Task OnAfterRenderAsync(bool firstRender)
+    //{
+    //    if (firstRender)
+    //    {
+    //        await JS.InvokeVoidAsync("CollectionScript");
+    //        await JS.InvokeVoidAsync("InitScript");
+    //    }
+    //}
 
 
 

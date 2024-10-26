@@ -28,7 +28,7 @@ public class BidController(IBidRepository bidRepo) : ControllerBase
     {
         var bid = await bidRepo.GetByIdAsync(id);
         if (bid == null) 
-            return NotFound(Result<BidDetailDto>.Failure("Bid not found"));
+            return Ok(Result<BidDetailDto>.Failure("Bid not found"));
 
         return Ok(Result<BidDetailDto>.Success(bid.ToDetailDto()));
     }
@@ -45,9 +45,6 @@ public class BidController(IBidRepository bidRepo) : ControllerBase
             return Unauthorized(Result<BidSummaryDto>.Failure("User not authenticated"));
 
         var result = await bidRepo.CreateAsync(createBidDto, userId, auctionId);
-        if (!result.IsSuccess)
-            return BadRequest(result);
-
         return Ok(result);
     }
 }

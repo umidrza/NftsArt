@@ -36,11 +36,6 @@ public partial class DetailCollection
         }
     }
 
-    private string GetNftUrl(int nftId)
-    {
-        return $"/collection/{Id}/nft/{nftId}";
-    }
-
     protected async Task LoadCollection()
     {
         var res = await ApiClient.GetFromJsonAsync<CollectionDetailDto>($"api/collection/{Id}");

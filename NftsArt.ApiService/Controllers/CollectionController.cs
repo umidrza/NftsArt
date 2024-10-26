@@ -27,7 +27,7 @@ public class CollectionController(ICollectionRepository collectionRepo) : Contro
     {
         var collection = await collectionRepo.GetByIdAsync(id);
         if (collection == null) 
-            return NotFound(Result<CollectionDetailDto>.Failure("Collection not found"));
+            return Ok(Result<CollectionDetailDto>.Failure("Collection not found"));
 
         return Ok(Result<CollectionDetailDto>.Success(collection.ToDetailDto()));
     }
@@ -44,9 +44,6 @@ public class CollectionController(ICollectionRepository collectionRepo) : Contro
             return Unauthorized(Result<CollectionSummaryDto>.Failure("User not authenticated"));
 
         var result = await collectionRepo.CreateAsync(createCollectionDto, userId);
-        if (!result.IsSuccess)
-            return BadRequest(result);
-
         return Ok(result);
     }
 
@@ -69,9 +66,6 @@ public class CollectionController(ICollectionRepository collectionRepo) : Contro
             return BadRequest(Result<CollectionSummaryDto>.Failure("You do not have permission to update this collection"));
 
         var result = await collectionRepo.UpdateAsync(id, updateCollectionDto);
-        if (!result.IsSuccess) 
-            return BadRequest(result);
-
         return Ok(result);
     }
 
@@ -91,9 +85,6 @@ public class CollectionController(ICollectionRepository collectionRepo) : Contro
             return BadRequest(Result<CollectionSummaryDto>.Failure("You do not have permission to delete this collection"));
 
         var result = await collectionRepo.DeleteAsync(id);
-        if (!result.IsSuccess) 
-            return NotFound(result);
-
         return Ok(result);
     }
 

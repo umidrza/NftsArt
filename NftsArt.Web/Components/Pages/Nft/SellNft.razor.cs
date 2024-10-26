@@ -2,6 +2,7 @@
 using Microsoft.JSInterop;
 using NftsArt.Model.Dtos.Auction;
 using NftsArt.Model.Dtos.Nft;
+using NftsArt.Model.Dtos.Wallet;
 
 namespace NftsArt.Web.Components.Pages.Nft;
 
@@ -17,14 +18,26 @@ public partial class SellNft
     private AuctionCreateDto AuctionCreateDto { get; set; } = new AuctionCreateDto();
 
     private NftDetailDto? Nft { get; set; }
+    private WalletDetailDto? Wallet { get; set; }
+
+    private bool isListingPopupActive = false;
+    private bool isCompletedPopupActive = false; 
 
     private async Task HandleValidSubmit()
     {
-        var res = await ApiClient.PostAsync<AuctionSummaryDto, AuctionCreateDto>($"api/auction/{Id}", AuctionCreateDto);
 
-        if (res.IsSuccess)
+        if (Wallet != null)
         {
-            NavigationManager.NavigateTo($"/nft/{Id}");
+            var res = await ApiClient.PostAsync<AuctionSummaryDto, AuctionCreateDto>($"api/auction/{Id}", AuctionCreateDto);
+
+            if (res != null && res.IsSuccess)
+            {
+                isCompletedPopupActive = true;
+            }
+        }
+        else
+        {
+            isListingPopupActive = true;
         }
     }
 
@@ -32,23 +45,47 @@ public partial class SellNft
     {
         await base.OnInitializedAsync();
         await LoadNft();
-    }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
+        if (Nft != null)
         {
-            await JS.InvokeVoidAsync("NftSellScript");
+            await LoadWallet();
         }
     }
+
+    //protected override async Task OnAfterRenderAsync(bool firstRender)
+    //{
+    //    if (firstRender)
+    //    {
+    //        await JS.InvokeVoidAsync("NftSellScript");
+    //    }
+    //}
 
     protected async Task LoadNft()
     {
         var res = await ApiClient.GetFromJsonAsync<NftDetailDto>($"api/nft/{Id}");
 
-        if (res.IsSuccess && res.Data != null)
+        if (res != null && res.IsSuccess)
         {
             Nft = res.Data;
+        }
+    }
+
+    protected async Task LoadWallet()
+    {
+        var res = await ApiClient.GetFromJsonAsync<WalletDetailDto>(
+            $"api/wallet/my-wallet" +
+            $"?BlockchainName={Nft?.BlockchainName}" +
+            $"&CurrencyName={AuctionCreateDto.Currency}");
+
+        Console.WriteLine("__________________");
+        Console.WriteLine(res);
+        Console.WriteLine(res?.Data);
+        Console.WriteLine("__________________");
+
+
+        if (res != null && res.IsSuccess)
+        {
+            Wallet = res.Data;
         }
     }
 }

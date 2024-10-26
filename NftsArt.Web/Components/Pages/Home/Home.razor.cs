@@ -73,19 +73,4 @@ public partial class Home
             Auction = res.Data;
         }
     }
-
-    private string GetNftUrl(int collectionId, int nftId)
-    {
-        return $"/collection/{collectionId}/nft/{nftId}";
-    }
-
-    private string GetNftUrl(int nftId)
-    {
-        return $"/nft/{nftId}";
-    }
-
-    private string GetCollectionUrl(int collectionId)
-    {
-        return $"/collection/{collectionId}";
-    }
 }

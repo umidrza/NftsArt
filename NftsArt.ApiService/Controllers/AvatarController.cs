@@ -27,7 +27,7 @@ public class AvatarController(IAvatarRepository avatarRepo) : ControllerBase
     {
         var avatar = await avatarRepo.GetByIdAsync(id);
         if (avatar == null) 
-            return NotFound(Result<AvatarSummaryDto>.Failure("Avatar not found"));
+            return Ok(Result<AvatarSummaryDto>.Failure("Avatar not found"));
 
         return Ok(Result<AvatarSummaryDto>.Success(avatar.ToSummaryDto()));
     }
@@ -39,9 +39,6 @@ public class AvatarController(IAvatarRepository avatarRepo) : ControllerBase
             return BadRequest(ModelState);
 
         var result = await avatarRepo.CreateAsync(createAvatarDto);
-        if (!result.IsSuccess)
-            return BadRequest(result);
-
         return Ok(result);
     }
 
@@ -53,9 +50,6 @@ public class AvatarController(IAvatarRepository avatarRepo) : ControllerBase
             return BadRequest(ModelState);
 
         var result = await avatarRepo.UpdateAsync(id, updateAvatarDto);
-        if (!result.IsSuccess)
-            return BadRequest(result);
-
         return Ok(result);
     }
 
@@ -64,9 +58,6 @@ public class AvatarController(IAvatarRepository avatarRepo) : ControllerBase
     public async Task<ActionResult<Result<AvatarSummaryDto>>> DeleteAvatar([FromRoute] int id)
     {
         var result = await avatarRepo.DeleteAsync(id);
-        if (!result.IsSuccess)
-            return NotFound(result);
-
         return Ok(result);
     }
 }

@@ -55,9 +55,6 @@ public class NftController(INftRepository nftRepo) : ControllerBase
             return Unauthorized(Result<NftSummaryDto>.Failure("User not authenticated"));
 
         var result = await nftRepo.CreateAsync(createNftDto, userId);
-        if (!result.IsSuccess)
-            return BadRequest(result);
-
         return Ok(result);
     }
 
@@ -80,9 +77,6 @@ public class NftController(INftRepository nftRepo) : ControllerBase
             return BadRequest(Result<NftSummaryDto>.Failure("You do not have permission to update this Nft"));
 
         var result = await nftRepo.UpdateAsync(id, updateNftDto);
-        if (!result.IsSuccess)
-            return BadRequest(result);
-
         return Ok(result);
     }
 
@@ -102,9 +96,6 @@ public class NftController(INftRepository nftRepo) : ControllerBase
             return BadRequest(Result<NftSummaryDto>.Failure("You do not have permission to delete this Nft"));
 
         var result = await nftRepo.DeleteAsync(id);
-        if (!result.IsSuccess)
-            return NotFound(result);
-
         return Ok(result);
     }
 
@@ -131,9 +122,6 @@ public class NftController(INftRepository nftRepo) : ControllerBase
             return Unauthorized(Result<Like>.Failure("User not authenticated"));
 
         var result = await nftRepo.LikeAsync(userId, id);
-        if (!result.IsSuccess)
-            return NotFound(result);
-
         return Ok(result);
     }
 
@@ -155,5 +143,24 @@ public class NftController(INftRepository nftRepo) : ControllerBase
         var isLiked = await nftRepo.HasUserLikedAsync(userId, id);
 
         return Ok(Result<bool>.Success(isLiked));
+    }
+
+
+    [HttpPost("upload")]
+    public async Task<ActionResult<Result<string>>> UploadNftImage(IFormFile file)
+    {
+        if (file == null || file.Length == 0)
+            return BadRequest(Result<string>.Failure("Upload a file."));
+
+        var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", fileName);
+
+        using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await file.CopyToAsync(stream);
+        }
+
+        string fileUrl = $"{Request.Scheme}://{Request.Host}/uploads/{fileName}";
+        return Ok(Result<string>.Success(fileUrl));
     }
 }

@@ -74,7 +74,7 @@
                                         {
                                             <div class="auction-detail">
                                                 <p class="auction-text-grey">Auction ending in</p>
-                                                <h4 class="auction-text-black countdown" data-date="@Auction.EndTime"></h4>
+                                                <h4 class="auction-text-black countdown">@CountdownDisplay</h4>
                                                 @if (Bids != null)
                                                 {
                                                     <p class="auction-text-grey">Bids: @Bids.Count</p> 
@@ -154,7 +154,7 @@
                             }
                             else
                             {
-                                <a href="@GetNftSellUrl()">
+                                <a href="@($"/nft/{Id}/sell")">
                                     <button class="auction-button btn-outline-green" disabled="@(!isTermsAccepted)">List Item for Sale</button>
                                 </a>
                             }
@@ -228,98 +228,6 @@
 
                                     </div>
                                 }
-                                
-                                <div class="auction-chart dropdown">
-                                    <div class="chart-title dropdown-btn">
-                                        <h3>Listings</h3>
-                                        <i class="fa-solid fa-arrow-down arrow-icon"></i>
-                                    </div>
-                                    <div class="dropdown-content opened auction-table">
-                                        <table class="sales-nfts-table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Unit Price</th>
-                                                    <th>USD</th>
-                                                    <th>Quantity</th>
-                                                    <th>Expiration</th>
-                                                    <th>From</th>
-                                                    <th></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td class="eth">
-                                                        <i class="fa-brands fa-ethereum"></i>
-                                                        0.25 ETH
-                                                    </td>
-                                                    <td class="usd"></td>
-                                                    <td>1</td>
-                                                    <td class="countdown days" data-date="">30 days</td>
-                                                    <td>nolanschleifer</td>
-                                                    <td>
-                                                        <form action="" method="post">
-                                                            <button type="submit" class="btn-outline-green">Buy</button>
-                                                        </form>
-                                                    </td>
-                                                </tr>
-                                                <tr class="spacing">
-                                                    <td></td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="eth">
-                                                        <i class="fa-brands fa-ethereum"></i>
-                                                        0.25 ETH
-                                                    </td>
-                                                    <td class="usd"></td>
-                                                    <td>1</td>
-                                                    <td class="countdown days" data-date="">30 days</td>
-                                                    <td>george</td>
-                                                    <td>
-                                                        <form action="" method="post">
-                                                            <button type="submit" class="btn-outline-green">Buy</button>
-                                                        </form>
-                                                    </td>
-                                                </tr>
-                                                <tr class="spacing">
-                                                    <td></td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="eth">
-                                                        <i class="fa-brands fa-ethereum"></i>
-                                                        0.25 ETH
-                                                    </td>
-                                                    <td class="usd"></td>
-                                                    <td>1</td>
-                                                    <td class="countdown days" data-date="">30 days</td>
-                                                    <td>talan</td>
-                                                    <td>
-                                                        <form action="" method="post">
-                                                            <button type="submit" class="btn-outline-green">Buy</button>
-                                                        </form>
-                                                    </td>
-                                                </tr>
-                                                <tr class="spacing">
-                                                    <td></td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="eth">
-                                                        <i class="fa-brands fa-ethereum"></i>
-                                                        0.25 ETH
-                                                    </td>
-                                                    <td class="usd"></td>
-                                                    <td>1</td>
-                                                    <td class="countdown days" data-date="">30 days</td>
-                                                    <td>jamesdias</td>
-                                                    <td>
-                                                        <form action="" method="post">
-                                                            <button type="submit" class="btn-outline-green">Buy</button>
-                                                        </form>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
 
                                 @if (Bids.Count > 0)
                                 {
@@ -344,10 +252,13 @@
                                                 @foreach(var bid in Bids)
                                                 {
                                                     <tr>
-                                                        <td class="eth"><i class="fa-brands fa-ethereum"></i>@bid.Price ETH</td>
+                                                        <td class="eth">
+                                                            <i class="fa-brands @(Auction.Currency == "ETH" ? "fa-ethereum" : "fa-bitcoin")"></i>
+                                                            @bid.Price @Auction.Currency
+                                                        </td>
                                                         <td class="usd"></td>
                                                         <td>@bid.Quantity</td>
-                                                        <td class="difference" data-price="@Auction.Price" data-bid-amount="@bid.Price" data-quantity="@bid.Quantity"></td>
+                                                        <td class="difference">@CalculateDifference(Auction.Price, bid.Price, bid.Quantity)</td>
                                                         <td class="countdown days" data-date="@bid.EndTime"></td>
                                                         <td>@bid.Bidder.UserName</td>
                                                     </tr>
@@ -376,7 +287,7 @@
                 <div class="popular-collections">
                     <div class="popular-collections-header">
                         <h2 class="section-title">More From This Collection</h2>
-                        <a href="@GetCollectionUrl()" class="see-all">See all</a>
+                        <a href="@($"/collection/{Collection.Id}")" class="see-all">See all</a>
                     </div>
                     <div class="popular-collection-cards">
                         @{
@@ -391,10 +302,14 @@
                             }
 
                             <div class="nft-card">
-                                <h4 class="nft-name">@Collection.Nfts[i].Name</h4>
-                                <div class="nft-card-image">
-                                    <img src="@Collection.Nfts[i].ImageUrl" class="nft-image">
-                                </div>
+                                <a href="@($"/collection/{Collection.Id}/nft/{Collection.Nfts[i].Id}")">
+                                    <h4 class="nft-name">@Collection.Nfts[i].Name</h4>
+                                </a>
+                                <a href="@($"/collection/{Collection.Id}/nft/{Collection.Nfts[i].Id}")">
+                                    <div class="nft-card-image">
+                                        <img src="@Collection.Nfts[i].ImageUrl" class="nft-image">
+                                    </div>
+                                </a>
                                 <div class="nft-detail">
                                     @if (Collection.Nfts[i].GetAuctionStatus() == NftStatus.Not_On_Sale)
                                     {

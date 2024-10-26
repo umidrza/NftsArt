@@ -174,11 +174,15 @@ public class NftRepository(AppDbContext context) : INftRepository
 
     public async Task<IEnumerable<Nft>> GetAllByUserAsync(string userId)
     {
-        return await context.Nfts
-            .Include(n => n.Creator)
-                .ThenInclude(u => u.Avatar)
-            .Include(n => n.Auction)
-                .ThenInclude(a => a.Seller)
+        return await context.NftCollectors
+            .Where(nc => nc.CollectorId == userId)
+            .Include(nc => nc.Nft)
+                .ThenInclude(n => n.Creator)
+                    .ThenInclude(u => u.Avatar)
+            .Include(nc => nc.Nft)
+                .ThenInclude(n => n.Auction)
+                    .ThenInclude(a => a.Seller)
+            .Select(nc => nc.Nft)
             .AsNoTracking()
             .ToListAsync();
     }
