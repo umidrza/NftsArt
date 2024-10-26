@@ -14,10 +14,10 @@ public partial class LoginRegister
 
 
     [SupplyParameterFromForm(FormName = "Register")]
-    private RegisterDto registerDto { get; set; } = new RegisterDto();
+    private RegisterDto RegisterDto { get; set; } = new RegisterDto();
 
     [SupplyParameterFromForm(FormName = "Login")]
-    private LoginDto loginDto { get; set; } = new LoginDto();
+    private LoginDto LoginDto { get; set; } = new LoginDto();
 
 
     private List<AvatarSummaryDto>? Avatars { get; set; }
@@ -46,7 +46,7 @@ public partial class LoginRegister
     {
         var res = await ApiClient.GetFromJsonAsync<List<AvatarSummaryDto>>($"api/avatar");
 
-        if (res.IsSuccess && res.Data != null)
+        if (res != null && res.IsSuccess && res.Data != null)
         {
             Avatars = res.Data;
         }
@@ -55,37 +55,39 @@ public partial class LoginRegister
 
     private async Task HandleRegister()
     {
-        var res = await ApiClient.PostAsync<LoginResponseDto, RegisterDto>("/api/auth/register", registerDto);
-        if (!res.IsSuccess || res.Data == null)
+        var res = await ApiClient.PostAsync<LoginResponseDto, RegisterDto>("/api/auth/register", RegisterDto);
+
+        if (res != null && res.IsSuccess && res.Data != null)
         {
-            registerError = res.Message;
-            return;
+            await ((CustomAuthStateProvider)AuthStateProvider).MarkUserAsAuthenticated(res.Data);
+            NavigationManager.NavigateTo("/");
         }
-
-        await ((CustomAuthStateProvider)AuthStateProvider).MarkUserAsAuthenticated(res.Data);
-
-        NavigationManager.NavigateTo("/");
+        else
+        {
+            registerError = res != null ? res.Message : "Register Error";
+        }
     }
 
     private async Task HandleLogin()
     {
-        var res = await ApiClient.PostAsync<LoginResponseDto, LoginDto>("/api/auth/login", loginDto);
-        if (!res.IsSuccess || res.Data == null)
+        var res = await ApiClient.PostAsync<LoginResponseDto, LoginDto>("/api/auth/login", LoginDto);
+
+        if (res != null && res.IsSuccess && res.Data != null)
         {
-            loginError = res.Message;
-            return;
+            await ((CustomAuthStateProvider)AuthStateProvider).MarkUserAsAuthenticated(res.Data);
+            NavigationManager.NavigateTo("/");
         }
-
-        await ((CustomAuthStateProvider)AuthStateProvider).MarkUserAsAuthenticated(res.Data);
-
-        NavigationManager.NavigateTo("/");
+        else
+        {
+            loginError = res != null ? res.Message : "Error logging you in";
+        }
     }
 
 
     private void SelectAvatar(AvatarSummaryDto avatar)
     {
         selectedAvatar = avatar.ImageUrl;
-        registerDto.AvatarId = avatar.Id;
+        RegisterDto.AvatarId = avatar.Id;
     }
 
     private void ToggleLoginPopup()

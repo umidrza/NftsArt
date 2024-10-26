@@ -37,30 +37,6 @@ function InitScript() {
         }, 3500);
     });
 
-    document.querySelectorAll('.auto-scroll').forEach((scrollbar, key) => {
-        let maxScrollWidth = scrollbar.scrollWidth - scrollbar.clientWidth;
-        scrollbar.scrollLeft = key % 2 == 0 ? 0 : maxScrollWidth;
-        let direction = 1;
-        let pause = false;
-
-        setInterval(() => {
-            if (!pause) {
-                scrollbar.scrollBy(direction, 0);
-
-                if (scrollbar.scrollLeft >= maxScrollWidth) {
-                    direction = -1;
-                    pause = true;
-                    setTimeout(() => { pause = false; }, 1000);
-                }
-                else if (scrollbar.scrollLeft <= 0) {
-                    direction = 1;
-                    pause = true;
-                    setTimeout(() => { pause = false; }, 1000);
-                }
-            }
-        }, 30)
-    });
-
 }
 
 function CollectionScript() {
@@ -250,6 +226,32 @@ function DropdownScript() {
             dropdownIcon.style.transform = `rotate(${toggle ? 0 : 180}deg)`;
             dropdownContent.style.height = toggle ? "0px" : dropdownContent.scrollHeight + "px";
         });
+    });
+}
+
+function AutoScrollScript() {
+    document.querySelectorAll('.auto-scroll').forEach((scrollbar, key) => {
+        let maxScrollWidth = scrollbar.scrollWidth - scrollbar.clientWidth;
+        scrollbar.scrollLeft = key % 2 == 0 ? 0 : maxScrollWidth;
+        let direction = 1;
+        let pause = false;
+
+        setInterval(() => {
+            if (!pause) {
+                scrollbar.scrollBy(direction, 0);
+
+                if (scrollbar.scrollLeft >= maxScrollWidth) {
+                    direction = -1;
+                    pause = true;
+                    setTimeout(() => { pause = false; }, 1000);
+                }
+                else if (scrollbar.scrollLeft <= 0) {
+                    direction = 1;
+                    pause = true;
+                    setTimeout(() => { pause = false; }, 1000);
+                }
+            }
+        }, 30)
     });
 }
 

@@ -25,14 +25,17 @@ public partial class DetailCollection
         await LoadCollection();
         await LoadCollectionNfts();
         await LoadCollectors();
-    }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
+
+        if (Collection != null && Nfts != null)
         {
             await JS.InvokeVoidAsync("CollectionScript");
-            await JS.InvokeVoidAsync("InitScript");
+            await JS.InvokeVoidAsync("DropdownScript");
+        }
+
+        if (Collectors != null)
+        {
+            await JS.InvokeVoidAsync("AutoScrollScript");
         }
     }
 
@@ -40,7 +43,7 @@ public partial class DetailCollection
     {
         var res = await ApiClient.GetFromJsonAsync<CollectionDetailDto>($"api/collection/{Id}");
 
-        if (res.IsSuccess && res.Data != null)
+        if (res != null && res.IsSuccess && res.Data != null)
         {
             Collection = res.Data;
         }
@@ -60,7 +63,7 @@ public partial class DetailCollection
             $"&PageNumber={QueryModel.PageNumber}" +
             $"&PageSize={QueryModel.PageSize}");
 
-        if (res.IsSuccess && res.Data != null)
+        if (res != null && res.IsSuccess && res.Data != null)
         {
             Nfts = res.Data;
         }
@@ -70,7 +73,7 @@ public partial class DetailCollection
     {
         var res = await ApiClient.GetFromJsonAsync<List<UserDetailDto>>($"api/auth/collector");
 
-        if (res.IsSuccess && res.Data != null)
+        if (res != null && res.IsSuccess && res.Data != null)
         {
             Collectors = res.Data;
         }

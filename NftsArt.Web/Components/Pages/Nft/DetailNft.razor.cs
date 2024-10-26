@@ -57,7 +57,10 @@ public partial class DetailNft
             await LoadBids();
             UsdConversionRate = Auction.Currency == Currency.BTC.ToString() ? BtcToUsdRate : EthToUsdRate;
             StartTimer();
+        }
 
+        if (Bids != null)
+        {
             await JS.InvokeVoidAsync("DropdownScript");
         }
 
@@ -68,7 +71,7 @@ public partial class DetailNft
     {
         var res = await ApiClient.GetFromJsonAsync<NftDetailDto>($"api/nft/{Id}");
 
-        if (res.IsSuccess && res.Data != null)
+        if (res != null && res.IsSuccess && res.Data != null)
         {
             Nft = res.Data;
         }
@@ -78,7 +81,7 @@ public partial class DetailNft
     {
         var res = await ApiClient.GetFromJsonAsync<CollectionDetailDto>($"api/collection/{CollectionId!.Value}");
 
-        if (res.IsSuccess && res.Data != null)
+        if (res != null && res.IsSuccess && res.Data != null)
         {
             Collection = res.Data;
         }
@@ -90,7 +93,7 @@ public partial class DetailNft
         {
             var res = await ApiClient.GetFromJsonAsync<List<BidSummaryDto>>($"api/auction/{Nft.Auction.Id}/bids");
 
-            if (res.IsSuccess && res.Data != null)
+            if (res != null && res.IsSuccess && res.Data != null)
             {
                 Bids = res.Data;
             }
@@ -100,13 +103,13 @@ public partial class DetailNft
     private async Task LoadLikeStatus()
     {
         var countRes = await ApiClient.GetFromJsonAsync<int>($"api/nft/{Id}/likes");
-        if (countRes.IsSuccess)
+        if (countRes != null && countRes.IsSuccess)
         {
             likeCount = countRes.Data;
         }
 
         var isLikedRes = await ApiClient.GetFromJsonAsync<bool>($"api/nft/{Id}/is-liked");
-        if (isLikedRes.IsSuccess)
+        if (isLikedRes != null && isLikedRes.IsSuccess)
         {
             isUserLiked = isLikedRes.Data;
         }
@@ -116,15 +119,18 @@ public partial class DetailNft
     {
         var res = await ApiClient.PostAsync<Like, object>($"api/nft/{Id}/like", null!);
 
-        if (res.IsSuccess && res.Data != null)
+        if (res != null && res.IsSuccess)
         {
-            likeCount++;
-            isUserLiked = true;
-        }
-        else if (res.IsSuccess && res.Data == null)
-        {
-            likeCount--;
-            isUserLiked = false;
+            if (res.Data != null)
+            {
+                likeCount++;
+                isUserLiked = true;
+            }
+            else
+            {
+                likeCount--;
+                isUserLiked = false;
+            }
         }
     }
 

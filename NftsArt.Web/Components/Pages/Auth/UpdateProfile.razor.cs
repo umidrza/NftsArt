@@ -47,7 +47,7 @@ public partial class UpdateProfile
 
         var res = await ApiClient.GetFromJsonAsync<UserDetailDto>($"api/auth/user/{userId}");
 
-        if (res.IsSuccess && res.Data != null)
+        if (res != null && res.IsSuccess && res.Data != null)
         {
             User = res.Data;
             UpdateDto = User.ToUpdateDto();
@@ -58,7 +58,7 @@ public partial class UpdateProfile
     {
         var res = await ApiClient.GetFromJsonAsync<List<AvatarSummaryDto>>($"api/avatar");
 
-        if (res.IsSuccess && res.Data != null)
+        if (res != null && res.IsSuccess && res.Data != null)
         {
             Avatars = res.Data;
         }
@@ -74,15 +74,15 @@ public partial class UpdateProfile
     private async Task HandleSubmit()
     {
         var res = await ApiClient.PutAsync<LoginResponseDto, UserUpdateDto>("/api/auth/profile", UpdateDto);
-        if (!res.IsSuccess || res.Data == null)
+        if (res != null && res.IsSuccess && res.Data != null)
         {
-            updateProfileError = res.Message;
-            return;
+            await ((CustomAuthStateProvider)AuthStateProvider).MarkUserAsAuthenticated(res.Data);
+            NavigationManager.NavigateTo("/");
         }
-
-        await ((CustomAuthStateProvider)AuthStateProvider).MarkUserAsAuthenticated(res.Data);
-
-        NavigationManager.NavigateTo("/");
+        else
+        {
+            updateProfileError = res != null ? res.Message : "Update Profile Error";
+        }
     }
 
     private async Task HandleLogout()

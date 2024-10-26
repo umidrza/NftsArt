@@ -11,7 +11,7 @@
                 <div class="register-form-title">
                     <h2 class="section-title">Register</h2>
                 </div>
-                <EditForm Model="@registerDto" OnValidSubmit="HandleRegister" FormName="Register" class="form" id="register-form">
+                <EditForm Model="@RegisterDto" OnValidSubmit="HandleRegister" FormName="Register" class="form" id="register-form">
                     <DataAnnotationsValidator />
 
                     <div class="form-previews">
@@ -23,11 +23,11 @@
                                     <div class="avatar">
                                         <img class="avatar-img" src="@selectedAvatar" />
                                     </div>
-                                    <h3 class="register-fullname">@registerDto.FullName</h3>
+                                    <h3 class="register-fullname">@RegisterDto.FullName</h3>
                                 </div>
                                 <div class="form-control">
-                                    <InputNumber class="hidden" id="avatar-input" @bind-Value="registerDto.AvatarId" />
-                                    <ValidationMessage For="@(() => registerDto.AvatarId)" />
+                                    <InputNumber class="hidden" id="avatar-input" @bind-Value="RegisterDto.AvatarId" />
+                                    <ValidationMessage For="@(() => RegisterDto.AvatarId)" />
                                 </div>
                             </div>
                             <div class="form-preview">
@@ -53,48 +53,48 @@
 
                             <div class="form-control">
                                 <div class="form-input-box">
-                                    <InputText id="fullNameInput" @bind-Value="registerDto.FullName" class="form-input" placeholder="Full Name" required />
+                                    <InputText id="fullNameInput" @bind-Value="RegisterDto.FullName" class="form-input" placeholder="Full Name" required />
                                     <label for="fullname" class="form-label">Full Name</label>
                                 </div>
-                                <ValidationMessage For="@(() => registerDto.FullName)" />
+                                <ValidationMessage For="@(() => RegisterDto.FullName)" />
                             </div>
 
                             <div class="form-control">
                                 <div class="form-input-box">
-                                    <InputText id="register-username" @bind-Value="registerDto.UserName" class="form-input" placeholder="Username" required />
+                                    <InputText id="register-username" @bind-Value="RegisterDto.UserName" class="form-input" placeholder="Username" required />
                                     <label for="username" class="form-label">Username</label>
                                 </div>
-                                <ValidationMessage For="@(() => registerDto.UserName)" />
+                                <ValidationMessage For="@(() => RegisterDto.UserName)" />
                             </div>
 
                             <div class="form-control">
                                 <div class="form-input-box">
-                                    <InputText type="email" id="email" @bind-Value="registerDto.Email" class="form-input" placeholder="Email" required />
+                                    <InputText type="email" id="email" @bind-Value="RegisterDto.Email" class="form-input" placeholder="Email" required />
                                     <label for="email" class="form-label">Email</label>
                                 </div>
-                                <ValidationMessage For="@(() => registerDto.Email)" />
+                                <ValidationMessage For="@(() => RegisterDto.Email)" />
                             </div>
 
                             <div class="form-control">
                                 <div class="form-input-box">
-                                    <InputText id="password1" @bind-Value="registerDto.Password" class="form-input"
+                                    <InputText id="password1" @bind-Value="RegisterDto.Password" class="form-input"
                                                type="@((isPasswordVisible) ? "text" : "password")" placeholder="Password" required />
                                     <label for="password1" class="form-label">Password</label>
                                     <i class="fa-regular @(isPasswordVisible ? "fa-eye" : "fa-eye-slash") password-show-btn"
                                        @onclick="() => isPasswordVisible = !isPasswordVisible"></i>
                                 </div>
-                                <ValidationMessage For="@(() => registerDto.Password)" />
+                                <ValidationMessage For="@(() => RegisterDto.Password)" />
                             </div>
 
                             <div class="form-control">
                                 <div class="form-input-box">
-                                    <InputText id="password2" @bind-Value="registerDto.ConfirmPassword" class="form-input"
+                                    <InputText id="password2" @bind-Value="RegisterDto.ConfirmPassword" class="form-input"
                                                type="@((isPasswordVisible) ? "text" : "password")" placeholder="Confirm Password" required />
                                     <label for="password2" class="form-label">Confirm Password</label>
                                     <i class="fa-regular @(isPasswordVisible ? "fa-eye" : "fa-eye-slash") password-show-btn"
                                        @onclick="() => isPasswordVisible = !isPasswordVisible"></i>
                                 </div>
-                                <ValidationMessage For="@(() => registerDto.ConfirmPassword)" />
+                                <ValidationMessage For="@(() => RegisterDto.ConfirmPassword)" />
                             </div>
                         </div>
 
@@ -118,27 +118,27 @@
         <div class="popup">
             <h2 class="popup-title">Login</h2>
 
-            <EditForm Model="@loginDto" OnValidSubmit="HandleLogin" FormName="Login" class="login-form">
+            <EditForm Model="@LoginDto" OnValidSubmit="HandleLogin" FormName="Login" class="login-form">
                 <DataAnnotationsValidator />
 
                 <div class="form-control">
                     <div class="form-input-box">
-                        <InputText @bind-Value="loginDto.UserName" id="username" class="form-input" required />
+                        <InputText @bind-Value="LoginDto.UserName" id="username" class="form-input" required />
                         <label for="username" class="form-label">Username</label>
                         <i class="fa-solid fa-user"></i>
                     </div>
-                    <ValidationMessage For="@(() => loginDto.UserName)" />
+                    <ValidationMessage For="@(() => LoginDto.UserName)" />
                 </div>
 
                 <div class="form-control">
                     <div class="form-input-box">
-                        <InputText @bind-Value="loginDto.Password" id="password" class="form-input"
+                        <InputText @bind-Value="LoginDto.Password" id="password" class="form-input"
                                    type="@((isPasswordVisible) ? "text" : "password")"  required />
                         <label for="password" class="form-label">Password</label>
                         <i class="fa-regular @(isPasswordVisible ? "fa-eye" : "fa-eye-slash") password-show-btn"
                            @onclick="() => isPasswordVisible = !isPasswordVisible"></i>
                     </div>
-                    <ValidationMessage For="@(() => loginDto.Password)" />
+                    <ValidationMessage For="@(() => LoginDto.Password)" />
                 </div>
 
                 @if (!string.IsNullOrEmpty(loginError))

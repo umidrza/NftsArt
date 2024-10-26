@@ -49,16 +49,10 @@ public partial class SellNft
         if (Nft != null)
         {
             await LoadWallet();
+
+            await JS.InvokeVoidAsync("NftSellScript");
         }
     }
-
-    //protected override async Task OnAfterRenderAsync(bool firstRender)
-    //{
-    //    if (firstRender)
-    //    {
-    //        await JS.InvokeVoidAsync("NftSellScript");
-    //    }
-    //}
 
     protected async Task LoadNft()
     {
@@ -76,12 +70,6 @@ public partial class SellNft
             $"api/wallet/my-wallet" +
             $"?BlockchainName={Nft?.BlockchainName}" +
             $"&CurrencyName={AuctionCreateDto.Currency}");
-
-        Console.WriteLine("__________________");
-        Console.WriteLine(res);
-        Console.WriteLine(res?.Data);
-        Console.WriteLine("__________________");
-
 
         if (res != null && res.IsSuccess)
         {

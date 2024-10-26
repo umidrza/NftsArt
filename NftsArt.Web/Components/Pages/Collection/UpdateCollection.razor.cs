@@ -48,7 +48,7 @@ public partial class UpdateCollection : ComponentBase
     {
         var res = await ApiClient.GetFromJsonAsync<List<NftSummaryDto>>($"api/nft/my-nfts");
 
-        if (res.IsSuccess && res.Data != null)
+        if (res != null && res.IsSuccess && res.Data != null)
         {
             Nfts = res.Data;
         }
@@ -72,7 +72,7 @@ public partial class UpdateCollection : ComponentBase
     {
         var res = await ApiClient.DeleteAsync<CollectionSummaryDto>($"api/collection/{Id}");
 
-        if (res.IsSuccess)
+        if (res != null && res.IsSuccess)
         {
             NavigationManager.NavigateTo("/collection");
         }

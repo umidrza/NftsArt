@@ -25,6 +25,16 @@ public partial class IndexCollection
         await LoadCollections();
         await LoadCollectors();
 
+        if (Collections != null)
+        {
+            await JS.InvokeVoidAsync("CollectionScript");
+        }
+
+        if (Collectors != null)
+        {
+            await JS.InvokeVoidAsync("AutoScrollScript");
+        }
+
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         UserId = authState.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
     }
@@ -55,17 +65,6 @@ public partial class IndexCollection
             Collectors = res.Data;
         }
     }
-
-
-    //protected override async Task OnAfterRenderAsync(bool firstRender)
-    //{
-    //    if (firstRender)
-    //    {
-    //        await JS.InvokeVoidAsync("CollectionScript");
-    //        await JS.InvokeVoidAsync("InitScript");
-    //    }
-    //}
-
 
 
     //Filters

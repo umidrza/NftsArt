@@ -34,13 +34,10 @@ public partial class Home
         {
             AuctionStatus = Auction.Nft.GetAuctionStatus();
         }
-    }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
+        if (Collectors != null)
         {
-            await JS.InvokeVoidAsync("InitScript");
+            await JS.InvokeVoidAsync("AutoScrollScript");
         }
     }
 
@@ -48,7 +45,7 @@ public partial class Home
     {
         var res = await ApiClient.GetFromJsonAsync<List<UserDetailDto>>($"api/auth/collector");
 
-        if (res.IsSuccess && res.Data != null)
+        if (res != null && res.IsSuccess && res.Data != null)
         {
             Collectors = res.Data;
         }
@@ -58,7 +55,7 @@ public partial class Home
     {
         var res = await ApiClient.GetFromJsonAsync<List<NftSummaryDto>>($"api/nft/popular");
 
-        if (res.IsSuccess && res.Data != null)
+        if (res != null && res.IsSuccess && res.Data != null)
         {
             PopularNfts = res.Data;
         }
@@ -71,6 +68,14 @@ public partial class Home
         if (res != null && res.IsSuccess)
         {
             Auction = res.Data;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("DropdownScript");
         }
     }
 }

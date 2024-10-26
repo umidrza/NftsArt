@@ -20,18 +20,15 @@ public partial class ConnectWallet
     private WalletSummaryDto? Wallet { get; set; }
     private UserDetailDto? User { get; set; }
 
-    //protected override async Task OnAfterRenderAsync(bool firstRender)
-    //{
-    //    if (firstRender)
-    //    {
-    //        await JS.InvokeVoidAsync("WalletScript");
-    //    }
-    //}
-
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         await LoadProviders();
+
+        if (Providers != null)
+        {
+            await JS.InvokeVoidAsync("WalletScript");
+        }
     }
 
     protected async Task LoadProviders()

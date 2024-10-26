@@ -34,7 +34,7 @@ public partial class CreateCollection
     {
         var res = await ApiClient.GetFromJsonAsync<List<NftSummaryDto>>($"api/nft/my-nfts");
 
-        if (res.IsSuccess && res.Data != null)
+        if (res != null && res.IsSuccess && res.Data != null)
         {
             Nfts = res.Data;
         }
