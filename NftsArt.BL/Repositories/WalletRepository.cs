@@ -42,6 +42,10 @@ public class WalletRepository(AppDbContext context) : IWalletRepository
     public async Task<Wallet?> GetByQueryAsync(WalletQueryDto query, string userId)
     {
         var wallets = context.Wallets
+            .Include (w => w.User)
+            .ThenInclude(u => u.Avatar)
+            .Include(w => w.Provider)
+            .AsNoTracking()
             .Where(w => w.UserId == userId)
             .AsQueryable();
 
@@ -60,6 +64,11 @@ public class WalletRepository(AppDbContext context) : IWalletRepository
             {
                 wallets = wallets.Where(w => w.Currency == currencyEnum);
             }
+        }
+
+        if (query.ProviderId.HasValue)
+        {
+            wallets = wallets.Where(w => w.ProviderId == query.ProviderId.Value);
         }
 
         return await wallets.FirstOrDefaultAsync();

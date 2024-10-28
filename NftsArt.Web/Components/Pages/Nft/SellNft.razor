@@ -19,18 +19,15 @@
                         <DataAnnotationsValidator />
 
                         <div class="form-preview">
-                            @if (Nft != null)
-                            {
-                                <h4 class="form-subtitle">Preview</h4>
-                                <h3 class="nft-sell-name">@Nft.Name</h3>
-                                <div class="nft-form-image">
-                                    <img src="@Nft.ImageUrl">
-                                </div>
-                                <div class="nft-sell-price">
-                                    <p>Price</p>
-                                    <h4 id="price-display">@AuctionCreateDto.Price.ToString("F2") @AuctionCreateDto.Currency</h4>
-                                </div>
-                            }
+                            <h4 class="form-subtitle">Preview</h4>
+                            <h3 class="nft-sell-name">@Nft.Name</h3>
+                            <div class="nft-form-image">
+                                <img src="@Nft.ImageUrl">
+                            </div>
+                            <div class="nft-sell-price">
+                                <p>Price</p>
+                                <h4 id="price-display">@AuctionCreateDto.Price.ToString("F2") @AuctionCreateDto.Currency</h4>
+                            </div>
                         </div>
                         <div class="form-inputs-container">
                             <div class="form-inputs">
@@ -117,7 +114,7 @@
                                 <h4 id="popup-price">@AuctionCreateDto.Price @AuctionCreateDto.Currency</h4>
                             </div>
                             <div class="nft-time">
-                                <span id="popup-end-time" class="countdown" data-date="@AuctionCreateDto.EndTime"></span>
+                                <span id="popup-end-time" class="countdown">@CalculateCountdown(AuctionCreateDto.EndTime)</span>
                             </div>
                         </div>
                     </div>
@@ -150,7 +147,7 @@
                                     <h4 id="popup-price">@AuctionCreateDto.Price @AuctionCreateDto.Currency</h4>
                                 </div>
                                 <div class="nft-time">
-                                    <span id="popup-end-time" class="countdown" data-date="@AuctionCreateDto.EndTime"></span>
+                                    <span id="popup-end-time" class="countdown">@CalculateCountdown(AuctionCreateDto.EndTime)</span>
                                 </div>
                             </div>
                         </div>

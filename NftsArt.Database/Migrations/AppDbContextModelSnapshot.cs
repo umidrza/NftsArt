@@ -606,16 +606,16 @@ namespace NftsArt.Database.Migrations
                             Id = "1",
                             AccessFailedCount = 0,
                             AvatarId = 1,
-                            ConcurrencyStamp = "2ec71838-f6c8-4857-8f3b-ba65c7a3d856",
+                            ConcurrencyStamp = "8baafb1e-1be3-4a1e-8638-c454ea0dded4",
                             Email = "umidrza47@gmail.com",
                             EmailConfirmed = true,
                             FullName = "Hope",
                             LockoutEnabled = false,
                             NormalizedEmail = "UMIDRZA47@GMAIL.COM",
                             NormalizedUserName = "HOPE",
-                            PasswordHash = "AQAAAAIAAYagAAAAEIM5ZXns1lE00jI7/ttNiE96yyOwwssqaUOwFED48KlPrRDY6oheyr4qHNM61KukSA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEHznwgOMxRizxIYUoZpYd4bCJHo9YtrEtkOVvGcWK4DFjqo3h1Xy/La8DS6P3X3WFQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "afe3fcdc-1155-4888-8f66-9ad1ac351173",
+                            SecurityStamp = "4975d96a-f7f7-43ad-87a0-f048233db637",
                             TwoFactorEnabled = false,
                             UserName = "hope"
                         });
@@ -655,8 +655,7 @@ namespace NftsArt.Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProviderId")
-                        .IsUnique();
+                    b.HasIndex("ProviderId");
 
                     b.HasIndex("UserId");
 
@@ -863,8 +862,8 @@ namespace NftsArt.Database.Migrations
             modelBuilder.Entity("NftsArt.Model.Entities.Wallet", b =>
                 {
                     b.HasOne("NftsArt.Model.Entities.Provider", "Provider")
-                        .WithOne("Wallet")
-                        .HasForeignKey("NftsArt.Model.Entities.Wallet", "ProviderId")
+                        .WithMany("Wallets")
+                        .HasForeignKey("ProviderId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -902,8 +901,7 @@ namespace NftsArt.Database.Migrations
 
             modelBuilder.Entity("NftsArt.Model.Entities.Provider", b =>
                 {
-                    b.Navigation("Wallet")
-                        .IsRequired();
+                    b.Navigation("Wallets");
                 });
 
             modelBuilder.Entity("NftsArt.Model.Entities.User", b =>

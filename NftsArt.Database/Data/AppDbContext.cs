@@ -122,8 +122,8 @@ public class AppDbContext : IdentityDbContext<User>
         
         builder.Entity<Wallet>()
             .HasOne(w => w.Provider)
-            .WithOne(p => p.Wallet)
-            .HasForeignKey<Wallet>(w => w.ProviderId)
+            .WithMany(p => p.Wallets)
+            .HasForeignKey(w => w.ProviderId)
             .OnDelete(DeleteBehavior.Restrict);
 
         List<IdentityRole> roles = new List<IdentityRole>

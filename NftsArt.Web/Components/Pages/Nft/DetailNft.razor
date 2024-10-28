@@ -38,7 +38,7 @@
                     </div>
                     <div class="auction-desc">
                         <div class="auction-info">
-                            @if (NftStatus == NftStatus.Listed)
+                            @if (Nft.NftStatus == NftStatus.Listed)
                             {
                                 <div class="auction-badge">
                                     <i class="live-icon"></i>
@@ -53,7 +53,7 @@
                                     }
                                     <h2 class="nft-auction-name">@Nft.Name</h2>
                                 </div>
-                                @if(NftStatus != NftStatus.Not_On_Sale && Auction != null)
+                                @if(Nft.NftStatus != NftStatus.Not_On_Sale && Auction != null)
                                 {
                                     <div class="auction-details">
                                         <div class="auction-detail">
@@ -61,38 +61,32 @@
                                             {
                                                 <p class="auction-text-grey">Current bid</p>
                                                 <h4 class="auction-text-black eth">@Auction.CurrentBid @Auction.Currency</h4>
-                                                <p class="auction-text-grey usd">@((UsdConversionRate * Auction.CurrentBid).ToString("F2")) USD</p>
+                                                <p class="auction-text-grey usd">@((usdConversionRate * Auction.CurrentBid).ToString("F2")) USD</p>
                                             }
                                             else
                                             {
                                                 <p class="auction-text-grey">Buy now price</p>
                                                 <h4 class="auction-text-black eth">@Auction.Price @Auction.Currency</h4>
-                                                <p class="auction-text-grey usd">@((UsdConversionRate * Auction.Price).ToString("F2")) USD</p>
+                                                <p class="auction-text-grey usd">@((usdConversionRate * Auction.Price).ToString("F2")) USD</p>
                                             }
                                         </div>
-                                        @if (NftStatus == NftStatus.Listed)
+                                        @if (Nft.NftStatus == NftStatus.Listed)
                                         {
                                             <div class="auction-detail">
                                                 <p class="auction-text-grey">Auction ending in</p>
                                                 <h4 class="auction-text-black countdown">@CountdownDisplay</h4>
-                                                @if (Bids != null)
-                                                {
-                                                    <p class="auction-text-grey">Bids: @Bids.Count</p> 
-                                                }
+                                                <p class="auction-text-grey">Bids: @(Bids != null ? Bids.Count : 0)</p>
                                             </div>
                                         }
-                                        else if (NftStatus == NftStatus.Expired)
+                                        else if (Nft.NftStatus == NftStatus.Expired)
                                         {
                                             <div class="auction-detail">
                                                 <p class="auction-text-grey">Auction ended</p>
                                                 <h4 class="auction-text-black">Expired</h4>
-                                                @if (Bids != null)
-                                                {
-                                                    <p class="auction-text-grey">Bids: @Bids.Count</p>
-                                                }
+                                                <p class="auction-text-grey">Bids: @(Bids != null ? Bids.Count : 0)</p>
                                             </div>
                                         }
-                                        else if (NftStatus == NftStatus.Not_Started)
+                                        else if (Nft.NftStatus == NftStatus.Not_Started)
                                         {
                                             <div class="auction-detail">
                                                 <p class="auction-text-grey">Auction starting in</p>
@@ -253,12 +247,12 @@
                                                 {
                                                     <tr>
                                                         <td class="eth">
-                                                            <i class="fa-brands @(Auction.Currency == "ETH" ? "fa-ethereum" : "fa-bitcoin")"></i>
-                                                            @bid.Price @Auction.Currency
+                                                            <i class="fa-brands @(Auction.Currency.ToString() == "ETH" ? "fa-ethereum" : "fa-bitcoin")"></i>
+                                                            @bid.Amount @Auction.Currency
                                                         </td>
                                                         <td class="usd"></td>
                                                         <td>@bid.Quantity</td>
-                                                        <td class="difference">@CalculateDifference(Auction.Price, bid.Price, bid.Quantity)</td>
+                                                        <td class="difference">@CalculateDifference(Auction.Price, bid.Amount, bid.Quantity)</td>
                                                         <td class="countdown days" data-date="@bid.EndTime"></td>
                                                         <td>@bid.Bidder.UserName</td>
                                                     </tr>
@@ -311,20 +305,20 @@
                                     </div>
                                 </a>
                                 <div class="nft-detail">
-                                    @if (Collection.Nfts[i].GetAuctionStatus() == NftStatus.Not_On_Sale)
+                                    @if (Collection.Nfts[i].NftStatus == NftStatus.Not_On_Sale)
                                     {
                                         <div class="nft-status nft-status-not-sale">
                                             <h4>Not on sale</h4>
                                         </div>
                                     }
-                                    else if (Collection.Nfts[i].GetAuctionStatus() == NftStatus.Not_Started)
+                                    else if (Collection.Nfts[i].NftStatus == NftStatus.Not_Started)
                                     {
                                         <div class="nft-status nft-status-not-sale">
                                             <h4>Not Started</h4>
                                             <p>Starts at: @Collection.Nfts[i].Auction!.StartTime.ToString("MM/dd/yyyy")</p>
                                         </div>
                                     }
-                                    else if (Collection.Nfts[i].GetAuctionStatus() == NftStatus.Expired)
+                                    else if (Collection.Nfts[i].NftStatus == NftStatus.Expired)
                                     {
                                         <div class="nft-status">
                                             <p>Highest bid</p>

@@ -125,9 +125,9 @@
 
                     <div class="collection-search">
                         <div class="collection-search-input">
-                            <input @oninput="HandleSearchChange" type="text" class="search-input" placeholder="Search collections" id="nft-search" name="search">
+                            <input @oninput="HandleSearchChange" @bind="QueryModel.SearchTerm" type="text" class="search-input" placeholder="Search collections" id="nft-search">
                             <i class="fa-solid fa-magnifying-glass"></i>
-                            <i @onclick="ClearSearch" class="fa-solid fa-xmark remove-search-btn hidden"></i>
+                            <i @onclick="ClearSearch" class="fa-solid fa-xmark remove-search-btn @((string.IsNullOrEmpty(QueryModel.SearchTerm) ? "hidden" : ""))"></i>
                         </div>
                         <div class="collection-select-filter">
                             <select @onchange="HandleSortChange" id="sort-by" class="filter-select">
@@ -191,37 +191,37 @@
                                         </div>
                                     </a>
                                     <div class="nft-detail">
-                                        @if (nft.GetAuctionStatus() == NftStatus.Not_On_Sale)
+                                        @if (nft.NftStatus == NftStatus.Not_On_Sale)
                                         {
                                             <div class="nft-status nft-status-not-sale">
                                                 <h4>Not on sale</h4>
                                             </div>
                                         }
-                                        else if (nft.GetAuctionStatus() == NftStatus.Not_Started)
+                                        else if (nft.NftStatus == NftStatus.Not_Started)
                                         {
                                             <div class="nft-status nft-status-not-sale">
                                                 <h4>Not Started</h4>
                                                 <p>Starts at: @nft.Auction!.StartTime.ToString("MM/dd/yyyy")</p>
                                             </div>
                                         }
-                                        else if (nft.GetAuctionStatus() == NftStatus.Expired)
+                                        else if (nft.NftStatus == NftStatus.Expired)
                                         {
                                             <div class="nft-status">
-                                                <p>Highest bid</p>
+                                                <p>Price</p>
                                                 <h4 class="nft-price">@nft.Auction!.Price @nft.Auction.Currency</h4>
                                             </div>
                                             <div class="nft-time">
                                                 <span class="expired">Expired</span>
                                             </div>
                                         }
-                                        else
+                                        else if (nft.NftStatus == NftStatus.Listed)
                                         {
                                             <div class="nft-status">
-                                                <p>Highest bid</p>
+                                                <p>Price</p>
                                                 <h4 class="nft-price">@nft.Auction!.Price @nft.Auction.Currency</h4>
                                             </div>
                                             <div class="nft-time">
-                                                <span class="countdown" data-date="@nft.Auction.EndTime">04:45:32</span>
+                                                <span class="countdown">@CalculateCountdown(nft.Auction.EndTime)</span>
                                             </div>
                                         }
                                     </div>

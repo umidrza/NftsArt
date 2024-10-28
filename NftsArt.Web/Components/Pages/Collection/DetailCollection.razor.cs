@@ -3,6 +3,7 @@ using Microsoft.JSInterop;
 using NftsArt.Model.Dtos.Collection;
 using NftsArt.Model.Dtos.Nft;
 using NftsArt.Model.Dtos.User;
+using NftsArt.Model.Entities;
 
 namespace NftsArt.Web.Components.Pages.Collection;
 
@@ -19,6 +20,9 @@ public partial class DetailCollection
 
     private List<UserDetailDto>? Collectors { get; set; }
 
+    private bool isDataLoaded;
+    private bool isScriptsInitialized;
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
@@ -26,16 +30,25 @@ public partial class DetailCollection
         await LoadCollectionNfts();
         await LoadCollectors();
 
+        isDataLoaded = true;
+    }
 
-        if (Collection != null && Nfts != null)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!isScriptsInitialized && isDataLoaded)
         {
-            await JS.InvokeVoidAsync("CollectionScript");
-            await JS.InvokeVoidAsync("DropdownScript");
-        }
+            if (Collection != null && Nfts != null)
+            {
+                await JS.InvokeVoidAsync("CollectionScript");
+                await JS.InvokeVoidAsync("DropdownScript");
+            }
 
-        if (Collectors != null)
-        {
-            await JS.InvokeVoidAsync("AutoScrollScript");
+            if (Collectors != null)
+            {
+                await JS.InvokeVoidAsync("AutoScrollScript");
+            }
+
+            isScriptsInitialized = true;
         }
     }
 
@@ -76,6 +89,26 @@ public partial class DetailCollection
         if (res != null && res.IsSuccess && res.Data != null)
         {
             Collectors = res.Data;
+        }
+    }
+
+    private string CalculateCountdown(DateTime auctionEndTime)
+    {
+        var timeDifference = auctionEndTime - DateTime.Now;
+
+        if (timeDifference.TotalMilliseconds > 0)
+        {
+            var days = timeDifference.Days;
+            var hours = timeDifference.Hours;
+            var minutes = timeDifference.Minutes;
+
+            var countdownDisplay = $"{days}d : {hours:D2}h : {minutes:D2}m";
+
+            return countdownDisplay;
+        }
+        else
+        {
+            return "Expired";
         }
     }
 

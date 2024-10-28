@@ -476,7 +476,7 @@ namespace NftsArt.Database.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "AvatarId", "ConcurrencyStamp", "Email", "EmailConfirmed", "FullName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "OtpExpiryTime", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "ResetPasswordOtp", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "1", 0, 1, "2ec71838-f6c8-4857-8f3b-ba65c7a3d856", "umidrza47@gmail.com", true, "Hope", false, null, "UMIDRZA47@GMAIL.COM", "HOPE", null, "AQAAAAIAAYagAAAAEIM5ZXns1lE00jI7/ttNiE96yyOwwssqaUOwFED48KlPrRDY6oheyr4qHNM61KukSA==", null, false, null, "afe3fcdc-1155-4888-8f66-9ad1ac351173", false, "hope" });
+                values: new object[] { "1", 0, 1, "8baafb1e-1be3-4a1e-8638-c454ea0dded4", "umidrza47@gmail.com", true, "Hope", false, null, "UMIDRZA47@GMAIL.COM", "HOPE", null, "AQAAAAIAAYagAAAAEHznwgOMxRizxIYUoZpYd4bCJHo9YtrEtkOVvGcWK4DFjqo3h1Xy/La8DS6P3X3WFQ==", null, false, null, "4975d96a-f7f7-43ad-87a0-f048233db637", false, "hope" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
@@ -601,8 +601,7 @@ namespace NftsArt.Database.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Wallets_ProviderId",
                 table: "Wallets",
-                column: "ProviderId",
-                unique: true);
+                column: "ProviderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Wallets_UserId",

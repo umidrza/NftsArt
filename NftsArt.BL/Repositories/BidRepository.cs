@@ -61,6 +61,9 @@ public class BidRepository(AppDbContext context) : IBidRepository
         if (buyer == null)
             return Result<BidSummaryDto>.Failure("Buyer not found.");
 
+        if (buyer.Wallets == null || buyer.Wallets.Count == 0)
+            return Result<BidSummaryDto>.Failure("No buyer wallet");
+
         var buyerWallets = buyer.Wallets
             .Where(w => w.Blockchain == auction.Nft.Blockchain && w.Currency == auction.Currency)
             .ToList();

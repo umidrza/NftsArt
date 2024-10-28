@@ -25,7 +25,6 @@ public static class BidMapping
                 bid.StartTime,
                 bid.EndTime,
                 bid.Quantity,
-                bid.Auction.ToSummaryDto(),
                 bid.Bidder.ToSummaryDto()
             );
     }
@@ -40,7 +39,7 @@ public static class BidMapping
                 bid.EndTime,
                 bid.Quantity,
                 bid.AuctionId,
-                bid.Bidder.ToSummaryDto()
+                bid.BidderId
             );
     }
 }

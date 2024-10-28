@@ -1,5 +1,6 @@
 ﻿using NftsArt.Model.Dtos.Auction;
 using NftsArt.Model.Dtos.User;
+using NftsArt.Model.Enums;
 
 namespace NftsArt.Model.Dtos.Nft;
 
@@ -8,7 +9,9 @@ public record class NftDetailDto(
         string Name,
         string Description,
         string ImageUrl,
-        string BlockchainName,
+        Blockchain Blockchain,
+        NftStatus NftStatus,
+        string CreatorId,
         UserSummaryDto Creator,
         AuctionSummaryDto? Auction
     );

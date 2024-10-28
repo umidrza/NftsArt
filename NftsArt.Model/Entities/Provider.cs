@@ -6,5 +6,5 @@ public class Provider
     public required string Name { get; set; }
     public required string Image { get; set; }
 
-    public Wallet Wallet { get; set; }
+    public List<Wallet> Wallets { get; set; } = [];
 }

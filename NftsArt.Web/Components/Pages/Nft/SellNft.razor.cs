@@ -3,6 +3,7 @@ using Microsoft.JSInterop;
 using NftsArt.Model.Dtos.Auction;
 using NftsArt.Model.Dtos.Nft;
 using NftsArt.Model.Dtos.Wallet;
+using NftsArt.Model.Entities;
 
 namespace NftsArt.Web.Components.Pages.Nft;
 
@@ -21,11 +22,13 @@ public partial class SellNft
     private WalletDetailDto? Wallet { get; set; }
 
     private bool isListingPopupActive = false;
-    private bool isCompletedPopupActive = false; 
+    private bool isCompletedPopupActive = false;
+
+    private bool isDataLoaded;
+    private bool isScriptsInitialized;
 
     private async Task HandleValidSubmit()
     {
-
         if (Wallet != null)
         {
             var res = await ApiClient.PostAsync<AuctionSummaryDto, AuctionCreateDto>($"api/auction/{Id}", AuctionCreateDto);
@@ -49,8 +52,21 @@ public partial class SellNft
         if (Nft != null)
         {
             await LoadWallet();
+        }
 
-            await JS.InvokeVoidAsync("NftSellScript");
+        isDataLoaded = true;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!isScriptsInitialized && isDataLoaded)
+        {
+            if (Nft != null)
+            {
+                await JS.InvokeVoidAsync("NftSellScript");
+            }
+
+            isScriptsInitialized = true;
         }
     }
 
@@ -68,12 +84,33 @@ public partial class SellNft
     {
         var res = await ApiClient.GetFromJsonAsync<WalletDetailDto>(
             $"api/wallet/my-wallet" +
-            $"?BlockchainName={Nft?.BlockchainName}" +
-            $"&CurrencyName={AuctionCreateDto.Currency}");
-
-        if (res != null && res.IsSuccess)
+            $"?BlockchainName={Nft?.Blockchain}");
+        
+        if (res != null && res.IsSuccess && res != null)
         {
             Wallet = res.Data;
+        }
+        else
+        {
+            Console.WriteLine($"You don't have {Nft?.Blockchain} blockchain");
+        }
+    }
+
+    private string CalculateCountdown(DateTime auctionEndTime)
+    {
+        var timeDifference = auctionEndTime - DateTime.Now;
+
+        if (timeDifference.TotalMilliseconds > 0)
+        {
+            var days = timeDifference.Days;
+            var hours = timeDifference.Hours;
+            var minutes = timeDifference.Minutes;
+
+            return $"{days}d : {hours:D2}h : {minutes:D2}m";
+        }
+        else
+        {
+            return "Expired";
         }
     }
 }

@@ -16,12 +16,15 @@ public partial class Home
     private List<NftSummaryDto>? PopularNfts { get; set; }
 
     private AuctionDetailDto? Auction { get; set; }
-    private NftStatus AuctionStatus { get; set; }
     private bool isTermsAccepted = true;
 
     private List<UserDetailDto>? Collectors { get; set; }
 
+    private bool isDataLoaded;
+    private bool isScriptsInitialized;
 
+    private Timer timer;
+    private string CountdownDisplay { get; set; } = "Calculating...";
 
     protected override async Task OnInitializedAsync()
     {
@@ -32,12 +35,27 @@ public partial class Home
 
         if (Auction != null)
         {
-            AuctionStatus = Auction.Nft.GetAuctionStatus();
+            StartTimer();
         }
 
-        if (Collectors != null)
+        isDataLoaded = true;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
         {
-            await JS.InvokeVoidAsync("AutoScrollScript");
+            await JS.InvokeVoidAsync("DropdownScript");
+        }
+
+        if (!isScriptsInitialized && isDataLoaded)
+        {
+            if (Collectors != null)
+            {
+                await JS.InvokeVoidAsync("AutoScrollScript");
+            }
+
+            isScriptsInitialized = true;
         }
     }
 
@@ -71,11 +89,36 @@ public partial class Home
         }
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    private void StartTimer()
     {
-        if (firstRender)
+        timer = new Timer(UpdateCountdown, null, 0, 60000);
+    }
+
+    private void UpdateCountdown(object state)
+    {
+        var timeDifference = Auction.EndTime - DateTime.Now;
+
+        if (timeDifference.TotalMilliseconds > 0)
         {
-            await JS.InvokeVoidAsync("DropdownScript");
+            var days = timeDifference.Days;
+            var hours = timeDifference.Hours;
+            var minutes = timeDifference.Minutes;
+
+            CountdownDisplay = Auction.EndTime.Date == DateTime.Today
+                ? $"{hours.ToString("D2")}h : {minutes.ToString("D2")}m"
+                : $"{days}d : {hours.ToString("D2")}h : {minutes.ToString("D2")}m";
         }
+        else
+        {
+            CountdownDisplay = "Expired";
+            timer.Dispose();
+        }
+
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        timer?.Dispose();
     }
 }

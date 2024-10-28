@@ -9,7 +9,8 @@ public record class BidCreateDto
 
     [Required(ErrorMessage = "Expiration date is required.")]
     public DateTime EndTime { get; set; }
-     
+
+    [Range(1, 1000)]
     public int Quantity { get; set; } = 1;
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

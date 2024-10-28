@@ -26,7 +26,9 @@ public static class NftMapping
                 nft.Name,
                 nft.Description,
                 nft.ImageUrl,
-                nft.Blockchain.ToString(),
+                nft.Blockchain,
+                nft.GetAuctionStatus(),
+                nft.CreatorId,
                 nft.Creator.ToSummaryDto(),
                 nft.Auction?.ToSummaryDto()
             );
@@ -40,7 +42,8 @@ public static class NftMapping
                 nft.Name,
                 nft.ImageUrl,
                 nft.CreatorId,
-                nft.Blockchain.ToString(),
+                nft.Blockchain,
+                nft.GetAuctionStatus(),
                 nft.Auction?.ToSummaryDto()
             );
     }
@@ -59,35 +62,7 @@ public static class NftMapping
         if (DateTime.Now < nft.Auction.StartTime)
             return NftStatus.Not_Started;
 
-        if (DateTime.Now > nft.Auction.EndTime && nft.Auction.Quantity <= 0)
-            return NftStatus.Expired;
-
-        return NftStatus.Listed;
-    }
-
-    public static NftStatus GetAuctionStatus(this NftDetailDto nft)
-    {
-        if (nft.Auction == null)
-            return NftStatus.Not_On_Sale;
-
-        if (DateTime.Now < nft.Auction.StartTime)
-            return NftStatus.Not_Started;
-
-        if (DateTime.Now > nft.Auction.EndTime && nft.Auction.Quantity <= 0)
-            return NftStatus.Expired;
-
-        return NftStatus.Listed;
-    }
-
-    public static NftStatus GetAuctionStatus(this NftSummaryDto nft)
-    {
-        if (nft.Auction == null)
-            return NftStatus.Not_On_Sale;
-
-        if (DateTime.Now < nft.Auction.StartTime)
-            return NftStatus.Not_Started;
-
-        if (DateTime.Now > nft.Auction.EndTime && nft.Auction.Quantity <= 0)
+        if (DateTime.Now > nft.Auction.EndTime || nft.Auction.Quantity <= 0)
             return NftStatus.Expired;
 
         return NftStatus.Listed;

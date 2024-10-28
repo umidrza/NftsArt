@@ -6,7 +6,6 @@ using NftsArt.Model.Dtos.Collection;
 using NftsArt.Model.Dtos.Nft;
 using NftsArt.Model.Entities;
 using NftsArt.Model.Enums;
-using NftsArt.Model.Mapping;
 
 namespace NftsArt.Web.Components.Pages.Nft;
 
@@ -20,51 +19,60 @@ public partial class DetailNft
 
     private NftDetailDto? Nft { get; set; }
     private CollectionDetailDto? Collection { get; set; }
-    private AuctionSummaryDto? Auction { get; set; }
-    private List<BidSummaryDto>? Bids { get; set; }
-    private NftStatus NftStatus { get; set; }
+    private AuctionDetailDto? Auction { get; set; }
+    private List<BidDetailDto>? Bids { get; set; }
 
     private bool isUserLiked = false;
     private int likeCount = 0;
 
     private bool isTermsAccepted = true;
 
-    private readonly decimal EthToUsdRate = 2637.91M;
-    private readonly decimal BtcToUsdRate = 68156.61M;
-    private decimal UsdConversionRate;
+    private decimal usdConversionRate;
 
     private Timer timer;
     private string CountdownDisplay { get; set; } = "Calculating...";
 
+    private bool isDataLoaded;
+    private bool isScriptsInitialized;
+
     protected override async Task OnParametersSetAsync()
     {
+        await LoadNft();
+
         if (CollectionId.HasValue)
         {
             await LoadCollection();
         }
 
-        await LoadNft();
-
         if (Nft != null)
         {
             await LoadLikeStatus();
-            Auction = Nft.Auction;
-            NftStatus = Nft.GetAuctionStatus();
+            await LoadAuction();
         }
 
         if (Auction != null)
         {
             await LoadBids();
-            UsdConversionRate = Auction.Currency == Currency.BTC.ToString() ? BtcToUsdRate : EthToUsdRate;
+
+            GetConversionRate();
             StartTimer();
         }
 
-        if (Bids != null)
-        {
-            await JS.InvokeVoidAsync("DropdownScript");
-        }
-
         StateHasChanged();
+        isDataLoaded = true;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!isScriptsInitialized && isDataLoaded)
+        {
+            if (Bids != null)
+            {
+                await JS.InvokeVoidAsync("DropdownScript");
+            }
+
+            isScriptsInitialized = true;
+        }
     }
 
     private async Task LoadNft()
@@ -76,6 +84,20 @@ public partial class DetailNft
             Nft = res.Data;
         }
     }
+
+    private async Task LoadAuction()
+    {
+        if (Nft != null && Nft.NftStatus != NftStatus.Not_On_Sale)
+        {
+            var res = await ApiClient.GetFromJsonAsync<AuctionDetailDto>($"api/auction/{Nft.Auction!.Id}");
+
+            if (res != null && res.IsSuccess && res.Data != null)
+            {
+                Auction = res.Data;
+            }
+        }
+    }
+
 
     private async Task LoadCollection()
     {
@@ -91,7 +113,7 @@ public partial class DetailNft
     {
         if (Nft != null && Nft.Auction != null)
         {
-            var res = await ApiClient.GetFromJsonAsync<List<BidSummaryDto>>($"api/auction/{Nft.Auction.Id}/bids");
+            var res = await ApiClient.GetFromJsonAsync<List<BidDetailDto>>($"api/auction/{Nft.Auction.Id}/bids");
 
             if (res != null && res.IsSuccess && res.Data != null)
             {
@@ -132,6 +154,14 @@ public partial class DetailNft
                 isUserLiked = false;
             }
         }
+    }
+
+    private void GetConversionRate()
+    {
+        decimal EthToUsdRate = 2637.91M;
+        decimal BtcToUsdRate = 68156.61M;
+
+        usdConversionRate = Auction!.Currency.ToString() == Currency.BTC.ToString() ? BtcToUsdRate : EthToUsdRate;
     }
 
     private void StartTimer()

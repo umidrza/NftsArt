@@ -1,4 +1,4 @@
-﻿using NftsArt.Model.Dtos.User;
+﻿using NftsArt.Model.Enums;
 
 namespace NftsArt.Model.Dtos.Auction;
 
@@ -9,7 +9,8 @@ public record class AuctionSummaryDto(
         DateTime StartTime,
         DateTime EndTime,
         int Quantity,
-        string Currency,
+        Currency Currency,
+        NftStatus NftStatus,
         int NftId,
-        UserSummaryDto Seller
+        string SellerId
     );

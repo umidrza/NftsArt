@@ -117,11 +117,11 @@ public class AuctionController(IAuctionRepository auctionRepo) : ControllerBase
 
 
     [HttpGet("{id:int}/bids")]
-    public async Task<ActionResult<List<BidSummaryDto>>> GetAuctionBids([FromRoute] int id)
+    public async Task<ActionResult<List<BidDetailDto>>> GetAuctionBids([FromRoute] int id)
     {
         var bids = (await auctionRepo.GetBidsAsync(id))
-                    .Select(b => b.ToSummaryDto()).ToList();
+                    .Select(b => b.ToDetailDto()).ToList();
 
-        return Ok(Result<List<BidSummaryDto>>.Success(bids));
+        return Ok(Result<List<BidDetailDto>>.Success(bids));
     }
 }

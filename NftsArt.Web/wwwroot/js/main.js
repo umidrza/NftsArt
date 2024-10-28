@@ -148,29 +148,6 @@ function NftSellScript() {
     }
 }
 
-function WalletScript() {
-    const walletPopup = document.querySelector('.popup-section');
-    const walletCancelBtn = document.getElementById('wallet-cancel-btn');
-
-    walletCancelBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        walletPopup.classList.remove('active');
-    });
-
-    document.querySelectorAll('.wallet').forEach(wallet => {
-        wallet.addEventListener('click', () => {
-            walletPopup.classList.add('active');
-            wallet.querySelector('input[name="provider"]').checked = true;
-            const walletImage = wallet.querySelector('.wallet-image img');
-            const walletName = wallet.querySelector('.wallet-name');
-            const walletBlockchain = document.querySelector('input[name="blockchain"]:checked + label');
-            walletPopup.querySelector('.wallet-image img').src = walletImage.src;
-            walletPopup.querySelector('.wallet-name').textContent = walletName.textContent;
-            walletPopup.querySelector('.wallet-info').textContent = walletBlockchain.textContent;
-        });
-    });
-}
-
 function ThemeScript() {
     const root = document.documentElement;
     const toggleButton = document.getElementById('theme-toggle');

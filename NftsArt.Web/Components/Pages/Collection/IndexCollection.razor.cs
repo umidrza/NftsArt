@@ -19,24 +19,35 @@ public partial class IndexCollection
 
     private string? UserId { get; set; }
 
+
+    private bool isDataLoaded;
+    private bool isScriptsInitialized;
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         await LoadCollections();
         await LoadCollectors();
+        await LoadUserId();
+        isDataLoaded = true;
+    }
 
-        if (Collections != null)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!isScriptsInitialized && isDataLoaded)
         {
-            await JS.InvokeVoidAsync("CollectionScript");
-        }
+            if (Collections != null)
+            {
+                await JS.InvokeVoidAsync("CollectionScript");
+            }
 
-        if (Collectors != null)
-        {
-            await JS.InvokeVoidAsync("AutoScrollScript");
-        }
+            if (Collectors != null)
+            {
+                await JS.InvokeVoidAsync("AutoScrollScript");
+            }
 
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        UserId = authState.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
+            isScriptsInitialized = true;
+        }
     }
 
     private async Task LoadCollections()
@@ -64,6 +75,12 @@ public partial class IndexCollection
         {
             Collectors = res.Data;
         }
+    }
+
+    protected async Task LoadUserId()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        UserId = authState.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
     }
 
 

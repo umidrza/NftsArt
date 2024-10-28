@@ -9,6 +9,5 @@ public record class BidDetailDto(
         DateTime StartTime,
         DateTime EndTime,
         int Quantity,
-        AuctionSummaryDto Auction,
         UserSummaryDto Bidder
     );

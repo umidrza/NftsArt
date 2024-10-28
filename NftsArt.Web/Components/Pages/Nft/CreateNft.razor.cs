@@ -10,6 +10,7 @@ public partial class CreateNft
     [Inject] ApiClient ApiClient { get; set; }
     [Inject] NavigationManager NavigationManager { get; set; }
 
+
     [SupplyParameterFromForm]
     private NftCreateDto NftCreateDto { get; set; } = new NftCreateDto();
 

@@ -1,5 +1,6 @@
 ﻿using NftsArt.Model.Dtos.Auction;
 using NftsArt.Model.Entities;
+using NftsArt.Model.Enums;
 
 namespace NftsArt.Model.Mapping;
 
@@ -29,7 +30,8 @@ public static class AuctionMapping
                 auction.StartTime,
                 auction.EndTime,
                 auction.Quantity,
-                auction.Currency.ToString(),
+                auction.Currency,
+                auction.GetAuctionStatus(),
                 auction.Nft.ToSummaryDto(),
                 auction.Seller.ToSummaryDto()
             );
@@ -45,9 +47,10 @@ public static class AuctionMapping
                 auction.StartTime,
                 auction.EndTime,
                 auction.Quantity,
-                auction.Currency.ToString(),
+                auction.Currency,
+                auction.GetAuctionStatus(),
                 auction.NftId,
-                auction.Seller.ToSummaryDto()
+                auction.SellerId
             );
     }
 
@@ -57,6 +60,20 @@ public static class AuctionMapping
         auction.StartTime = updatedAuction.StartTime;
         auction.EndTime = updatedAuction.EndTime;
         auction.Quantity = updatedAuction.Quantity;
+    }
+
+    public static NftStatus GetAuctionStatus(this Auction auction)
+    {
+        if (auction == null)
+            return NftStatus.Not_On_Sale;
+
+        if (DateTime.Now < auction.StartTime)
+            return NftStatus.Not_Started;
+
+        if (DateTime.Now > auction.EndTime || auction.Quantity <= 0)
+            return NftStatus.Expired;
+
+        return NftStatus.Listed;
     }
 }
 

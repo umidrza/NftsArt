@@ -18,9 +18,9 @@
                     <div class="nft-collections-container">
                         <div class="collection-search">
                             <div class="collection-search-input">
-                                <input @oninput="HandleSearchChange" type="text" class="search-input" placeholder="Search collections" id="collection-search" name="search" />
+                                <input @oninput="HandleSearchChange" @bind="QueryModel.SearchTerm" type="text" class="search-input" placeholder="Search collections" id="collection-search" name="search" />
                                 <i class="fa-solid fa-magnifying-glass"></i>
-                                <i @onclick="ClearSearch" class="fa-solid fa-xmark remove-search-btn"></i>
+                                <i @onclick="ClearSearch" class="fa-solid fa-xmark remove-search-btn @((string.IsNullOrEmpty(QueryModel.SearchTerm) ? "hidden" : ""))"></i>
                             </div>
                             <div class="collection-select-filter">
                                 <select @onchange="HandleBlockchainChange" name="blockchains" id="blockchains" class="filter-select">
