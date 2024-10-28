@@ -1,43 +1,3 @@
-function InitScript() {
-
-    document.querySelectorAll('.show-more').forEach(moreButton => {
-        const textElement = moreButton.parentElement.querySelector('.extra-content');
-        const fullText = textElement.innerHTML;
-        const length = +textElement.getAttribute('data-length');
-
-        if (length >= fullText.length) {
-            moreButton.classList.add('hidden');
-            return;
-        }
-
-        textElement.innerHTML = fullText.length > length ? fullText.slice(0, length) + '...' : text;
-        let isTruncated = true;
-
-        moreButton.addEventListener('click', () => {
-            if (isTruncated) {
-                textElement.innerHTML = fullText;
-                moreButton.textContent = 'Show less';
-            }
-            else {
-                textElement.innerHTML = fullText.length > length ? fullText.slice(0, length) + '...' : text;
-                moreButton.textContent = 'Show more';
-            }
-
-            isTruncated = !isTruncated;
-        });
-    });
-
-    document.querySelectorAll('.alert').forEach(alert => {
-        setTimeout(() => {
-            alert.classList.add('deactive');
-        }, 3000);
-
-        setTimeout(() => {
-            alert.remove();
-        }, 3500);
-    });
-
-}
 
 function CollectionScript() {
     const collectionFilters = document.querySelector('.collection-cards-filters');
@@ -101,51 +61,6 @@ function CollectionScript() {
     }
 
     handleSwitchChange();
-}
-
-function NftSellScript() {
-    const startTimeInput = document.getElementById('start-time');
-    const endTimeInput = document.getElementById('end-time');
-    const scheduleSelect = document.getElementById('schedule-time');
-
-    const today = new Date().toISOString().split('T')[0];
-    startTimeInput.setAttribute('min', today);
-    startTimeInput.value = today;
-
-    updateEndTime();
-    scheduleSelect.addEventListener('change', updateEndTime);
-    startTimeInput.addEventListener('change', updateEndTime);
-
-    function updateEndTime() {
-        const scheduleValue = scheduleSelect.value.split('-');
-        const startDate = new Date(startTimeInput.value);
-        let endDate = new Date(startDate);
-
-        if (scheduleValue[1] === 'month') {
-            endDate.setMonth(endDate.getMonth() + +scheduleValue[0]);
-        }
-        else if (scheduleValue[1] === 'year') {
-            endDate.setFullYear(endDate.getFullYear() + +scheduleValue[0]);
-        }
-
-        endTimeInput.value = endDate.toISOString().split('T')[0];
-        endTimeInput.setAttribute('min', startTimeInput.value);
-    }
-
-    const walletLink = document.querySelector('.popup-nft-link');
-    if (walletLink) {
-        const walletKey = walletLink.querySelector('.popup-wallet-link');
-        const copyBtn = walletLink.querySelector('.wallet-copy-btn');
-        const fullKey = walletKey.getAttribute('data-key');
-        const truncatedKey = `0x${fullKey.slice(0, 7)}...K${fullKey.slice(-3)}`;
-        walletKey.textContent = truncatedKey;
-
-        copyBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(fullKey);
-            copyBtn.classList.toggle('fa-solid');
-            copyBtn.classList.toggle('fa-regular');
-        });
-    }
 }
 
 function ThemeScript() {
@@ -231,4 +146,3 @@ function AutoScrollScript() {
         }, 30)
     });
 }
-

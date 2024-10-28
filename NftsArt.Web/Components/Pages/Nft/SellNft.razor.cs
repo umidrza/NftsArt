@@ -3,14 +3,13 @@ using Microsoft.JSInterop;
 using NftsArt.Model.Dtos.Auction;
 using NftsArt.Model.Dtos.Nft;
 using NftsArt.Model.Dtos.Wallet;
-using NftsArt.Model.Entities;
+using System.Globalization;
 
 namespace NftsArt.Web.Components.Pages.Nft;
 
 public partial class SellNft
 {
     [Inject] ApiClient ApiClient { get; set; }
-    [Inject] NavigationManager NavigationManager { get; set; }
     [Inject] IJSRuntime JS {  get; set; }
 
     [Parameter] public int Id { get; set; }
@@ -23,9 +22,6 @@ public partial class SellNft
 
     private bool isListingPopupActive = false;
     private bool isCompletedPopupActive = false;
-
-    private bool isDataLoaded;
-    private bool isScriptsInitialized;
 
     private async Task HandleValidSubmit()
     {
@@ -52,21 +48,9 @@ public partial class SellNft
         if (Nft != null)
         {
             await LoadWallet();
-        }
 
-        isDataLoaded = true;
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!isScriptsInitialized && isDataLoaded)
-        {
-            if (Nft != null)
-            {
-                await JS.InvokeVoidAsync("NftSellScript");
-            }
-
-            isScriptsInitialized = true;
+            AuctionCreateDto.StartTime = DateTime.Now;
+            UpdateEndDate();
         }
     }
 
@@ -112,5 +96,40 @@ public partial class SellNft
         {
             return "Expired";
         }
+    }
+
+
+    private string _selectedSchedule = "6-month";
+    public string SelectedSchedule
+    {
+        get => _selectedSchedule;
+        set
+        {
+            _selectedSchedule = value;
+            UpdateEndDate();
+        }
+    }
+    private DateTime MinEndDate => AuctionCreateDto.StartTime.AddDays(1);
+    private void UpdateEndDate()
+    {
+        var scheduleParts = SelectedSchedule.Split('-');
+        int duration = int.Parse(scheduleParts[0], CultureInfo.InvariantCulture);
+        string unit = scheduleParts[1];
+
+        AuctionCreateDto.EndTime = unit switch
+        {
+            "month" => AuctionCreateDto.StartTime.AddMonths(duration),
+            "year" => AuctionCreateDto.StartTime.AddYears(duration),
+            _ => AuctionCreateDto.EndTime
+        };
+    }
+
+
+    private bool isKeyCopied = false;
+    private string TruncatedWalletKey => $"0x{Wallet?.Key[..7]}...K{Wallet?.Key[^3..]}";
+    private async Task CopyToClipboard()
+    {
+        await JS.InvokeVoidAsync("navigator.clipboard.writeText", Wallet?.Key);
+        isKeyCopied = true;
     }
 }

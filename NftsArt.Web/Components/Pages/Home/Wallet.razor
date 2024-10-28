@@ -66,14 +66,14 @@
             </div>
 
             <div class="popup-detail">
-                @if (User != null && WalletDetailDto != null)
+                @if (WalletDetailDto != null)
                 {
                     <div class="popup-user-wallet">
                         <div class="avatar">
-                            <img class="avatar-img" src="@User.Avatar?.ImageUrl">
+                            <img class="avatar-img" src="@WalletDetailDto.User.Avatar?.ImageUrl">
                         </div>
                         <div class="popup-wallet-desc">
-                            <h4 class="popup-user-name">@User.FullName</h4>
+                            <h4 class="popup-user-name">@WalletDetailDto.User.FullName</h4>
                             <div class="popup-wallet-detail">
                                 <p class="popup-wallet-link">@WalletDetailDto.Key</p>
                                 <div class="popup-wallet-connected">Connected</div>
@@ -84,11 +84,10 @@
                 <div class="popup-subheader">
                     <h4>Welcome to NFTs Art!</h4>
                     <p class="popup-desc popup-subheader-desc">
-                        <span class="extra-content" data-length="140">
-                            Click to sign in and accept the NFTs Art Term of Service:
-                            https://example-nftsart.io/terms
+                        <span class="extra-content">
+                            @GetExtraContent("Click to sign in and accept the NFTs Art Term of Service: https://example-nftsart.io/terms", 60)
                         </span>
-                        <span class="show-more">Show more</span>
+                        <span @onclick="() => IsTruncated = !IsTruncated" class="show-more">@ButtonText</span>
                     </p>
                 </div>
             </div>

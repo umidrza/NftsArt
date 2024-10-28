@@ -3496,9 +3496,10 @@ body:has(.notfound-section) {
 
 .popup-wallet-desc {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     gap: 12px;
+    width: calc(100% - 50px);
 }
 
 .popup-user-name {

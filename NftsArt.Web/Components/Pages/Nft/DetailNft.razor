@@ -16,10 +16,13 @@
                     <div class="auction-image">
                         <img src="@Nft.ImageUrl">
                         <div class="auction-detail-desc">
-                            <span class="extra-content" data-length="300">
-                                @Nft.Description
+                            <span class="extra-content">
+                                @GetExtraContent(Nft.Description, 300)
                             </span>
-                            <span class="show-more">Show more</span>
+                            @if(Nft.Description.Length > 300)
+                            {
+                                <span @onclick="() => IsTruncated = !IsTruncated" class="show-more">@ButtonText</span>
+                            }
                         </div>
                         <div class="auction-actions">
                             <div class="auction-action">

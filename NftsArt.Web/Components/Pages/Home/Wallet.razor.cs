@@ -11,40 +11,20 @@ public partial class Wallet
 {
     [Inject] ApiClient ApiClient { get; set; }
     [Inject] NavigationManager NavigationManager { get; set; }
-    [Inject] IJSRuntime JS { get; set; }
-
 
     private List<ProviderSummaryDto>? Providers { get; set; }
     private WalletDetailDto? WalletDetailDto { get; set; }
     private WalletCreateDto WalletCreateDto { get; set; } = new WalletCreateDto();
-    private UserDetailDto? User { get; set; }
 
     private ProviderSummaryDto? SelectedProvider { get; set; }
 
     private bool isPopupActive = false;
 
-    private bool isDataLoaded;
-    private bool isScriptsInitialized;
-
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         await LoadProviders();
-        isDataLoaded = true;
     }
-
-    //protected override async Task OnAfterRenderAsync(bool firstRender)
-    //{
-    //    if (!isScriptsInitialized && isDataLoaded)
-    //    {
-    //        if (Providers != null)
-    //        {
-    //            await JS.InvokeVoidAsync("WalletScript");
-    //        }
-
-    //        isScriptsInitialized = true;
-    //    }
-    //}
 
     protected async Task LoadProviders()
     {
@@ -102,4 +82,14 @@ public partial class Wallet
 
         return res != null && res.IsSuccess;
     }
+
+    private bool IsTruncated { get; set; } = true;
+    private string GetExtraContent(string text, int maxLength)
+    {
+        return IsTruncated && text.Length > maxLength
+            ? text.Substring(0, maxLength) + "..."
+            : text;
+    }
+
+    private string ButtonText => IsTruncated ? "Show more" : "Show less";
 }

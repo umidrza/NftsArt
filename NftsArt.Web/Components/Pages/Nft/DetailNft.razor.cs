@@ -209,4 +209,15 @@ public partial class DetailNft
         }
         return "N/A";
     }
+
+
+    private bool IsTruncated { get; set; } = true;
+    private string GetExtraContent(string text, int maxLength)
+    {
+        return IsTruncated && text.Length > maxLength
+            ? text.Substring(0, maxLength) + "..."
+            : text;
+    }
+    
+    private string ButtonText => IsTruncated ? "Show more" : "Show less";
 }
