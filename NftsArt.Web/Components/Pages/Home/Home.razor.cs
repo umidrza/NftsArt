@@ -3,8 +3,6 @@ using Microsoft.JSInterop;
 using NftsArt.Model.Dtos.Auction;
 using NftsArt.Model.Dtos.Nft;
 using NftsArt.Model.Dtos.User;
-using NftsArt.Model.Enums;
-using NftsArt.Model.Mapping;
 
 namespace NftsArt.Web.Components.Pages.Home;
 
@@ -18,7 +16,7 @@ public partial class Home
     private AuctionDetailDto? Auction { get; set; }
     private bool isTermsAccepted = true;
 
-    private List<UserDetailDto>? Collectors { get; set; }
+    private List<CollectorDto>? Collectors { get; set; }
 
     private bool isDataLoaded;
     private bool isScriptsInitialized;
@@ -61,7 +59,7 @@ public partial class Home
 
     private async Task LoadCollectors()
     {
-        var res = await ApiClient.GetFromJsonAsync<List<UserDetailDto>>($"api/auth/collector");
+        var res = await ApiClient.GetFromJsonAsync<List<CollectorDto>>($"api/auth/collector");
 
         if (res != null && res.IsSuccess && res.Data != null)
         {

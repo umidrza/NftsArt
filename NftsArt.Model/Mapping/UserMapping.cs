@@ -23,10 +23,7 @@ public static class UserMapping
                 user.UserName!,
                 user.FullName,
                 user.Email!,
-                user.Avatar?.ToSummaryDto(),
-                user.Followers.Count,
-                user.Collections.Count,
-                user.Auctions.Sum(a => a.Price)
+                user.Avatar?.ToSummaryDto()
             );
     }
 
@@ -37,9 +34,7 @@ public static class UserMapping
                 user.UserName!,
                 user.FullName,
                 user.Email!,
-                user.Avatar?.ToSummaryDto(),
-                user.Followers.Count,
-                user.Collections.Count
+                user.Avatar?.ToSummaryDto()
             );
     }
 
@@ -51,6 +46,19 @@ public static class UserMapping
         user.AvatarId = updatedUser.AvatarId;
     }
 
+    public static CollectorDto ToCollectorDto(this User user)
+    {
+        return new CollectorDto(
+                user.Id,
+                user.UserName!,
+                user.FullName,
+                user.Avatar?.ToSummaryDto(),
+                user.Nfts.Count,
+                user.Followers.Select(f => f.ToFollowDto()).ToList(),
+                user.Auctions.Sum(a => a.Price)
+            );
+    }
+
     public static UserUpdateDto ToUpdateDto(this UserDetailDto user)
     {
         return new UserUpdateDto()
@@ -60,6 +68,17 @@ public static class UserMapping
             Email = user.Email,
             AvatarId = user.Avatar?.Id,
         };
+    }
+
+    public static FollowDto ToFollowDto(this Follow follow)
+    {
+        return new FollowDto
+            (
+                follow.FollowerId,
+                follow.FollowingId,
+                follow.FollowedOn,
+                follow.IsDeleted
+            );
     }
 }
 

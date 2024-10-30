@@ -18,7 +18,7 @@ public interface INftRepository
     Task<Result<NftSummaryDto>> CreateAsync(NftCreateDto newNft, string userId);
     Task<Result<NftSummaryDto>> UpdateAsync(int id, NftUpdateDto updatedNft);
     Task<Result<NftSummaryDto>> DeleteAsync(int id);
-    Task<Result<Like>> LikeAsync(string userId, int nftId);
+    Task<Result<NftLikeDto>> LikeAsync(string userId, int nftId);
     Task<int> GetLikesCountAsync(int nftId);
     Task<bool> HasUserLikedAsync(string userId, int nftId);
 }
@@ -201,7 +201,7 @@ public class NftRepository(AppDbContext context) : INftRepository
             .ToListAsync();
     }
 
-    public async Task<Result<Like>> LikeAsync(string userId, int nftId)
+    public async Task<Result<NftLikeDto>> LikeAsync(string userId, int nftId)
     {
         var existingLike = await context.Likes
             .FirstOrDefaultAsync(x => x.NftId == nftId && x.UserId == userId);
@@ -212,14 +212,14 @@ public class NftRepository(AppDbContext context) : INftRepository
             await context.Likes.AddAsync(like);
             await context.SaveChangesAsync();
 
-            return Result<Like>.Success(like, "NFT liked successfully");
+            return Result<NftLikeDto>.Success(like.ToLikeDto(), "NFT liked successfully");
         }
         else
         {
             context.Likes.Remove(existingLike);
             await context.SaveChangesAsync();
 
-            return Result<Like>.Success(null!, "NFT unliked successfully");
+            return Result<NftLikeDto>.Success(null!, "NFT unliked successfully");
         }
     }
 

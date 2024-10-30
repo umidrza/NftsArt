@@ -10,8 +10,7 @@ public partial class UpdateCollection : ComponentBase
     [Inject] private ApiClient ApiClient { get; set; }
     [Inject] private NavigationManager NavigationManager { get; set; }
 
-    [Parameter]
-    public int Id { get; set; }
+    [Parameter] public int Id { get; set; }
 
     [SupplyParameterFromForm]
     public CollectionUpdateDto CollectionUpdateDto { get; set; } = new();

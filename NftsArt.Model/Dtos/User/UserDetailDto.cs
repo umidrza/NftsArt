@@ -7,8 +7,5 @@ public record class UserDetailDto(
         string UserName,
         string FullName,
         string Email,
-        AvatarSummaryDto? Avatar,
-        int FollowerCount,
-        int CollectionCount,
-        decimal AuctionsSumPrice
+        AvatarSummaryDto? Avatar
     );

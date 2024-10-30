@@ -22,9 +22,9 @@ public static class CollectionMapping
             (
                 collection.Id,
                 collection.Name,
-                collection.Creator.ToSummaryDto(),
                 collection.Blockchain,
                 collection.Category,
+                collection.Creator.ToCollectorDto(),
                 collection.CollectionNfts.Select(cn => cn.Nft.ToSummaryDto()).ToList()
             );
     }

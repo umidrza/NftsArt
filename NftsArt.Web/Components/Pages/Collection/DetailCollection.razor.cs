@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 using NftsArt.Model.Dtos.Collection;
 using NftsArt.Model.Dtos.Nft;
 using NftsArt.Model.Dtos.User;
-using NftsArt.Model.Entities;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace NftsArt.Web.Components.Pages.Collection;
 
@@ -11,14 +12,16 @@ public partial class DetailCollection
 {
     [Inject] ApiClient ApiClient { get; set; }
     [Inject] IJSRuntime JS { get; set; }
+    [Inject] AuthenticationStateProvider AuthStateProvider { get; set; }
 
 
-    [Parameter]
-    public int Id { get; set; }
+    [Parameter] public int Id { get; set; }
     private CollectionDetailDto? Collection { get; set; }
     private List<NftSummaryDto>? Nfts { get; set; }
 
-    private List<UserDetailDto>? Collectors { get; set; }
+    private List<CollectorDto>? Collectors { get; set; }
+
+    private string? UserId { get; set; }
 
     private bool isDataLoaded;
     private bool isScriptsInitialized;
@@ -29,6 +32,13 @@ public partial class DetailCollection
         await LoadCollection();
         await LoadCollectionNfts();
         await LoadCollectors();
+        await LoadUserId();
+
+        if (Collection != null && UserId != null)
+        {
+            FollowingState = Collection.Creator.Followers.Exists(f => f.FollowerId == UserId && !f.IsDeleted);
+            FollowerCount = Collection.Creator.Followers.Where(f => !f.IsDeleted).Count();
+        }
 
         isDataLoaded = true;
     }
@@ -84,12 +94,18 @@ public partial class DetailCollection
 
     private async Task LoadCollectors()
     {
-        var res = await ApiClient.GetFromJsonAsync<List<UserDetailDto>>($"api/auth/collector");
+        var res = await ApiClient.GetFromJsonAsync<List<CollectorDto>>($"api/auth/collector");
 
         if (res != null && res.IsSuccess && res.Data != null)
         {
             Collectors = res.Data;
         }
+    }
+
+    private async Task LoadUserId()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        UserId = authState.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
     }
 
     private string CalculateCountdown(DateTime auctionEndTime)
@@ -109,6 +125,23 @@ public partial class DetailCollection
         else
         {
             return "Expired";
+        }
+    }
+
+
+    private bool FollowingState = false;
+    private int FollowerCount;
+
+    private async Task HandleFollow(string userId)
+    {
+        var res = await ApiClient.PostAsync<FollowDto>($"api/auth/follow/{userId}", null!);
+
+        if (res != null && res.IsSuccess && res.Data != null)
+        {
+            var followDto = res.Data;
+
+            FollowingState = !followDto.IsDeleted;
+            FollowerCount = !followDto.IsDeleted ? FollowerCount + 1 : FollowerCount - 1;
         }
     }
 

@@ -31,14 +31,14 @@
                                         <div class="collection-creator-stats">
                                             <div class="collection-creator-stat">
                                                 <p>Collections</p>
-                                                <h5>@Collection.Creator.CollectionCount</h5>
+                                                <h5>@(Collection.Nfts?.Count ?? 0)</h5>
                                             </div>
                                             <div class="collection-creator-stat">
                                                 <p>Followers</p>
-                                                <h5 class="creator-followers-count">@Collection.Creator.FollowerCount</h5>
+                                                <h5 class="creator-followers-count">@FollowerCount</h5>
                                             </div>
                                         </div>
-                                        <button class="btn-green collection-card-btn follow-btn" data-user-id="1">Follow</button>
+                                        <button @onclick="() => HandleFollow(Collection.Creator.Id)" class="btn-green collection-card-btn follow-btn">@(FollowingState ? "Following" : "Follow")</button>
                                     </div>
                                 </div>
                             </div>

@@ -15,7 +15,7 @@ public partial class IndexCollection
 
 
     private List<CollectionDetailDto>? Collections { get; set; }
-    private List<UserDetailDto>? Collectors { get; set; }
+    private List<CollectorDto>? Collectors { get; set; }
 
     private string? UserId { get; set; }
 
@@ -29,6 +29,18 @@ public partial class IndexCollection
         await LoadCollections();
         await LoadCollectors();
         await LoadUserId();
+
+        if (Collections != null && UserId != null)
+        {
+            foreach (var collection in Collections)
+            {
+                string id = collection.Creator.Id;
+
+                FollowingStates[id] = collection.Creator.Followers.Exists(f => f.FollowerId == UserId && !f.IsDeleted);
+                FollowerCounts[id] = collection.Creator.Followers.Where(f => !f.IsDeleted).Count();
+            }
+        }
+
         isDataLoaded = true;
     }
 
@@ -61,7 +73,7 @@ public partial class IndexCollection
                 $"&PageNumber={QueryModel.PageNumber}" +
                 $"&PageSize={QueryModel.PageSize}");
 
-        if (res != null && res.IsSuccess)
+        if (res != null && res.IsSuccess && res.Data != null)
         {
             Collections = res.Data;
         }
@@ -69,9 +81,9 @@ public partial class IndexCollection
 
     private async Task LoadCollectors()
     {
-        var res = await ApiClient.GetFromJsonAsync<List<UserDetailDto>>($"api/auth/collector");
+        var res = await ApiClient.GetFromJsonAsync<List<CollectorDto>>($"api/auth/collector");
 
-        if (res != null && res.IsSuccess)
+        if (res != null && res.IsSuccess && res.Data != null)
         {
             Collectors = res.Data;
         }
@@ -80,8 +92,28 @@ public partial class IndexCollection
     protected async Task LoadUserId()
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        if (authState == null) return;
+        
         UserId = authState.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
     }
+
+
+    private Dictionary<string, bool> FollowingStates = [];
+    private Dictionary<string, int> FollowerCounts = [];
+
+    private async Task HandleFollow(string userId)
+    {
+        var res = await ApiClient.PostAsync<FollowDto>($"api/auth/follow/{userId}", null!);
+
+        if (res != null && res.IsSuccess && res.Data != null)
+        {
+            var followDto = res.Data;
+
+            FollowingStates[userId] = !followDto.IsDeleted;
+            FollowerCounts[userId] = !followDto.IsDeleted ? FollowerCounts[userId] + 1 : FollowerCounts[userId] - 1;
+        }
+    }
+
 
 
     //Filters

@@ -1,9 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿namespace NftsArt.Model.Dtos.User;
 
-namespace NftsArt.Model.Dtos.User;
-
-public record class FollowDto
-{
-    [Required]
-    public required string FollowingUserId { get; set; }
-}
+public record class FollowDto(
+    string FollowerId,
+    string FollowingId,
+    DateTime FollowedOn,
+    bool IsDeleted
+);

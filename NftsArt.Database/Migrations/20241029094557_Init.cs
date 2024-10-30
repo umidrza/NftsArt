@@ -236,7 +236,7 @@ namespace NftsArt.Database.Migrations
                         column: x => x.FollowerId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Follows_AspNetUsers_FollowingId",
                         column: x => x.FollowingId,
@@ -476,7 +476,7 @@ namespace NftsArt.Database.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "AvatarId", "ConcurrencyStamp", "Email", "EmailConfirmed", "FullName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "OtpExpiryTime", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "ResetPasswordOtp", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "1", 0, 1, "8baafb1e-1be3-4a1e-8638-c454ea0dded4", "umidrza47@gmail.com", true, "Hope", false, null, "UMIDRZA47@GMAIL.COM", "HOPE", null, "AQAAAAIAAYagAAAAEHznwgOMxRizxIYUoZpYd4bCJHo9YtrEtkOVvGcWK4DFjqo3h1Xy/La8DS6P3X3WFQ==", null, false, null, "4975d96a-f7f7-43ad-87a0-f048233db637", false, "hope" });
+                values: new object[] { "1", 0, 1, "34a4008c-83b2-45e2-becf-fa05370fa0ef", "umidrza47@gmail.com", true, "Hope", false, null, "UMIDRZA47@GMAIL.COM", "HOPE", null, "AQAAAAIAAYagAAAAEEQSDqyrGuCc5qZ8HINZjSjpQONjrNSfrsP7R1U/IccHCC4+zrRRp6/WH0ALg2K+lA==", null, false, null, "a5043129-73f2-4366-b0af-9616d687f97c", false, "hope" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",

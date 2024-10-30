@@ -17,20 +17,14 @@ public partial class NavMenu
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        var userId = authState.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
-        if (userId != null)
-        {
-            await LoadUser(userId); 
-        }
+        await LoadUser(); 
     }
 
-    private async Task LoadUser(string userId)
+    private async Task LoadUser()
     {
-        var res = await ApiClient.GetFromJsonAsync<UserDetailDto>($"api/auth/user/{userId}");
+        var res = await ApiClient.GetFromJsonAsync<UserDetailDto>($"api/auth/profile");
 
-        if (res.IsSuccess && res.Data != null)
+        if (res != null && res.IsSuccess && res.Data != null)
         {
             User = res.Data;
         }

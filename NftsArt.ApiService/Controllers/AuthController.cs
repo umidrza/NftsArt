@@ -109,42 +109,46 @@ public class AuthController(
 
 
     [HttpGet("collector")]
-    public async Task<ActionResult<Result<List<UserDetailDto>>>> GetTopCollectors()
+    public async Task<ActionResult<Result<List<CollectorDto>>>> GetTopCollectors()
     {
-        var users = (await userManager.Users
+        var users = await userManager.Users
             .Include(u => u.Avatar)
             .Include(u => u.Auctions)
             .Include(u => u.Collections)
             .Include(u => u.Followers)
             .OrderByDescending(u => u.Auctions.Sum(a => a.Price))
             .Take(12)
-            .ToListAsync())
-                .Select(u => u.ToDetailDto())
-                .ToList();
+            .Select(u => u.ToCollectorDto())
+            .ToListAsync();
 
-        return Ok(Result<List<UserDetailDto>>.Success(users));
+        return Ok(Result<List<CollectorDto>>.Success(users));
     }
 
 
-    [HttpGet("user/{id}")]
-    public async Task<ActionResult<Result<UserDetailDto>>> GetUser([FromRoute] string id)
+    [HttpGet("collector/{id}")]
+    public async Task<ActionResult<Result<CollectorDto>>> GetCollector([FromRoute] string id)
     {
         var user = await userManager.Users
             .Include(u => u.Avatar)
+            .Include(u => u.Followers)
+            .Include(u => u.Following)
+            .Include(u => u.Collections)
             .FirstOrDefaultAsync(u => u.Id == id);
 
         if (user == null)
-            return Unauthorized(Result<UserDetailDto>.Failure("User not authorized!"));
+            return Unauthorized(Result<CollectorDto>.Failure("User not authorized!"));
 
-        return Ok(Result<UserDetailDto>.Success(user.ToDetailDto()));
+        return Ok(Result<CollectorDto>.Success(user.ToCollectorDto()));
     }
 
 
-    [Authorize]
     [HttpGet("profile")]
+    [Authorize]
     public async Task<ActionResult<Result<UserDetailDto>>> GetProfile()
     {
-        var user = await userManager.GetUserAsync(User);
+        var user = await userManager.Users
+            .Include(u => u.Avatar)
+            .FirstOrDefaultAsync(u => u.Id == userManager.GetUserId(User));
 
         if (user == null)
             return Unauthorized(Result<UserDetailDto>.Failure("User not authorized!"));
@@ -153,8 +157,8 @@ public class AuthController(
     }
 
 
-    [Authorize]
     [HttpPut("profile")]
+    [Authorize]
     public async Task<ActionResult<Result<LoginResponseDto>>> UpdateProfile([FromBody] UserUpdateDto updatedUser)
     {
         if (!ModelState.IsValid)
@@ -312,24 +316,24 @@ public class AuthController(
     }
 
 
+    [HttpPost("follow/{followingUserId}")]
     [Authorize]
-    [HttpPost("follow")]
-    public async Task<ActionResult<Result<Follow>>> Follow(FollowDto followDto)
-    {
+    public async Task<ActionResult<Result<Follow>>> Follow(string followingUserId)
+    { 
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userId == null) 
             return Unauthorized(Result<Follow>.Failure("User not authorized"));
 
-        if (userId == followDto.FollowingUserId)
+        if (userId == followingUserId)
             return BadRequest(Result<Follow>.Failure("You cannot follow yourself."));
 
-        var result = await userRepo.FollowUser(userId, followDto.FollowingUserId);
+        var result = await userRepo.FollowUser(userId, followingUserId);
         return Ok(result);
     }
 
 
-    [Authorize]
     [HttpGet("isfollowing/{userId}")]
+    [Authorize]
     public async Task<ActionResult<Result<bool>>> IsFollowing(string userId)
     {
         var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);

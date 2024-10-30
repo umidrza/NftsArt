@@ -67,5 +67,15 @@ public static class NftMapping
 
         return NftStatus.Listed;
     }
+
+    public static NftLikeDto ToLikeDto(this Like like)
+    {
+        return new NftLikeDto
+            (
+                like.NftId,
+                like.UserId,
+                like.LikedOn
+            );
+    }
 }
 

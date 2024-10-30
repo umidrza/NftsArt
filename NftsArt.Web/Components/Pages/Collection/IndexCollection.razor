@@ -99,11 +99,11 @@
                                                     <div class="collection-creator-stats">
                                                         <div class="collection-creator-stat">
                                                             <p>Collections</p>
-                                                            <h5>@collection.Creator.CollectionCount</h5>
+                                                            <h5>@(collection.Nfts?.Count ?? 0)</h5>
                                                         </div>
                                                         <div class="collection-creator-stat">
                                                             <p>Followers</p>
-                                                            <h5 class="creator-followers-count">@collection.Creator.FollowerCount</h5>
+                                                            <h5 class="creator-followers-count">@FollowerCounts[collection.Creator.Id]</h5>
                                                         </div>
                                                     </div>
                                                     <AuthorizeView>
@@ -116,7 +116,7 @@
                                                             }
                                                             else
                                                             {
-                                                                <button class="btn-green collection-card-btn follow-btn">Follow</button>
+                                                                <button @onclick="() => HandleFollow(collection.Creator.Id)" class="btn-green collection-card-btn follow-btn">@(FollowingStates[collection.Creator.Id] ? "Following" : "Follow")</button>
                                                             }
                                                         </Authorized>
                                                     </AuthorizeView>

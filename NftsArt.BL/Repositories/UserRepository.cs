@@ -1,20 +1,22 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NftsArt.Database.Data;
+using NftsArt.Model.Dtos.User;
 using NftsArt.Model.Entities;
 using NftsArt.Model.Helpers;
+using NftsArt.Model.Mapping;
 
 namespace NftsArt.BL.Repositories;
 
 
 public interface IUserRepository
 {
-    Task<Result<Follow>> FollowUser(string followerId, string followingId);
+    Task<Result<FollowDto>> FollowUser(string followerId, string followingId);
     Task<bool> IsFollowing(string followerId, string followingId);
 }
 
 public class UserRepository(AppDbContext context) : IUserRepository
 {
-    public async Task<Result<Follow>> FollowUser(string followerId, string followingId)
+    public async Task<Result<FollowDto>> FollowUser(string followerId, string followingId)
     {
         var follow = await context.Follows
             .FirstOrDefaultAsync(f => f.FollowerId == followerId && f.FollowingId == followingId);
@@ -32,14 +34,14 @@ public class UserRepository(AppDbContext context) : IUserRepository
             }
 
             await context.SaveChangesAsync();
-            return Result<Follow>.Success(follow, "User followed successfully.");
+            return Result<FollowDto>.Success(follow.ToFollowDto(), "User followed successfully.");
         }
         else
         {
             follow.IsDeleted = true;
 
             await context.SaveChangesAsync();
-            return Result<Follow>.Success(follow, "User unfollowed successfully.");
+            return Result<FollowDto>.Success(follow.ToFollowDto(), "User unfollowed successfully.");
         }
     }
 

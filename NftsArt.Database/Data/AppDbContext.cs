@@ -92,13 +92,13 @@ public class AppDbContext : IdentityDbContext<User>
 
         builder.Entity<Follow>()
             .HasOne(f => f.Follower)
-            .WithMany(u => u.Followers)
+            .WithMany(u => u.Following)
             .HasForeignKey(f => f.FollowerId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.Entity<Follow>()
             .HasOne(f => f.Following)
-            .WithMany()
+            .WithMany(u => u.Followers)
             .HasForeignKey(f => f.FollowingId)
             .OnDelete(DeleteBehavior.Restrict);
 

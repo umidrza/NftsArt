@@ -21,4 +21,5 @@ public class User : IdentityUser
     public List<Bid> Bids { get; set; } = [];
     public List<Wallet> Wallets { get; set; } = [];
     public List<Follow> Followers { get; set; } = [];
+    public List<Follow> Following { get; set; } = [];
 }

@@ -12,7 +12,7 @@ using NftsArt.Database.Data;
 namespace NftsArt.Database.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241027180525_Init")]
+    [Migration("20241029094557_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -609,16 +609,16 @@ namespace NftsArt.Database.Migrations
                             Id = "1",
                             AccessFailedCount = 0,
                             AvatarId = 1,
-                            ConcurrencyStamp = "8baafb1e-1be3-4a1e-8638-c454ea0dded4",
+                            ConcurrencyStamp = "34a4008c-83b2-45e2-becf-fa05370fa0ef",
                             Email = "umidrza47@gmail.com",
                             EmailConfirmed = true,
                             FullName = "Hope",
                             LockoutEnabled = false,
                             NormalizedEmail = "UMIDRZA47@GMAIL.COM",
                             NormalizedUserName = "HOPE",
-                            PasswordHash = "AQAAAAIAAYagAAAAEHznwgOMxRizxIYUoZpYd4bCJHo9YtrEtkOVvGcWK4DFjqo3h1Xy/La8DS6P3X3WFQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEEQSDqyrGuCc5qZ8HINZjSjpQONjrNSfrsP7R1U/IccHCC4+zrRRp6/WH0ALg2K+lA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "4975d96a-f7f7-43ad-87a0-f048233db637",
+                            SecurityStamp = "a5043129-73f2-4366-b0af-9616d687f97c",
                             TwoFactorEnabled = false,
                             UserName = "hope"
                         });
@@ -787,13 +787,13 @@ namespace NftsArt.Database.Migrations
             modelBuilder.Entity("NftsArt.Model.Entities.Follow", b =>
                 {
                     b.HasOne("NftsArt.Model.Entities.User", "Follower")
-                        .WithMany("Followers")
+                        .WithMany("Following")
                         .HasForeignKey("FollowerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("NftsArt.Model.Entities.User", "Following")
-                        .WithMany()
+                        .WithMany("Followers")
                         .HasForeignKey("FollowingId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -916,6 +916,8 @@ namespace NftsArt.Database.Migrations
                     b.Navigation("Collections");
 
                     b.Navigation("Followers");
+
+                    b.Navigation("Following");
 
                     b.Navigation("NftCollectors");
 

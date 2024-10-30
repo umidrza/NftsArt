@@ -41,11 +41,7 @@ public partial class UpdateProfile
 
     protected async Task LoadUser()
     {
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        var userId = authState.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
-        if (userId == null) return;
-
-        var res = await ApiClient.GetFromJsonAsync<UserDetailDto>($"api/auth/user/{userId}");
+        var res = await ApiClient.GetFromJsonAsync<UserDetailDto>($"api/auth/profile");
 
         if (res != null && res.IsSuccess && res.Data != null)
         {
