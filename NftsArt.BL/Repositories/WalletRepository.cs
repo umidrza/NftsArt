@@ -77,6 +77,7 @@ public class WalletRepository(AppDbContext context) : IWalletRepository
     public async Task<Result<WalletSummaryDto>> CreateAsync(WalletCreateDto walletCreateDto, string userId)
     {
         var wallet = walletCreateDto.ToEntity(userId);
+        wallet.Balance = 10;
 
         await context.Wallets.AddAsync(wallet);
         await context.SaveChangesAsync();

@@ -39,8 +39,6 @@ public partial class UpdateNft
         if (Nft != null && Nft.Auction != null)
         {
             AuctionUpdateDto = Nft.Auction.ToUpdateDto();
-
-            UpdateEndDate();
         }
     }
 

@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using NftsArt.Model.Dtos.Provider;
-using NftsArt.Model.Dtos.User;
 using NftsArt.Model.Dtos.Wallet;
 using NftsArt.Model.Enums;
 
@@ -52,7 +50,6 @@ public partial class Wallet
         var res = await ApiClient.GetFromJsonAsync<WalletDetailDto>(
             $"api/wallet/my-wallet" +
             $"?BlockchainName={WalletCreateDto.Blockchain}" +
-            $"&CurrencyName={WalletCreateDto.Currency}" +
             $"&ProviderId={WalletCreateDto.ProviderId}");
 
         if (res != null && res.IsSuccess && res.Data != null)
@@ -65,8 +62,9 @@ public partial class Wallet
     {
         if (WalletDetailDto == null)
         {
-            var res = await CreateWallet();
-            if (!res)
+            var res = await ApiClient.PostAsync<WalletSummaryDto, WalletCreateDto>($"api/wallet", WalletCreateDto);
+
+            if (res == null || !res.IsSuccess)
             {
                 Console.WriteLine("Wallet create failed");
                 return;
@@ -74,13 +72,6 @@ public partial class Wallet
         }
 
         NavigationManager.NavigateTo("/");
-    }
-
-    protected async Task<bool> CreateWallet()
-    {
-        var res = await ApiClient.PostAsync<WalletSummaryDto, WalletCreateDto>($"api/wallet", WalletCreateDto);
-
-        return res != null && res.IsSuccess;
     }
 
     private bool IsTruncated { get; set; } = true;

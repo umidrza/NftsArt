@@ -13,6 +13,7 @@ public record class NftDetailDto(
         NftStatus NftStatus,
         string CreatorId,
         UserSummaryDto Creator,
-        AuctionSummaryDto? Auction
-    );
+        AuctionSummaryDto? Auction,
+        List<string> Collectors
+    ); 
 

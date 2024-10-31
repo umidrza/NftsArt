@@ -120,10 +120,10 @@ public class AuctionRepository(AppDbContext context) : IAuctionRepository
         if (auction == null)
             return Result<AuctionSummaryDto>.Failure("Auction not found.");
 
-        if (DateTime.UtcNow <= auction.StartTime)
+        if (DateTime.Now <= auction.StartTime)
             return Result<AuctionSummaryDto>.Failure($"The auction not started yet. Starts on {auction.StartTime}");
 
-        if (DateTime.UtcNow > auction.EndTime)
+        if (DateTime.Now > auction.EndTime)
             return Result<AuctionSummaryDto>.Failure("The auction has already ended.");
 
         if (quantity > auction.Quantity)
@@ -136,21 +136,19 @@ public class AuctionRepository(AppDbContext context) : IAuctionRepository
         if (buyer == null)
             return Result<AuctionSummaryDto>.Failure("Buyer not found.");
 
-        var buyerWallets = buyer.Wallets
-            .Where(w => w.Blockchain == auction.Nft.Blockchain && w.Currency == auction.Currency)
-            .ToList();
-
-        if (buyerWallets == null || buyerWallets.Count == 0)
-            return Result<AuctionSummaryDto>.Failure($"No {auction.Nft.Blockchain} blockchain wallet or {auction.Currency} currency");
-
-        var buyerWallet = buyerWallets.FirstOrDefault(w => w.Balance < auction.Price * quantity);
+        var buyerWallet = buyer.Wallets
+            .Where(w => w.Currency == auction.Currency)
+            .OrderBy(w => w.Balance)
+            .FirstOrDefault();
 
         if (buyerWallet == null)
+            return Result<AuctionSummaryDto>.Failure($"No {auction.Currency} currency wallet");
+
+        if (buyerWallet.Balance < auction.Price * quantity)
             return Result<AuctionSummaryDto>.Failure("Insufficient funds.");
 
         buyerWallet.Balance -= auction.Price * quantity;
         auction.Quantity -= quantity;
-
 
         var collector = auction.Nft.NftCollectors
                      .FirstOrDefault(c => c.CollectorId == buyer.Id);

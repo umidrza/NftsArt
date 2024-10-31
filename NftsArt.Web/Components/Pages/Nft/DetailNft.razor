@@ -50,10 +50,7 @@
                             }
                             <div class="auction-nft-desc">
                                 <div class="nft-auction-detail">
-                                    @if(Collection != null)
-                                    {
-                                        <p class="nft-auction-category">@Collection.Name</p>
-                                    }
+                                    <p class="nft-auction-category">@(Collection != null ? $"{Collection.Name} · " : "") @Nft.Blockchain</p>
                                     <h2 class="nft-auction-name">@Nft.Name</h2>
                                 </div>
                                 @if(Nft.NftStatus != NftStatus.Not_On_Sale && Auction != null)
@@ -137,15 +134,16 @@
                             </div>
                         </div>
 
-                        <div class="auction-terms">
-                            <div class="term-check-icon" @onclick="() => isTermsAccepted = !isTermsAccepted">
-                                <i class="fa-solid fa-check check-icon @(isTermsAccepted ? "" : "hidden")"></i>
-                            </div>
-                            <p class="auction-term">I Agree to AllBlocks. Term & Service</p>
-                        </div>
-                        <div class="auction-buttons">
-                            <AuthorizeView>
-                                <Authorized>
+                        <AuthorizeView>
+                            <Authorized>
+                                <div class="auction-terms">
+                                    <div class="term-check-icon" @onclick="() => isTermsAccepted = !isTermsAccepted">
+                                        <i class="fa-solid fa-check check-icon @(isTermsAccepted ? "" : "hidden")"></i>
+                                    </div>
+                                    <p class="auction-term">I Agree to AllBlocks. Term & Service</p>
+                                </div>
+
+                                <div class="auction-buttons">
                                     @if (Auction == null)
                                     {
                                         if (Nft.CreatorId == UserId)
@@ -155,27 +153,33 @@
                                             </a>
                                         }
                                     }
-                                    else
+                                    else if (Auction.Seller.Id == UserId)
                                     {
-                                        if (Auction.Seller.Id == UserId)
+                                        <a href="@($"/nft/{Id}/update")">
+                                            <button class="auction-button btn-green" disabled="@(!isTermsAccepted)">Update</button>
+                                        </a>
+
+                                        if (Bids == null || Bids.Count == 0)
                                         {
-                                            <a href="@($"/nft/{Id}/update")">
-                                                <button class="auction-button btn-green" disabled="@(!isTermsAccepted)">Update</button>
-                                            </a>
-                                            if (Bids == null || Bids.Count == 0)
-                                            {
-                                                <button @onclick="DeleteAuction" class="auction-button btn-red" disabled="@(!isTermsAccepted)">Delete</button>
-                                            }
-                                        }
-                                        else
-                                        {
-                                            <button class="auction-button btn-green" disabled="@(!isTermsAccepted)">Purchase now</button>
-                                            <button class="auction-button btn-outline-green" disabled="@(!isTermsAccepted)">Place a bid</button>
+                                            <button @onclick="DeleteAuction" class="auction-button btn-red" disabled="@(!isTermsAccepted)">Delete</button>
                                         }
                                     }
-                                </Authorized>
-                            </AuthorizeView>
-                        </div>
+                                    else if (Auction.NftStatus == NftStatus.Listed)
+                                    {
+                                        if (Nft.Collectors.Exists(id => id == UserId))
+                                        {
+                                            <button class="auction-button btn-green" disabled="@(!isTermsAccepted)">Buy More</button>
+                                        }   
+                                        else
+                                        {
+                                            <button @onclick="HandlePurchase" class="auction-button btn-green" disabled="@(!isTermsAccepted)">Purchase now</button>
+                                            <button class="auction-button btn-outline-green" disabled="@(!isTermsAccepted)">Place a bid</button>
+                                        }
+                                        
+                                    }
+                                </div>
+                            </Authorized>
+                        </AuthorizeView>
 
                         <div class="auction-charts">
                             @if (Auction != null && Bids != null)

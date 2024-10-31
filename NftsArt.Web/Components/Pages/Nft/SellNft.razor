@@ -70,6 +70,12 @@
                                         <ValidationMessage For="@(() => AuctionCreateDto.EndTime)" />
                                     </div>
                                 </div>
+
+                                <div class="form-control">
+                                    <label for="quantity" class="form-label">Quantity</label>
+                                    <InputNumber id="quantity" @bind-Value="AuctionCreateDto.Quantity" class="form-input" required />
+                                    <ValidationMessage For="@(() => AuctionCreateDto.Quantity)" />
+                                </div>
                             </div>
                             <div class="form-checkboxes">
                                 <div class="form-info">

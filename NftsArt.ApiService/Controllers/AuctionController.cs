@@ -46,14 +46,14 @@ public class AuctionController(IAuctionRepository auctionRepo) : ControllerBase
 
     [HttpPost("{nftId:int}")]
     [Authorize]
-    public async Task<ActionResult<Result<AuctionDetailDto>>> CreateAuction([FromRoute] int nftId, [FromBody] AuctionCreateDto createAuctionDto)
+    public async Task<ActionResult<Result<AuctionSummaryDto>>> CreateAuction([FromRoute] int nftId, [FromBody] AuctionCreateDto createAuctionDto)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (userId == null)
-            return Unauthorized(Result<AuctionDetailDto>.Failure("User not authenticated"));
+            return Unauthorized(Result<AuctionSummaryDto>.Failure("User not authenticated"));
 
         var result = await auctionRepo.CreateAsync(createAuctionDto, userId, nftId);
         return Ok(result);
@@ -61,21 +61,21 @@ public class AuctionController(IAuctionRepository auctionRepo) : ControllerBase
 
     [HttpPut("{id:int}")]
     [Authorize]
-    public async Task<ActionResult<Result<AuctionDetailDto>>> UpdateAuction([FromRoute] int id, [FromBody] AuctionUpdateDto updateAuctionDto)
+    public async Task<ActionResult<Result<AuctionSummaryDto>>> UpdateAuction([FromRoute] int id, [FromBody] AuctionUpdateDto updateAuctionDto)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
         var auction = await auctionRepo.GetByIdAsync(id);
         if (auction == null)
-            return NotFound(Result<AuctionDetailDto>.Failure("Auction not found"));
+            return NotFound(Result<AuctionSummaryDto>.Failure("Auction not found"));
 
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (userId == null)
-            return Unauthorized(Result<AuctionDetailDto>.Failure("User not authenticated"));
+            return Unauthorized(Result<AuctionSummaryDto>.Failure("User not authenticated"));
 
         if (auction.SellerId != userId)
-            return BadRequest(Result<AuctionDetailDto>.Failure("You do not have permission to update this Auction"));
+            return BadRequest(Result<AuctionSummaryDto>.Failure("You do not have permission to update this Auction"));
 
         var result = await auctionRepo.UpdateAsync(id, updateAuctionDto);
         return Ok(result);
@@ -83,33 +83,33 @@ public class AuctionController(IAuctionRepository auctionRepo) : ControllerBase
 
     [HttpDelete("{id:int}")]
     [Authorize]
-    public async Task<ActionResult<Result<AuctionDetailDto>>> DeleteAuction([FromRoute] int id)
+    public async Task<ActionResult<Result<AuctionSummaryDto>>> DeleteAuction([FromRoute] int id)
     {
         var auction = await auctionRepo.GetByIdAsync(id);
         if (auction == null)
-            return NotFound(Result<AuctionDetailDto>.Failure("Auction not found"));
+            return NotFound(Result<AuctionSummaryDto>.Failure("Auction not found"));
 
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (userId == null)
-            return Unauthorized(Result<AuctionDetailDto>.Failure("User not authenticated"));
+            return Unauthorized(Result<AuctionSummaryDto>.Failure("User not authenticated"));
 
         if (auction.SellerId != userId)
-            return BadRequest(Result<AuctionDetailDto>.Failure("You do not have permission to delete this Auction"));
+            return BadRequest(Result<AuctionSummaryDto>.Failure("You do not have permission to delete this Auction"));
 
         var result = await auctionRepo.DeleteAsync(id);
         return Ok(result);
     }
 
 
-    [HttpPost("purchase/{id:int}")]
-    public async Task<ActionResult<Result<AuctionDetailDto>>> PurchaseAuction([FromRoute] int id, [FromBody] int quantity)
+    [HttpPost("{id:int}/purchase")]
+    public async Task<ActionResult<Result<AuctionSummaryDto>>> PurchaseAuction([FromRoute] int id, [FromBody] int quantity)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (userId == null)
-            return Unauthorized(Result<AuctionDetailDto>.Failure("User not authenticated"));
+            return Unauthorized(Result<AuctionSummaryDto>.Failure("User not authenticated"));
 
         var result = await auctionRepo.PurchaseAsync(userId, id, quantity);
         return Ok(result);

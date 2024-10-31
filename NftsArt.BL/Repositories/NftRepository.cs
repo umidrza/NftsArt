@@ -123,6 +123,7 @@ public class NftRepository(AppDbContext context) : INftRepository
                 .ThenInclude(u => u.Avatar)
             .Include(n => n.Auction)
                 .ThenInclude(a => a.Seller)
+            .Include(n => n.NftCollectors)
             .FirstOrDefaultAsync(n => n.Id == id);
     }
 

@@ -191,6 +191,24 @@ public partial class DetailNft
         }
     }
 
+    private async Task HandlePurchase()
+    {
+        if (!isTermsAccepted) return;
+        if (Nft == null || Nft.Auction == null) return;
+
+        var res = await ApiClient.PostAsync<AuctionSummaryDto, int>($"api/auction/{Nft.Auction.Id}/purchase", 1);
+
+        if (res != null && res.IsSuccess)
+        {
+            Console.WriteLine("You have purchased this Nft");
+            Navigation.NavigateTo($"/nft/{Id}", true);
+        }
+        else
+        {
+            Console.WriteLine(res?.Message);
+        }
+    }
+
     private void GetConversionRate()
     {
         decimal EthToUsdRate = 2637.91M;

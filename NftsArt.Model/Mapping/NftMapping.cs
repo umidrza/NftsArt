@@ -30,7 +30,8 @@ public static class NftMapping
                 nft.GetAuctionStatus(),
                 nft.CreatorId,
                 nft.Creator.ToSummaryDto(),
-                nft.Auction?.ToSummaryDto()
+                nft.Auction?.ToSummaryDto(),
+                nft.NftCollectors.Select(nc => nc.CollectorId).ToList()
             );
     }
 

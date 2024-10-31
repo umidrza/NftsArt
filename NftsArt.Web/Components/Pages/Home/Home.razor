@@ -201,8 +201,9 @@
                             <p class="auction-term">I Agree to AllBlocks. Term & Service</p>
                         </div>
                         <div class="auction-buttons">
-                            <button class="auction-button btn-green" disabled="@(!isTermsAccepted)">Purchase now</button>
-                            <button class="auction-button btn-outline-green" disabled="@(!isTermsAccepted)">Place a bid</button>
+                            <a href="@($"/nft/{Auction.Nft.Id}")">
+                                <button class="auction-button btn-green" disabled="@(!isTermsAccepted)">Check out</button>
+                            </a>
                         </div>
                     </div>
                 </div>
