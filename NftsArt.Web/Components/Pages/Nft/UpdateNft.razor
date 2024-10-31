@@ -1,0 +1,86 @@
+﻿@page "/nft/{Id:int}/update"
+
+<PageTitle>Update Auction</PageTitle>
+
+<main>
+    @if (Nft == null || Nft.Auction == null)
+    {
+        <div class="container">
+            <p><em>Loading...</em></p>
+        </div>
+    }
+    else
+    {
+        <section class="form-section">
+            <div class="container">
+                <div class="form-container">
+                    <h2 class="section-title">Update Auction</h2>
+                    <EditForm Model="@AuctionUpdateDto" OnValidSubmit="HandleValidSubmit" FormName="AuctionUpdate" class="form">
+                        <DataAnnotationsValidator />
+
+                        <div class="form-preview">
+                            <h4 class="form-subtitle">Preview</h4>
+                            <h3 class="nft-sell-name">@Nft.Name</h3>
+                            <div class="nft-form-image">
+                                <img src="@Nft.ImageUrl">
+                            </div>
+                            <div class="nft-sell-price">
+                                <p>Price</p>
+                                <h4 id="price-display">@AuctionUpdateDto.Price.ToString("F2") @Nft.Auction?.Currency</h4>
+                            </div>
+                        </div>
+                        <div class="form-inputs-container">
+                            <div class="form-inputs">
+                                <div class="form-control">
+                                    <label for="price" class="form-label">Price</label>
+                                    <div class="nft-sell-price-inputs">
+                                        <InputNumber @bind-Value="AuctionUpdateDto.Price" id="price-input" class="form-input"
+                                                     placeholder="Type here..." required />
+                                    </div>
+                                    <ValidationMessage For="@(() => AuctionUpdateDto.Price)" />
+                                </div>
+
+                                <div class="form-control">
+                                    <label for="schedule-time" class="form-label">Schedule Listing</label>
+                                    <select id="schedule-time" class="form-select" @bind="SelectedSchedule">
+                                        <option value="3-month">3 Month</option>
+                                        <option value="6-month" selected>6 Month</option>
+                                        <option value="1-year">1 Year</option>
+                                        <option value="2-year">2 Year</option>
+                                        <option value="5-year">5 Year</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-control-dates">
+                                    <div class="form-control">
+                                        <label for="start-time" class="form-label">Starting</label>
+                                        <InputDate id="start-time" @bind-Value="AuctionUpdateDto.StartTime" class="form-input" required />
+                                        <ValidationMessage For="@(() => AuctionUpdateDto.StartTime)" />
+                                    </div>
+                                    <div class="form-control">
+                                        <label for="end-time" class="form-label">Ending</label>
+                                        <InputDate id="end-time" @bind-Value="AuctionUpdateDto.EndTime" class="form-input" min="@MinEndDate" required />
+                                        <ValidationMessage For="@(() => AuctionUpdateDto.EndTime)" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-checkboxes">
+                                <div class="form-checkbox">
+                                    <div class="form-checkbox-label">
+                                        <label for="reserve-for-buyer" class="form-label">Reserve for specific buyer</label>
+                                    </div>
+                                    <input type="checkbox" id="reserve-for-buyer" class="form-checkbox-input hidden">
+                                    <label for="reserve-for-buyer" class="checkbox-icon"></label>
+                                </div>
+                            </div>
+                            <div class="form-buttons">
+                                <button class="form-button btn-green" id="complete-listing-btn">Update Auction</button>
+                            </div>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </section>
+    }
+
+</main>

@@ -75,5 +75,16 @@ public static class AuctionMapping
 
         return NftStatus.Listed;
     }
+
+    public static AuctionUpdateDto ToUpdateDto(this AuctionSummaryDto auction)
+    {
+        return new AuctionUpdateDto
+            {
+                Price = auction.Price,
+                StartTime = auction.StartTime,
+                EndTime = auction.EndTime,
+                Quantity = auction.Quantity
+            };
+    }
 }
 

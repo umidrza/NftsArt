@@ -105,6 +105,8 @@ public partial class DetailCollection
     private async Task LoadUserId()
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        if (authState == null) return;
+
         UserId = authState.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
     }
 

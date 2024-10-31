@@ -30,14 +30,18 @@ public partial class IndexCollection
         await LoadCollectors();
         await LoadUserId();
 
-        if (Collections != null && UserId != null)
+        if (Collections != null)
         {
             foreach (var collection in Collections)
             {
                 string id = collection.Creator.Id;
 
-                FollowingStates[id] = collection.Creator.Followers.Exists(f => f.FollowerId == UserId && !f.IsDeleted);
                 FollowerCounts[id] = collection.Creator.Followers.Where(f => !f.IsDeleted).Count();
+
+                if (UserId != null)
+                {
+                    FollowingStates[id] = collection.Creator.Followers.Exists(f => f.FollowerId == UserId && !f.IsDeleted);
+                }
             }
         }
 
@@ -103,6 +107,8 @@ public partial class IndexCollection
 
     private async Task HandleFollow(string userId)
     {
+        if (Collections == null || UserId == null) return;
+
         var res = await ApiClient.PostAsync<FollowDto>($"api/auth/follow/{userId}", null!);
 
         if (res != null && res.IsSuccess && res.Data != null)

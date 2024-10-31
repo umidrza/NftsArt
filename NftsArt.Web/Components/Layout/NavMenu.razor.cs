@@ -22,6 +22,11 @@ public partial class NavMenu
 
     private async Task LoadUser()
     {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity?.IsAuthenticated == false) return;
+
         var res = await ApiClient.GetFromJsonAsync<UserDetailDto>($"api/auth/profile");
 
         if (res != null && res.IsSuccess && res.Data != null)

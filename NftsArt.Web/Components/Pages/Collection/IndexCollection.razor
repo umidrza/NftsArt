@@ -108,15 +108,19 @@
                                                     </div>
                                                     <AuthorizeView>
                                                         <Authorized>
-                                                            @if (UserId != null && UserId == collection.Creator.Id)
+                                                            @if (UserId != null)
                                                             {
-                                                                <a href="@($"/collection/{collection.Id}/update")">
-                                                                    <button class="btn-green collection-card-btn">Update</button>
-                                                                </a>
-                                                            }
-                                                            else
-                                                            {
-                                                                <button @onclick="() => HandleFollow(collection.Creator.Id)" class="btn-green collection-card-btn follow-btn">@(FollowingStates[collection.Creator.Id] ? "Following" : "Follow")</button>
+                                                                if (UserId == collection.Creator.Id)
+                                                                {
+                                                                    <a href="@($"/collection/{collection.Id}/update")">
+                                                                        <button class="btn-green collection-card-btn">Update</button>
+                                                                    </a>
+                                                                
+                                                                }
+                                                                else
+                                                                {
+                                                                    <button @onclick="() => HandleFollow(collection.Creator.Id)" class="btn-green collection-card-btn follow-btn">@(FollowingStates[collection.Creator.Id] ? "Following" : "Follow")</button>
+                                                                }
                                                             }
                                                         </Authorized>
                                                     </AuthorizeView>

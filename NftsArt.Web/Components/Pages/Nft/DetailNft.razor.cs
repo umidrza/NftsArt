@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 using NftsArt.Model.Dtos.Auction;
 using NftsArt.Model.Dtos.Bid;
@@ -6,13 +7,17 @@ using NftsArt.Model.Dtos.Collection;
 using NftsArt.Model.Dtos.Nft;
 using NftsArt.Model.Entities;
 using NftsArt.Model.Enums;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace NftsArt.Web.Components.Pages.Nft;
 
 public partial class DetailNft
 {
     [Inject] ApiClient ApiClient { get; set; }
+    [Inject] AuthenticationStateProvider AuthStateProvider { get; set; }
     [Inject] IJSRuntime JS { get; set; }
+    [Inject] NavigationManager Navigation { get; set; }
+
 
     [Parameter] public int Id { get; set; }
     [Parameter] public int? CollectionId { get; set; }
@@ -21,12 +26,12 @@ public partial class DetailNft
     private CollectionDetailDto? Collection { get; set; }
     private AuctionDetailDto? Auction { get; set; }
     private List<BidDetailDto>? Bids { get; set; }
+    private string? UserId { get; set; }
 
     private bool isUserLiked = false;
     private int likeCount = 0;
 
     private bool isTermsAccepted = true;
-
     private decimal usdConversionRate;
 
     private Timer timer;
@@ -38,6 +43,7 @@ public partial class DetailNft
     protected override async Task OnParametersSetAsync()
     {
         await LoadNft();
+        await LoadUserId();
 
         if (CollectionId.HasValue)
         {
@@ -130,11 +136,22 @@ public partial class DetailNft
             likeCount = countRes.Data;
         }
 
-        var isLikedRes = await ApiClient.GetFromJsonAsync<bool>($"api/nft/{Id}/is-liked");
-        if (isLikedRes != null && isLikedRes.IsSuccess)
+        if (UserId != null)
         {
-            isUserLiked = isLikedRes.Data;
+            var isLikedRes = await ApiClient.GetFromJsonAsync<bool>($"api/nft/{Id}/is-liked");
+            if (isLikedRes != null && isLikedRes.IsSuccess)
+            {
+                isUserLiked = isLikedRes.Data;
+            }
         }
+    }
+
+    private async Task LoadUserId()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        if (authState == null) return;
+
+        UserId = authState.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
     }
 
     private async Task LikeNft()
@@ -153,6 +170,24 @@ public partial class DetailNft
                 likeCount--;
                 isUserLiked = false;
             }
+        }
+    }
+
+    private async Task DeleteAuction()
+    {
+        if (!isTermsAccepted) return;
+        if (Nft == null || Nft.Auction == null) return;
+        if (Bids != null && Bids.Count > 0) return;
+
+        var res = await ApiClient.DeleteAsync<AuctionSummaryDto>($"api/auction/{Nft.Auction.Id}");
+
+        if (res != null && res.IsSuccess)
+        {
+            Navigation.NavigateTo($"/nft/{Id}", true);
+        }
+        else
+        {
+            Console.WriteLine("Failed to delete the item.");
         }
     }
 
