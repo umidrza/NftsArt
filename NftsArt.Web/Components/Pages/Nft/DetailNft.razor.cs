@@ -7,6 +7,8 @@ using NftsArt.Model.Dtos.Collection;
 using NftsArt.Model.Dtos.Nft;
 using NftsArt.Model.Entities;
 using NftsArt.Model.Enums;
+using NftsArt.Model.Helpers;
+using NftsArt.Web.Services;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace NftsArt.Web.Components.Pages.Nft;
@@ -17,6 +19,7 @@ public partial class DetailNft
     [Inject] AuthenticationStateProvider AuthStateProvider { get; set; }
     [Inject] IJSRuntime JS { get; set; }
     [Inject] NavigationManager Navigation { get; set; }
+    [Inject] MessageService MessageService { get; set; }
 
 
     [Parameter] public int Id { get; set; }
@@ -183,6 +186,7 @@ public partial class DetailNft
 
         if (res != null && res.IsSuccess)
         {
+            MessageService.ShowMessage(Message.Success("Auction deleted successfully!"));
             Navigation.NavigateTo($"/nft/{Id}", true);
         }
         else
@@ -200,12 +204,12 @@ public partial class DetailNft
 
         if (res != null && res.IsSuccess)
         {
-            Console.WriteLine("You have purchased this Nft");
+            MessageService.ShowMessage(Message.Success("Nft purchased successfully!"));
             Navigation.NavigateTo($"/nft/{Id}", true);
         }
         else
         {
-            Console.WriteLine(res?.Message);
+            MessageService.ShowMessage(Message.Error(res?.Message ?? "Error purchasing"));
         }
     }
 

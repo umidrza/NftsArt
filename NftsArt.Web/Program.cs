@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using NftsArt.Web;
 using NftsArt.Web.Authentication;
 using NftsArt.Web.Components;
+using NftsArt.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,7 @@ builder.Services.AddHttpClient<ApiClient>(client =>
         client.BaseAddress = new("https+http://localhost:7563/"));
 
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+builder.Services.AddSingleton<MessageService>();
 
 var app = builder.Build();
 
