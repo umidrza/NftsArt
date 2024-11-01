@@ -4,7 +4,8 @@ using NftsArt.Model.Dtos.Avatar;
 using NftsArt.Model.Dtos.User;
 using NftsArt.Web.Authentication;
 using NftsArt.Model.Mapping;
-using System.IdentityModel.Tokens.Jwt;
+using NftsArt.Model.Helpers;
+using NftsArt.Web.Services;
 
 namespace NftsArt.Web.Components.Pages.Auth;
 
@@ -13,6 +14,7 @@ public partial class UpdateProfile
     [Inject] ApiClient ApiClient { get; set; }
     [Inject] NavigationManager NavigationManager { get; set; }
     [Inject] AuthenticationStateProvider AuthStateProvider { get; set; }
+    [Inject] MessageService MessageService { get; set; }
 
 
     [SupplyParameterFromForm(FormName = "UpdateProfile")]
@@ -48,6 +50,10 @@ public partial class UpdateProfile
             User = res.Data;
             UpdateDto = User.ToUpdateDto();
         }
+        else
+        {
+            MessageService.ShowMessage(Message.Error(res?.Message ?? "Error"));
+        }
     }
 
     protected async Task LoadAvatars()
@@ -74,6 +80,8 @@ public partial class UpdateProfile
         {
             await ((CustomAuthStateProvider)AuthStateProvider).MarkUserAsAuthenticated(res.Data);
             NavigationManager.NavigateTo("/");
+
+            MessageService.ShowMessage(Message.Success(res.Message));
         }
         else
         {
@@ -85,6 +93,7 @@ public partial class UpdateProfile
     {
         await ((CustomAuthStateProvider)AuthStateProvider).MarkUserAsLoggedOut();
 
+        MessageService.ShowMessage(Message.Success("You've been logged out"));
         NavigationManager.NavigateTo("/");
     }
 }

@@ -4,6 +4,8 @@ using Microsoft.JSInterop;
 using NftsArt.Model.Dtos.Collection;
 using NftsArt.Model.Dtos.Nft;
 using NftsArt.Model.Dtos.User;
+using NftsArt.Model.Helpers;
+using NftsArt.Web.Services;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace NftsArt.Web.Components.Pages.Collection;
@@ -13,6 +15,7 @@ public partial class DetailCollection
     [Inject] ApiClient ApiClient { get; set; }
     [Inject] IJSRuntime JS { get; set; }
     [Inject] AuthenticationStateProvider AuthStateProvider { get; set; }
+    [Inject] MessageService MessageService { get; set; }
 
 
     [Parameter] public int Id { get; set; }
@@ -69,6 +72,10 @@ public partial class DetailCollection
         if (res != null && res.IsSuccess && res.Data != null)
         {
             Collection = res.Data;
+        }
+        else
+        {
+            MessageService.ShowMessage(Message.Error(res?.Message ?? "Error"));
         }
     }
 
@@ -144,6 +151,10 @@ public partial class DetailCollection
 
             FollowingState = !followDto.IsDeleted;
             FollowerCount = !followDto.IsDeleted ? FollowerCount + 1 : FollowerCount - 1;
+        }
+        else
+        {
+            MessageService.ShowMessage(Message.Error(res?.Message ?? "Error"));
         }
     }
 

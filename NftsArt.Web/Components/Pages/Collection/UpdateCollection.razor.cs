@@ -1,14 +1,17 @@
 ﻿using Microsoft.AspNetCore.Components;
 using NftsArt.Model.Dtos.Collection;
 using NftsArt.Model.Dtos.Nft;
+using NftsArt.Model.Helpers;
 using NftsArt.Model.Mapping;
+using NftsArt.Web.Services;
 
 namespace NftsArt.Web.Components.Pages.Collection;
 
 public partial class UpdateCollection : ComponentBase
 {
-    [Inject] private ApiClient ApiClient { get; set; }
-    [Inject] private NavigationManager NavigationManager { get; set; }
+    [Inject] ApiClient ApiClient { get; set; }
+    [Inject] NavigationManager NavigationManager { get; set; }
+    [Inject] MessageService MessageService { get; set; }
 
     [Parameter] public int Id { get; set; }
 
@@ -23,7 +26,12 @@ public partial class UpdateCollection : ComponentBase
         var res = await ApiClient.PutAsync<CollectionSummaryDto, CollectionUpdateDto>($"/api/collection/{Id}", CollectionUpdateDto);
         if (res != null && res.IsSuccess)
         {
+            MessageService.ShowMessage(Message.Success(res.Message));
             NavigationManager.NavigateTo($"/collection/{Id}");
+        }
+        else
+        {
+            MessageService.ShowMessage(Message.Error(res?.Message ?? "Error"));
         }
     }
 
@@ -40,6 +48,10 @@ public partial class UpdateCollection : ComponentBase
         if (res != null && res.IsSuccess && res.Data != null)
         {
             CollectionUpdateDto = res.Data.ToUpdateDto();
+        }
+        else
+        {
+            MessageService.ShowMessage(Message.Error(res?.Message ?? "Error"));
         }
     }
 
@@ -73,7 +85,12 @@ public partial class UpdateCollection : ComponentBase
 
         if (res != null && res.IsSuccess)
         {
+            MessageService.ShowMessage(Message.Success(res.Message));
             NavigationManager.NavigateTo("/collection");
+        }
+        else
+        {
+            MessageService.ShowMessage(Message.Error(res?.Message ?? "Error"));
         }
     }
 }

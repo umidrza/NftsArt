@@ -92,6 +92,10 @@ public partial class DetailNft
         {
             Nft = res.Data;
         }
+        else
+        {
+            MessageService.ShowMessage(Message.Error(res?.Message ?? "Error"));
+        }
     }
 
     private async Task LoadAuction()
@@ -138,6 +142,10 @@ public partial class DetailNft
         {
             likeCount = countRes.Data;
         }
+        else
+        {
+            MessageService.ShowMessage(Message.Error(countRes?.Message ?? "Error"));
+        }
 
         if (UserId != null)
         {
@@ -145,6 +153,10 @@ public partial class DetailNft
             if (isLikedRes != null && isLikedRes.IsSuccess)
             {
                 isUserLiked = isLikedRes.Data;
+            }
+            else
+            {
+                MessageService.ShowMessage(Message.Error(isLikedRes?.Message ?? "Error"));
             }
         }
     }
@@ -174,24 +186,31 @@ public partial class DetailNft
                 isUserLiked = false;
             }
         }
+        else
+        {
+            MessageService.ShowMessage(Message.Error(res?.Message ?? "Error"));
+        }
     }
 
     private async Task DeleteAuction()
     {
         if (!isTermsAccepted) return;
         if (Nft == null || Nft.Auction == null) return;
-        if (Bids != null && Bids.Count > 0) return;
+        if (Bids != null && Bids.Count > 0)
+        {
+            MessageService.ShowMessage(Message.Error("You can't delete live auction"));
+        }
 
         var res = await ApiClient.DeleteAsync<AuctionSummaryDto>($"api/auction/{Nft.Auction.Id}");
 
         if (res != null && res.IsSuccess)
         {
-            MessageService.ShowMessage(Message.Success("Auction deleted successfully!"));
             Navigation.NavigateTo($"/nft/{Id}", true);
+            MessageService.ShowMessage(Message.Success("Auction deleted successfully!"));
         }
         else
         {
-            Console.WriteLine("Failed to delete the item.");
+            MessageService.ShowMessage(Message.Error(res?.Message ?? "Error"));
         }
     }
 
@@ -204,12 +223,12 @@ public partial class DetailNft
 
         if (res != null && res.IsSuccess)
         {
-            MessageService.ShowMessage(Message.Success("Nft purchased successfully!"));
             Navigation.NavigateTo($"/nft/{Id}", true);
+            MessageService.ShowMessage(Message.Success("Nft purchased successfully!"));
         }
         else
         {
-            MessageService.ShowMessage(Message.Error(res?.Message ?? "Error purchasing"));
+            MessageService.ShowMessage(Message.Error(res?.Message ?? "Error"));
         }
     }
 
@@ -247,6 +266,21 @@ public partial class DetailNft
         }
 
         InvokeAsync(StateHasChanged);
+    }
+
+    private string GetCountdownDays(DateTime endDate)
+    {
+        var timeDifference = endDate - DateTime.Now;
+
+        if (timeDifference.TotalMilliseconds > 0)
+        {
+            var days = timeDifference.Days;
+            return $"{days} days";
+        }
+        else
+        {
+            return "Expired";
+        }
     }
 
     public void Dispose()

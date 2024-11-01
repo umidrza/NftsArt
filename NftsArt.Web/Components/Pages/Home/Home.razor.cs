@@ -6,7 +6,7 @@ using NftsArt.Model.Dtos.User;
 
 namespace NftsArt.Web.Components.Pages.Home;
 
-public partial class Home
+public partial class Home : IDisposable
 {
     [Inject] ApiClient ApiClient { get; set; }
     [Inject] IJSRuntime JS { get; set; }

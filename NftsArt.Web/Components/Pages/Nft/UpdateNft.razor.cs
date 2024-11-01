@@ -4,6 +4,8 @@ using NftsArt.Model.Dtos.Auction;
 using Microsoft.JSInterop;
 using System.Globalization;
 using NftsArt.Model.Mapping;
+using NftsArt.Web.Services;
+using NftsArt.Model.Helpers;
 
 namespace NftsArt.Web.Components.Pages.Nft;
 
@@ -12,6 +14,7 @@ public partial class UpdateNft
     [Inject] ApiClient ApiClient { get; set; }
     [Inject] IJSRuntime JS { get; set; }
     [Inject] NavigationManager Navigation { get; set; }
+    [Inject] MessageService MessageService { get; set; }
 
     [Parameter] public int Id { get; set; }
 
@@ -26,9 +29,14 @@ public partial class UpdateNft
 
         if (res != null && res.IsSuccess)
         {
+            MessageService.ShowMessage(Message.Success(res.Message));
             Navigation.NavigateTo($"/nft/{Id}");
         }
-        
+        else
+        {
+            MessageService.ShowMessage(Message.Error(res?.Message ?? "Error"));
+        }
+
     }
 
     protected override async Task OnInitializedAsync()
@@ -49,6 +57,10 @@ public partial class UpdateNft
         if (res != null && res.IsSuccess)
         {
             Nft = res.Data;
+        }
+        else
+        {
+            MessageService.ShowMessage(Message.Error(res?.Message ?? "Error"));
         }
     }
 

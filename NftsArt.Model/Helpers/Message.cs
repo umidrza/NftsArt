@@ -7,6 +7,8 @@ public class Message
     public int Duration { get; set; } = 3000;
     public bool IsDeactivated { get; set; } = false;
 
+    public Message() { }
+
     private Message(string value, string type, int duration)
     {
         Value = value;

@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using NftsArt.Model.Dtos.Avatar;
 using NftsArt.Model.Dtos.User;
+using NftsArt.Model.Helpers;
 using NftsArt.Web.Authentication;
+using NftsArt.Web.Services;
 
 namespace NftsArt.Web.Components.Pages.Auth;
 
@@ -11,6 +13,7 @@ public partial class LoginRegister
     [Inject] ApiClient ApiClient { get; set; }
     [Inject] NavigationManager NavigationManager { get; set; }
     [Inject] AuthenticationStateProvider AuthStateProvider { get; set; }
+    [Inject] MessageService MessageService { get; set; }
 
 
     [SupplyParameterFromForm(FormName = "Register")]
@@ -60,6 +63,7 @@ public partial class LoginRegister
         if (res != null && res.IsSuccess && res.Data != null)
         {
             await ((CustomAuthStateProvider)AuthStateProvider).MarkUserAsAuthenticated(res.Data);
+            MessageService.ShowMessage(Message.Success("You are logged in"));
             NavigationManager.NavigateTo("/");
         }
         else
@@ -75,6 +79,7 @@ public partial class LoginRegister
         if (res != null && res.IsSuccess && res.Data != null)
         {
             await ((CustomAuthStateProvider)AuthStateProvider).MarkUserAsAuthenticated(res.Data);
+            MessageService.ShowMessage(Message.Success("You are logged in"));
             NavigationManager.NavigateTo("/");
         }
         else

@@ -1,0 +1,58 @@
+﻿@page "/nft/{Id:int}/bid"
+
+<PageTitle>Place a bid</PageTitle>
+
+<main>
+    <section class="form-section">
+        <div class="container">
+            @if (Nft == null || Nft.Auction == null)
+            {
+                <p><em>Loading...</em></p>
+            }
+            else
+            {
+                <div class="form-container">
+                    <h2 class="section-title">Place a bid</h2>
+                    <EditForm Model="BidCreateDto" OnValidSubmit="HandleSubmit" FormName="BidCreate" class="form">
+                        <DataAnnotationsValidator />
+
+                        <div class="form-preview">
+                            <h4 class="form-subtitle">Preview</h4>
+                            <h3 class="nft-sell-name">@Nft.Name</h3>
+                            <div class="nft-form-image">
+                                <img src="@Nft.ImageUrl" alt="NFT Image">
+                            </div>
+                            <div class="nft-sell-price">
+                                <p>Highest Bid</p>
+                                <h4>@Nft.Auction.CurrentBid</h4>
+                            </div>
+                        </div>
+                        <div class="form-inputs-container">
+                            <div class="form-inputs">
+                                <div class="form-control">
+                                    <label for="amount" class="form-label">Amount</label>
+                                    <InputNumber @bind-Value="BidCreateDto.Amount" id="amount" class="form-input"
+                                                 placeholder="Type here..." required />
+                                    <ValidationMessage For="@(() => BidCreateDto.Amount)" />
+                                </div>
+                                <div class="form-control">
+                                    <label for="quantity" class="form-label">Quantity</label>
+                                    <InputNumber id="quantity" @bind-Value="BidCreateDto.Quantity" class="form-input" min="1" required />
+                                    <ValidationMessage For="@(() => BidCreateDto.Quantity)" />
+                                </div>
+                                <div class="form-control">
+                                    <label for="expiration" class="form-label">Expiration</label>
+                                    <InputDate id="expiration" @bind-Value="BidCreateDto.EndTime" class="form-input" required />
+                                    <ValidationMessage For="@(() => BidCreateDto.EndTime)" />
+                                </div>
+                            </div>
+                            <div class="form-buttons">
+                                <button type="submit" class="form-button btn-green">Place a bid</button>
+                            </div>
+                        </div>
+                    </EditForm>
+                </div>
+            }
+        </div>
+    </section>
+</main>

@@ -38,7 +38,10 @@ public class BidRepository(AppDbContext context) : IBidRepository
 
     public async Task<Result<BidSummaryDto>> CreateAsync(BidCreateDto bidCreateDto, string userId, int auctionId)
     {
-        var auction = await context.Auctions.FindAsync(auctionId);
+        var auction = await context.Auctions
+            .Include(a => a.Nft)
+            .FirstOrDefaultAsync(a => a.Id == auctionId);
+
         if (auction == null)
             return Result<BidSummaryDto>.Failure("Auction has not found");
 
@@ -51,30 +54,21 @@ public class BidRepository(AppDbContext context) : IBidRepository
         if (bidCreateDto.Quantity > auction.Quantity)
             return Result<BidSummaryDto>.Failure("Not enough copies available for the requested quantity.");
 
-        if (bidCreateDto.Amount < auction.CurrentBid)
-            return Result<BidSummaryDto>.Failure("You cannot bid lower than the current bid");
+        if (bidCreateDto.Amount <= auction.CurrentBid)
+            return Result<BidSummaryDto>.Failure("You must bid higher than the current bid");
 
         var buyer = await context.Users
-            .Include(u => u.Wallets)
             .FirstOrDefaultAsync(u => u.Id == userId);
 
         if (buyer == null)
             return Result<BidSummaryDto>.Failure("Buyer not found.");
 
-        if (buyer.Wallets == null || buyer.Wallets.Count == 0)
-            return Result<BidSummaryDto>.Failure("No buyer wallet");
-
-        var buyerWallets = buyer.Wallets
-            .Where(w => w.Blockchain == auction.Nft.Blockchain && w.Currency == auction.Currency)
-            .ToList();
-
-        if (buyerWallets == null || buyerWallets.Count == 0)
-            return Result<BidSummaryDto>.Failure($"No {auction.Nft.Blockchain} blockchain wallet or {auction.Currency} currency");
-
-        var buyerWallet = buyerWallets.FirstOrDefault(w => w.Balance < bidCreateDto.Amount * bidCreateDto.Quantity);
+        var buyerWallet = await context.Wallets
+            .Where(w => w.Blockchain == auction.Nft.Blockchain && w.UserId == userId)
+            .FirstOrDefaultAsync();
 
         if (buyerWallet == null)
-            return Result<BidSummaryDto>.Failure("Insufficient funds.");
+            return Result<BidSummaryDto>.Failure($"No {auction.Nft.Blockchain} wallet");
 
 
         var bid = bidCreateDto.ToEntity(userId, auctionId);

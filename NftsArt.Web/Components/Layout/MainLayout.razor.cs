@@ -13,7 +13,7 @@ public partial class MainLayout : IDisposable
     protected void ShowMessage(Message message)
     {
         Messages.Add(message);
-        StateHasChanged();
+        InvokeAsync(StateHasChanged);
 
         _ = Task.Delay(message.Duration).ContinueWith(task =>
         {

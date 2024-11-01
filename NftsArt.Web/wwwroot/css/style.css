@@ -151,7 +151,8 @@ body:has(header) {
 }
 
 .btn-green:disabled,
-.btn-outline-green:disabled {
+.btn-outline-green:disabled,
+.btn-red:disabled{
     color: var(--grayscale-60);
     background: var(--grayscale-10-95);
     border: 1px solid transparent;
@@ -3605,7 +3606,7 @@ body:has(.notfound-section) {
 
 .alert-info {
     background-color: #FFCD1A;
-    color: white;
+    color: black;
 }
 
 .deactive{

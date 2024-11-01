@@ -41,7 +41,7 @@
                                             }
                                         </InputSelect>
                                         <InputNumber @bind-Value="AuctionCreateDto.Price" id="price-input" class="form-input"
-                                                     placeholder="Type here..." step="0.01" required />
+                                                     placeholder="Type here..." required />
                                     </div>
                                     <ValidationMessage For="@(() => AuctionCreateDto.Currency)" />
                                     <ValidationMessage For="@(() => AuctionCreateDto.Price)" />
@@ -73,7 +73,7 @@
 
                                 <div class="form-control">
                                     <label for="quantity" class="form-label">Quantity</label>
-                                    <InputNumber id="quantity" @bind-Value="AuctionCreateDto.Quantity" class="form-input" required />
+                                    <InputNumber id="quantity" @bind-Value="AuctionCreateDto.Quantity" class="form-input" min="1" required />
                                     <ValidationMessage For="@(() => AuctionCreateDto.Quantity)" />
                                 </div>
                             </div>

@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 using NftsArt.Model.Dtos.Collection;
 using NftsArt.Model.Dtos.User;
+using NftsArt.Model.Helpers;
+using NftsArt.Web.Services;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace NftsArt.Web.Components.Pages.Collection;
@@ -12,6 +14,7 @@ public partial class IndexCollection
     [Inject] ApiClient ApiClient { get; set; }
     [Inject] AuthenticationStateProvider AuthStateProvider { get; set; }
     [Inject] IJSRuntime JS { get; set; }
+    [Inject] MessageService MessageService { get; set; }
 
 
     private List<CollectionDetailDto>? Collections { get; set; }
@@ -81,6 +84,7 @@ public partial class IndexCollection
         {
             Collections = res.Data;
         }
+
     }
 
     private async Task LoadCollectors()
@@ -117,6 +121,10 @@ public partial class IndexCollection
 
             FollowingStates[userId] = !followDto.IsDeleted;
             FollowerCounts[userId] = !followDto.IsDeleted ? FollowerCounts[userId] + 1 : FollowerCounts[userId] - 1;
+        }
+        else
+        {
+            MessageService.ShowMessage(Message.Error(res?.Message ?? "Error"));
         }
     }
 

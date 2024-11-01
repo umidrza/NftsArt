@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Components;
 using NftsArt.Model.Dtos.Nft;
 using NftsArt.Model.Dtos.Collection;
+using NftsArt.Model.Helpers;
+using NftsArt.Web.Services;
 
 namespace NftsArt.Web.Components.Pages.Nft;
 
@@ -9,6 +11,7 @@ public partial class CreateNft
 {
     [Inject] ApiClient ApiClient { get; set; }
     [Inject] NavigationManager NavigationManager { get; set; }
+    [Inject] MessageService MessageService { get; set; }
 
 
     [SupplyParameterFromForm]
@@ -27,6 +30,12 @@ public partial class CreateNft
         {
             var nft = res.Data;
             NavigationManager.NavigateTo($"/nft/{nft.Id}");
+
+            MessageService.ShowMessage(Message.Success(res.Message));
+        }
+        else
+        {
+            MessageService.ShowMessage(Message.Error(res?.Message ?? "Error"));
         }
     }
 
@@ -43,6 +52,10 @@ public partial class CreateNft
         if (res != null && res.IsSuccess && res.Data != null)
         {
             Collections = res.Data;
+        }
+        else
+        {
+            MessageService.ShowMessage(Message.Error(res?.Message ?? "Error"));
         }
     }
 
@@ -65,9 +78,10 @@ public partial class CreateNft
                 NftCreateDto.ImageUrl = res.Data;
                 hasImage = true;
             }
-            else 
+            else
             {
                 hasImage = false;
+                MessageService.ShowMessage(Message.Error(res?.Message ?? "Error"));
             }
         }
         else

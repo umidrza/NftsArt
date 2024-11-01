@@ -1,13 +1,17 @@
 ﻿using Microsoft.AspNetCore.Components;
 using NftsArt.Model.Dtos.Collection;
 using NftsArt.Model.Dtos.Nft;
+using NftsArt.Model.Helpers;
+using NftsArt.Web.Services;
 
 namespace NftsArt.Web.Components.Pages.Collection;
 
 public partial class CreateCollection
 {
-    [Inject] private ApiClient ApiClient { get; set; }
-    [Inject] private NavigationManager NavigationManager { get; set; }
+    [Inject] ApiClient ApiClient { get; set; }
+    [Inject] NavigationManager NavigationManager { get; set; }
+    [Inject] MessageService MessageService { get; set; }
+
 
     [SupplyParameterFromForm]
     public CollectionCreateDto CollectionCreateDto { get; set; } = new();
@@ -20,7 +24,12 @@ public partial class CreateCollection
         var res = await ApiClient.PostAsync<CollectionSummaryDto, CollectionCreateDto>("api/collection", CollectionCreateDto);
         if (res != null && res.IsSuccess)
         {
+            MessageService.ShowMessage(Message.Success(res.Message));
             NavigationManager.NavigateTo("/collection");
+        }
+        else
+        {
+            MessageService.ShowMessage(Message.Error(res?.Message ?? "Error"));
         }
     }
 

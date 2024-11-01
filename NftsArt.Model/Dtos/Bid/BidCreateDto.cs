@@ -2,7 +2,7 @@
 
 namespace NftsArt.Model.Dtos.Bid;
 
-public record class BidCreateDto
+public record class BidCreateDto : IValidatableObject
 {
     [Range(0.01, double.MaxValue, ErrorMessage = "Amount must be valid.")]
     public decimal Amount { get; set; }

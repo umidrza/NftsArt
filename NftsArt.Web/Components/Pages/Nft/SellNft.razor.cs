@@ -3,6 +3,8 @@ using Microsoft.JSInterop;
 using NftsArt.Model.Dtos.Auction;
 using NftsArt.Model.Dtos.Nft;
 using NftsArt.Model.Dtos.Wallet;
+using NftsArt.Model.Helpers;
+using NftsArt.Web.Services;
 using System.Globalization;
 
 namespace NftsArt.Web.Components.Pages.Nft;
@@ -11,6 +13,8 @@ public partial class SellNft
 {
     [Inject] ApiClient ApiClient { get; set; }
     [Inject] IJSRuntime JS {  get; set; }
+    [Inject] NavigationManager Navigation { get; set; }
+    [Inject] MessageService MessageService { get; set; }
 
     [Parameter] public int Id { get; set; }
 
@@ -32,6 +36,10 @@ public partial class SellNft
             if (res != null && res.IsSuccess)
             {
                 isCompletedPopupActive = true;
+            }
+            else
+            {
+                MessageService.ShowMessage(Message.Error(res?.Message ?? "Error"));
             }
         }
         else
@@ -62,6 +70,10 @@ public partial class SellNft
         {
             Nft = res.Data;
         }
+        else
+        {
+            MessageService.ShowMessage(Message.Error(res?.Message ?? "Error"));
+        }
     }
 
     protected async Task LoadWallet()
@@ -76,7 +88,8 @@ public partial class SellNft
         }
         else
         {
-            Console.WriteLine($"You don't have {Nft?.Blockchain} blockchain");
+            Navigation.NavigateTo("wallet");
+            MessageService.ShowMessage(Message.Info($"{Nft?.Blockchain} blockchain wallet needed to list this NFT ", 5000));
         }
     }
 
