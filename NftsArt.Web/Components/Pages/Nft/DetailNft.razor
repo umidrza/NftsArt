@@ -1,5 +1,6 @@
 ﻿@page "/nft/{Id:int}"
 @page "/collection/{CollectionId:int}/nft/{Id:int}"
+@using System.Globalization
 
 <PageTitle>NFT Detail</PageTitle>
 
@@ -196,7 +197,7 @@
                                         <div class="price-history-chart-container dropdown-content opened">
                                             <div class="chart-subtitle">
                                                 <h4>All Time Avg. Price</h4>
-                                                <select class="chart-select">
+                                                <select class="chart-select" @onchange="OnRangeChanged">
                                                     <option value="1">7 days</option>
                                                     <option value="2">1 month</option>
                                                     <option value="3">1 year</option>
@@ -205,50 +206,39 @@
                                             </div>
                                             <div class="price-history-chart">
                                                 <div class="prices">
-                                                    <p class="chart-text">2.5</p>
-                                                    <p class="chart-text">2</p>
-                                                    <p class="chart-text">1.5</p>
-                                                    <p class="chart-text">1</p>
-                                                    <p class="chart-text">0.5</p>
-                                                    <p class="chart-text">0</p>
+                                                    @foreach (var price in DisplayedPrices)
+                                                    {
+                                                        <p class="chart-text">@price</p>
+                                                    }
                                                 </div>
                                                 <div class="dates">
-                                                    <p class="chart-text">15/9</p>
-                                                    <p class="chart-text">16/9</p>
-                                                    <p class="chart-text">17/9</p>
-                                                    <p class="chart-text">18/9</p>
-                                                    <p class="chart-text">19/9</p>
-                                                    <p class="chart-text">20/9</p>
-                                                    <p class="chart-text">21/9</p>
+                                                    @foreach (var date in DisplayedDates)
+                                                    {
+                                                        <p class="chart-text">@date.ToString("dd/MM/yy")</p>
+                                                    }
                                                 </div>
                                                 <div class="lines">
-                                                    <div class="line"></div>
-                                                    <div class="line"></div>
-                                                    <div class="line"></div>
-                                                    <div class="line"></div>
-                                                    <div class="line"></div>
-                                                    <div class="line"></div>
+                                                    @for (int i = 0; i < 6; i++)
+                                                    {
+                                                        <div class="line"></div>
+                                                    }
                                                 </div>
                                                 <div class="chart">
-                                                    <svg class="chart-line1" xmlns="http://www.w3.org/2000/svg" width="650"
-                                                         height="200" viewBox="0 0 650 200" fill="none">
-                                                        <path d="" fill="url(#paint0_linear_91_2002)" fill-opacity="0.32" />
+                                                    <svg class="chart-line1" width="650" height="200" viewBox="0 0 650 200" fill="none">
+                                                        <path d="@PathData1" fill="url(#paint0_linear_91_2002)" fill-opacity="0.32" />
                                                         <defs>
-                                                            <linearGradient id="paint0_linear_91_2002" x1="328.351" y1="-10"
-                                                                            x2="328.478" y2="186" gradientUnits="userSpaceOnUse">
+                                                            <linearGradient id="paint0_linear_91_2002" x1="328.351" y1="-10" x2="328.478" y2="186" gradientUnits="userSpaceOnUse">
                                                                 <stop stop-color="#DCF06B" />
                                                                 <stop offset="1" stop-color="#DCF06B" stop-opacity="0" />
                                                             </linearGradient>
                                                         </defs>
                                                     </svg>
-                                                    <svg class="chart-line2" xmlns="http://www.w3.org/2000/svg" width="650"
-                                                         height="200" viewBox="0 0 650 200" fill="none">
-                                                        <path d="" stroke="#171717" stroke-width="1.5" stroke-linecap="round" />
+                                                    <svg class="chart-line2" width="650" height="200" viewBox="0 0 650 200" fill="none">
+                                                        <path d="@PathData2" stroke="#171717" stroke-width="1.5" stroke-linecap="round" />
                                                     </svg>
                                                 </div>
                                             </div>
                                         </div>
-
                                     </div>
                                 }
 

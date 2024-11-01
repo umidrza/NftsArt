@@ -1,5 +1,4 @@
-﻿using NftsArt.Model.Dtos.Auction;
-using NftsArt.Model.Dtos.User;
+﻿using NftsArt.Model.Dtos.User;
 
 namespace NftsArt.Model.Dtos.Bid;
 

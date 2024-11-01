@@ -8,7 +8,7 @@ public record class BidCreateDto : IValidatableObject
     public decimal Amount { get; set; }
 
     [Required(ErrorMessage = "Expiration date is required.")]
-    public DateTime EndTime { get; set; }
+    public DateTime EndTime { get; set; } = DateTime.Now.AddMonths(6);
 
     [Range(1, 1000)]
     public int Quantity { get; set; } = 1;

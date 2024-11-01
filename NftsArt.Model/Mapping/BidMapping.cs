@@ -11,6 +11,7 @@ public static class BidMapping
         {
             Amount = bidCreateDto.Amount,
             EndTime = bidCreateDto.EndTime,
+            Quantity = bidCreateDto.Quantity,
             BidderId = creatorId,
             AuctionId = auctionId
         };

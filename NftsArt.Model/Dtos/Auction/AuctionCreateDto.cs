@@ -9,7 +9,7 @@ public record class AuctionCreateDto : IValidatableObject
     public decimal Price { get; set; }
 
     [Required(ErrorMessage = "Start time is required.")]
-    public DateTime StartTime { get; set; }
+    public DateTime StartTime { get; set; } = DateTime.Now;
 
     [Required(ErrorMessage = "End time is required.")]
     public DateTime EndTime { get; set; }

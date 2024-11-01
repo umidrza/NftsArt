@@ -40,6 +40,8 @@ public partial class BidNft
     {
         await base.OnInitializedAsync();
         await LoadNft();
+
+        BidCreateDto.EndTime = DateTime.Now.AddMonths(6);
     }
 
     protected async Task LoadNft()

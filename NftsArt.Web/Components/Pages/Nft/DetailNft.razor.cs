@@ -67,6 +67,12 @@ public partial class DetailNft
             StartTimer();
         }
 
+        if (Bids != null)
+        {
+            FilterBidChart("4");
+            UpdateBidChart();
+        }
+
         StateHasChanged();
         isDataLoaded = true;
     }
@@ -302,6 +308,7 @@ public partial class DetailNft
     }
 
 
+    private string ButtonText => IsTruncated ? "Show more" : "Show less";
     private bool IsTruncated { get; set; } = true;
     private string GetExtraContent(string text, int maxLength)
     {
@@ -310,5 +317,78 @@ public partial class DetailNft
             : text;
     }
     
-    private string ButtonText => IsTruncated ? "Show more" : "Show less";
+
+
+    // Bids chart 
+    private List<decimal> FilteredBidAmounts { get; set; } = new();
+    private List<DateTime> FilteredBidTimestamps { get; set; } = new();
+
+    private List<string> DisplayedPrices { get; set; } = new();
+    private List<DateTime> DisplayedDates { get; set; } = new();
+
+    private string PathData1 { get; set; } = string.Empty;
+    private string PathData2 { get; set; } = string.Empty;
+
+    private void OnRangeChanged(ChangeEventArgs e)
+    {
+        string selectedRange = e.Value?.ToString() ?? "4";
+        FilterBidChart(selectedRange);
+        UpdateBidChart();
+    }
+
+    private void FilterBidChart(string range)
+    {
+        DateTime now = DateTime.Now;
+        DateTime threshold = range switch
+        {
+            "1" => now.AddDays(-7),
+            "2" => now.AddMonths(-1),
+            "3" => now.AddYears(-1),
+            _ => DateTime.MinValue
+        };
+
+        var filteredBids = Bids!.Where(bid => bid.StartTime >= threshold).ToList();
+
+        FilteredBidAmounts = filteredBids.Select(bid => bid.Amount).ToList();
+        FilteredBidTimestamps = filteredBids.Select(bid => bid.StartTime).ToList();
+    }
+
+    private void UpdateBidChart()
+    {
+        if (FilteredBidAmounts.Count == 0) return;
+
+        decimal maxBidAmount = FilteredBidAmounts.Max();
+        decimal minBidAmount = FilteredBidAmounts.Min();
+
+        PathData1 = "M";
+        PathData2 = "M";
+
+        for (int i = 0; i < FilteredBidAmounts.Count; i++)
+        {
+            decimal amount = FilteredBidAmounts[i];
+            float x = i * (650f / (FilteredBidAmounts.Count - 1));
+            float y = 200f - ((float)((amount - minBidAmount) / (maxBidAmount - minBidAmount)) * 200f);
+
+            if (i == 0)
+            {
+                PathData1 += $"{x} {y}";
+                PathData2 += $"{x} {y}";
+            }
+            else
+            {
+                PathData1 += $" L{x} {y}";
+                PathData2 += $" L{x} {y}";
+            }
+        }
+
+        DisplayedPrices = Enumerable.Range(0, 6)
+            .Select(i => minBidAmount + i * (maxBidAmount - minBidAmount) / 5)
+            .Select(p => p.ToString("F1"))
+            .Reverse()
+            .ToList();
+
+        DisplayedDates = FilteredBidTimestamps
+            .Where((_, i) => i % Math.Max(1, FilteredBidTimestamps.Count / 6) == 0)
+            .ToList();
+    }
 }
