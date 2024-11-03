@@ -76,7 +76,7 @@
 
                         <div class="form-buttons">
                             <button type="submit" class="form-button btn-green">Update Profile</button>
-                            <button type="button" class="btn-outline-green" id="update-password-button">Update Password?</button>
+                            <button @onclick="() => isUpdatePasswordPopupVisible = !isUpdatePasswordPopupVisible" type="button" class="btn-outline-green" id="update-password-button">Update Password?</button>
                             <button @onclick="HandleLogout" type="button" class="btn-red logout-btn">Logout</button>
                         </div>
                     </div>
@@ -85,35 +85,47 @@
         </div>
     </section>
 
-    <section class="popup-section" id="reset-password-popup">
+    <section class="popup-section @(isUpdatePasswordPopupVisible ? "active" : "")" id="reset-password-popup">
         <div class="popup">
             <h2 class="popup-title">Reset Password</h2>
-            <form method="post" id="reset-password-form" class="popup-form">
+            <EditForm Model="UpdatePasswordDto" OnValidSubmit="SubmitUpdatePassword" FormName="UpdatePassword" class="popup-form">
+                <DataAnnotationsValidator />
 
                 <div class="form-control" id="current-password-input">
                     <div class="form-input-box">
-                        <input type="password" name="old-password" id="old-password" class="form-input">
+                        <InputText @bind-Value="UpdatePasswordDto.CurrentPassword" name="old-password" id="old-password" class="form-input"
+                                    type="@((isPasswordVisible) ? "text" : "password")" required />
                         <label for="old-password" class="form-label">Current Password</label>
-                        <i class="fa-regular fa-eye-slash password-show-btn"></i>
+                        <i class="fa-regular @(isPasswordVisible ? "fa-eye" : "fa-eye-slash") password-show-btn"
+                           @onclick="() => isPasswordVisible = !isPasswordVisible"></i>
                     </div>
-                </div>
-                <div class="form-control">
-                    <div class="form-input-box">
-                        <input type="password" name="new-password1" id="new-password1" class="form-input" required>
-                        <label for="password" class="form-label">New Password</label>
-                        <i class="fa-regular fa-eye-slash password-show-btn"></i>
-                    </div>
-                </div>
-                <div class="form-control">
-                    <div class="form-input-box">
-                        <input type="password" name="new-password2" id="new-password2" class="form-input" required>
-                        <label for="password" class="form-label">Confirm New Password</label>
-                        <i class="fa-regular fa-eye-slash password-show-btn"></i>
-                    </div>
+                    <ValidationMessage For="@(() => UpdatePasswordDto.CurrentPassword)" />
                 </div>
 
-                <button type="submit" class="btn-green">Reset Password</button>
-            </form>
+                <div class="form-control">
+                    <div class="form-input-box">
+                        <InputText @bind-Value="UpdatePasswordDto.NewPassword" name="new-password1" id="new-password1"
+                                   type="@((isPasswordVisible) ? "text" : "password")" class="form-input" required />
+                        <label for="new-password1" class="form-label">New Password</label>
+                        <i class="fa-regular @(isPasswordVisible ? "fa-eye" : "fa-eye-slash") password-show-btn"
+                           @onclick="() => isPasswordVisible = !isPasswordVisible"></i>
+                    </div>
+                    <ValidationMessage For="@(() => UpdatePasswordDto.NewPassword)" />
+                </div>
+                <div class="form-control">
+                    <div class="form-input-box">
+                        <InputText @bind-Value="UpdatePasswordDto.ConfirmPassword" name="new-password2" id="new-password2" class="form-input"
+                                   type="@((isPasswordVisible) ? "text" : "password")" required />
+                        <label for="new-password2" class="form-label">Confirm New Password</label>
+                        <i class="fa-regular @(isPasswordVisible ? "fa-eye" : "fa-eye-slash") password-show-btn"
+                           @onclick="() => isPasswordVisible = !isPasswordVisible"></i>
+                    </div>
+                    <ValidationMessage For="@(() => UpdatePasswordDto.ConfirmPassword)" />
+                </div>
+
+                <button type="submit" class="btn-green">Update Password</button>
+            </EditForm>
+
         </div>
     </section>
 </main>

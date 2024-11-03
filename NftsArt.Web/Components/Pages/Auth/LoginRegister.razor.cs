@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Forms;
 using NftsArt.Model.Dtos.Avatar;
 using NftsArt.Model.Dtos.User;
 using NftsArt.Model.Helpers;
@@ -11,7 +12,7 @@ namespace NftsArt.Web.Components.Pages.Auth;
 public partial class LoginRegister
 {
     [Inject] ApiClient ApiClient { get; set; }
-    [Inject] NavigationManager NavigationManager { get; set; }
+    [Inject] NavigationManager Navigation { get; set; }
     [Inject] AuthenticationStateProvider AuthStateProvider { get; set; }
     [Inject] MessageService MessageService { get; set; }
 
@@ -26,8 +27,11 @@ public partial class LoginRegister
     private List<AvatarSummaryDto>? Avatars { get; set; }
     private string? selectedAvatar;
 
-    private bool isLoginPopupVisible = false;
     private bool isPasswordVisible = false;
+    private bool isLoginPopupVisible = false;
+    private bool isForgotPasswordPopupVisible = false;
+    private bool isVerifyCodePopupVisible = false;
+    private bool isResetPasswordPopupVisible = false;
 
     private string? loginError;
     private string? registerError;
@@ -64,7 +68,7 @@ public partial class LoginRegister
         {
             await ((CustomAuthStateProvider)AuthStateProvider).MarkUserAsAuthenticated(res.Data);
             MessageService.ShowMessage(Message.Success("You are logged in"));
-            NavigationManager.NavigateTo("/");
+            Navigation.NavigateTo("/");
         }
         else
         {
@@ -80,7 +84,7 @@ public partial class LoginRegister
         {
             await ((CustomAuthStateProvider)AuthStateProvider).MarkUserAsAuthenticated(res.Data);
             MessageService.ShowMessage(Message.Success("You are logged in"));
-            NavigationManager.NavigateTo("/");
+            Navigation.NavigateTo("/");
         }
         else
         {
@@ -95,8 +99,60 @@ public partial class LoginRegister
         RegisterDto.AvatarId = avatar.Id;
     }
 
-    private void ToggleLoginPopup()
+
+    // Reset Password
+
+    [SupplyParameterFromForm(FormName = "ForgotPassword")]
+    private ForgotPasswordDto ForgotPasswordDto { get; set; } = new ForgotPasswordDto();
+
+    [SupplyParameterFromForm(FormName = "VerifyCode")]
+    private VerifyCodeDto VerifyCodeDto { get; set; } = new VerifyCodeDto();
+
+    [SupplyParameterFromForm(FormName = "ResetPassword")]
+    private ResetPasswordDto ResetPasswordDto { get; set; } = new ResetPasswordDto();
+
+
+    private async Task SubmitForgotPassword()
     {
-        isLoginPopupVisible = !isLoginPopupVisible;
+        var res = await ApiClient.PostAsync<UserSummaryDto>($"api/auth/forgot-password?email={ForgotPasswordDto.Email}", null!);
+        
+        if (res != null && res.IsSuccess && res.Data != null)
+        {
+            MessageService.ShowMessage(Message.Success(res.Message));
+            isVerifyCodePopupVisible = true;
+        }
+        else
+        {
+            MessageService.ShowMessage(Message.Error(res?.Message ?? "Error"));
+        }
+    }
+
+    private async Task SubmitResetPassword()
+    {
+        var res = await ApiClient.PostAsync<UserSummaryDto, ResetPasswordDto>($"api/auth/reset-password-with-otp?email={ForgotPasswordDto.Email}&otpCode={VerifyCodeDto.OtpCode}", ResetPasswordDto);
+
+        if (res != null && res.IsSuccess && res.Data != null)
+        {
+            MessageService.ShowMessage(Message.Success(res.Message));
+            Navigation.NavigateTo("/");
+        }
+        else
+        {
+            MessageService.ShowMessage(Message.Error(res?.Message ?? "Error"));
+        }
+    }
+
+    private async Task SubmitVerifyCode() 
+    {
+        var res = await ApiClient.PostAsync<UserSummaryDto>($"api/auth/verify-otp?email={ForgotPasswordDto.Email}&otpCode={VerifyCodeDto.OtpCode}", null!);
+
+        if (res != null && res.IsSuccess && res.Data != null)
+        {
+            isResetPasswordPopupVisible = true;
+        }
+        else
+        {
+            MessageService.ShowMessage(Message.Error(res?.Message ?? "Invalid Code"));  
+        }
     }
 }

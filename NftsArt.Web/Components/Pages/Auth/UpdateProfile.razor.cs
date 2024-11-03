@@ -6,13 +6,14 @@ using NftsArt.Web.Authentication;
 using NftsArt.Model.Mapping;
 using NftsArt.Model.Helpers;
 using NftsArt.Web.Services;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace NftsArt.Web.Components.Pages.Auth;
 
 public partial class UpdateProfile
 {
     [Inject] ApiClient ApiClient { get; set; }
-    [Inject] NavigationManager NavigationManager { get; set; }
+    [Inject] NavigationManager Navigation { get; set; }
     [Inject] AuthenticationStateProvider AuthStateProvider { get; set; }
     [Inject] MessageService MessageService { get; set; }
 
@@ -20,12 +21,18 @@ public partial class UpdateProfile
     [SupplyParameterFromForm(FormName = "UpdateProfile")]
     private UserUpdateDto UpdateDto { get; set; } = new UserUpdateDto();
 
+    [SupplyParameterFromForm(FormName = "UpdatePassword")]
+    private UpdatePasswordDto UpdatePasswordDto { get; set; } = new UpdatePasswordDto();
+
     private UserDetailDto? User { get; set; }
 
     private List<AvatarSummaryDto>? Avatars { get; set; }
     private string? selectedAvatar;
 
     private string? updateProfileError;
+
+    private bool isUpdatePasswordPopupVisible = false;
+    private bool isPasswordVisible = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -79,7 +86,7 @@ public partial class UpdateProfile
         if (res != null && res.IsSuccess && res.Data != null)
         {
             await ((CustomAuthStateProvider)AuthStateProvider).MarkUserAsAuthenticated(res.Data);
-            NavigationManager.NavigateTo("/");
+            Navigation.NavigateTo("/");
 
             MessageService.ShowMessage(Message.Success(res.Message));
         }
@@ -94,6 +101,23 @@ public partial class UpdateProfile
         await ((CustomAuthStateProvider)AuthStateProvider).MarkUserAsLoggedOut();
 
         MessageService.ShowMessage(Message.Success("You've been logged out"));
-        NavigationManager.NavigateTo("/");
+        Navigation.NavigateTo("/");
+    }
+
+    private async Task SubmitUpdatePassword()
+    {
+        if (User == null) return;
+
+        var res = await ApiClient.PutAsync<UserSummaryDto, UpdatePasswordDto>($"api/auth/user/{User.Id}/update-password", UpdatePasswordDto);
+
+        if (res != null && res.IsSuccess && res.Data != null)
+        {
+            MessageService.ShowMessage(Message.Success(res.Message));
+            Navigation.NavigateTo("/");
+        }
+        else
+        {
+            MessageService.ShowMessage(Message.Error(res?.Message ?? "Error"));
+        }
     }
 }

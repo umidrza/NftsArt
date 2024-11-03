@@ -220,11 +220,11 @@ public class AuthController(
 
 
     [HttpPost("forgot-password")]
-    public async Task<ActionResult<Result<UserSummaryDto>>> ForgotPassword(string email)
+    public async Task<ActionResult<Result<UserSummaryDto>>> ForgotPassword([FromQuery] string email)
     {
         var user = await userManager.FindByEmailAsync(email);
         if (user == null)
-            return NotFound(Result<UserSummaryDto>.Failure("User not found"));
+            return Ok(Result<UserSummaryDto>.Failure("User has not been found with this email"));
 
         string token = await userManager.GeneratePasswordResetTokenAsync(user);
         string resetUrl = $"http://localhost:5179/api/auth/reset-password-with-token?email={user.Email}&token={HttpUtility.UrlEncode(token)}";
@@ -238,16 +238,14 @@ public class AuthController(
         string message = $"Please reset your password by clicking here: {resetUrl} or enter verification code {otpCode}";
         Console.WriteLine(message);
 
-        var result = await emailService.SendEmailAsync(user.Email!, subject, message);
-        if (!result.IsSuccess)
-            return BadRequest(result);
+        await emailService.SendEmailAsync(user.Email!, subject, message);
 
         return Ok(Result<UserSummaryDto>.Success(user.ToSummaryDto(), "A password reset link has been sent to your email"));
     }
 
 
     [HttpPost("reset-password-with-token")]
-    public async Task<ActionResult<Result<UserSummaryDto>>> ResetPasswordWithToken(string email, string token, [FromBody] ResetPasswordDto resetPasswordDto)
+    public async Task<ActionResult<Result<UserSummaryDto>>> ResetPasswordWithToken([FromQuery] string email, [FromQuery] string token, [FromBody] ResetPasswordDto resetPasswordDto)
     {
         if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(token))
             return BadRequest(Result<UserSummaryDto>.Failure("Email and Token required"));
@@ -271,7 +269,7 @@ public class AuthController(
 
 
     [HttpPost("verify-otp")]
-    public async Task<ActionResult<Result<UserSummaryDto>>> VerifyOtp(string email, string otpCode)
+    public async Task<ActionResult<Result<UserSummaryDto>>> VerifyOtp([FromQuery] string email, [FromQuery] string otpCode)
     {
         var user = await userManager.FindByEmailAsync(email);
         if (user == null)
@@ -285,7 +283,7 @@ public class AuthController(
 
 
     [HttpPost("reset-password-with-otp")]
-    public async Task<ActionResult<Result<UserSummaryDto>>> ResetPasswordWithOtp(string email, string otpCode, [FromBody] ResetPasswordDto resetPasswordDto)
+    public async Task<ActionResult<Result<UserSummaryDto>>> ResetPasswordWithOtp([FromQuery] string email, [FromQuery] string otpCode, [FromBody] ResetPasswordDto resetPasswordDto)
     {
         if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(otpCode))
             return BadRequest(Result<UserSummaryDto>.Failure("Email and OTP code required"));
@@ -318,7 +316,7 @@ public class AuthController(
 
     [HttpPost("follow/{followingUserId}")]
     [Authorize]
-    public async Task<ActionResult<Result<Follow>>> Follow(string followingUserId)
+    public async Task<ActionResult<Result<Follow>>> Follow([FromRoute] string followingUserId)
     { 
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userId == null) 
@@ -334,7 +332,7 @@ public class AuthController(
 
     [HttpGet("isfollowing/{userId}")]
     [Authorize]
-    public async Task<ActionResult<Result<bool>>> IsFollowing(string userId)
+    public async Task<ActionResult<Result<bool>>> IsFollowing([FromRoute] string userId)
     {
         var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (currentUserId == null)

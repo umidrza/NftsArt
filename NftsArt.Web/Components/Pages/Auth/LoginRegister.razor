@@ -1,7 +1,5 @@
 ﻿@page "/auth"
 
-@* @layout EmptyLayout *@
-
 <PageTitle>Login | Register</PageTitle>
 
 <main>
@@ -105,7 +103,7 @@
                         <div class="form-checkboxes">
                             <div class="form-info">
                                 <label class="form-label">Have an account already?</label>
-                                <h5 @onclick="ToggleLoginPopup" id="login-btn">Log in</h5>
+                                <h5 @onclick="() => isLoginPopupVisible = !isLoginPopupVisible" id="login-btn">Log in</h5>
                             </div>
                         </div>
                     </div>
@@ -147,63 +145,78 @@
                 }
 
                 <button type="submit" class="btn-green">Login</button>
-                <button type="button" class="btn-outline-green">Forgot Password?</button>
+                <button @onclick="() => isForgotPasswordPopupVisible = !isForgotPasswordPopupVisible" 
+                    type="button" class="btn-outline-green">Forgot Password?</button>
 
                 <div class="register-link">
-                    <p>Don't have an account? <span id="register-btn" @onclick="ToggleLoginPopup">Register</span></p>
+                    <p>Don't have an account? <span id="register-btn" @onclick="() => isLoginPopupVisible = !isLoginPopupVisible">Register</span></p>
                 </div>
             </EditForm>
         </div>
     </section>
 
-    <section class="popup-section" id="forgot-password-popup">
+    <section class="popup-section @(isForgotPasswordPopupVisible ? "active" : "")" id="forgot-password-popup">
         <div class="popup">
             <h2 class="popup-title">Forgot Password</h2>
-            <form method="post" id="forgot-password-form" class="popup-form">
+            <EditForm Model="ForgotPasswordDto" OnValidSubmit="SubmitForgotPassword" FormName="ForgotPassword" id="forgot-password-form" class="popup-form">
+                <DataAnnotationsValidator />
+
                 <div class="form-control">
-                    <label for="email" class="form-label">Enter your email address:</label>
-                    <input type="email" name="email" id="forgot-password-email" class="form-input" placeholder="Type here..." required>
+                    <label for="forgot-password-email" class="form-label">Enter your email address:</label>
+                    <InputText type="email" @bind-Value="ForgotPasswordDto.Email" id="forgot-password-email" class="form-input" placeholder="Type here..." required />
+                    <ValidationMessage For="@(() => ForgotPasswordDto.Email)" />
                 </div>
                 <button type="submit" class="btn-green">Send Verification Code</button>
-            </form>
+            </EditForm>
         </div>
     </section>
 
-    <section class="popup-section" id="verify-code-popup">
+    <section class="popup-section @(isVerifyCodePopupVisible ? "active" : "")" id="verify-code-popup">
         <div class="popup">
             <h2 class="popup-title">Verify Code</h2>
-            <form method="post" id="verify-code-form" class="popup-form">
+            <EditForm Model="VerifyCodeDto" OnValidSubmit="SubmitVerifyCode" FormName="VerifyCode" id="verify-code-form" class="popup-form">
+                <DataAnnotationsValidator />
+
                 <div class="form-control">
-                    <label for="token" class="form-label">Verification Code:</label>
-                    <input type="text" name="token" id="token" class="form-input" placeholder="Type here..." required>
+                    <label for="otpCode" class="form-label">Verification Code:</label>
+                    <InputText @bind-Value="VerifyCodeDto.OtpCode" id="otpCode" class="form-input" placeholder="Type here..." required />
+                    <ValidationMessage For="@(() => VerifyCodeDto.OtpCode)" />
                 </div>
                 <button type="submit" class="btn-green">Verify Code</button>
-            </form>
+            </EditForm>
         </div>
     </section>
 
-    <section class="popup-section" id="reset-password-popup">
+    <section class="popup-section @(isResetPasswordPopupVisible ? "active" : "")" id="reset-password-popup">
         <div class="popup">
             <h2 class="popup-title">Reset Password</h2>
-            <form method="post" id="reset-password-form" class="popup-form">
+            <EditForm Model="ResetPasswordDto" OnValidSubmit="SubmitResetPassword" FormName="ResetPassword" id="reset-password-form" class="popup-form">
+                <DataAnnotationsValidator />
 
                 <div class="form-control">
                     <div class="form-input-box">
-                        <input type="password" name="new-password1" id="new-password1" class="form-input" required>
-                        <label for="password" class="form-label">New Password</label>
-                        <i class="fa-regular fa-eye-slash password-show-btn"></i>
+                        <InputText @bind-Value="ResetPasswordDto.NewPassword" name="new-password1" id="new-password1"
+                                    type="@((isPasswordVisible) ? "text" : "password")" class="form-input" required />
+                        <label for="new-password1" class="form-label">New Password</label>
+                        <i class="fa-regular @(isPasswordVisible ? "fa-eye" : "fa-eye-slash") password-show-btn"
+                           @onclick="() => isPasswordVisible = !isPasswordVisible"></i>
                     </div>
+                    <ValidationMessage For="@(() => ResetPasswordDto.NewPassword)" />
                 </div>
                 <div class="form-control">
                     <div class="form-input-box">
-                        <input type="password" name="new-password2" id="new-password2" class="form-input" required>
-                        <label for="password" class="form-label">Confirm New Password</label>
-                        <i class="fa-regular fa-eye-slash password-show-btn"></i>
+                        <InputText @bind-Value="ResetPasswordDto.ConfirmPassword" name="new-password2" id="new-password2" class="form-input"
+                                   type="@((isPasswordVisible) ? "text" : "password")" required />
+                        <label for="new-password2" class="form-label">Confirm New Password</label>
+                        <i class="fa-regular @(isPasswordVisible ? "fa-eye" : "fa-eye-slash") password-show-btn"
+                           @onclick="() => isPasswordVisible = !isPasswordVisible"></i>
                     </div>
+                    <ValidationMessage For="@(() => ResetPasswordDto.ConfirmPassword)" />
                 </div>
+
 
                 <button type="submit" class="btn-green">Reset Password</button>
-            </form>
+            </EditForm>
         </div>
     </section>
 </main>

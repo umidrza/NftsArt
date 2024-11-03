@@ -7,6 +7,6 @@ public record class ResetPasswordDto
     [Required]
     public string NewPassword { get; set; }
 
-    [Compare("Password", ErrorMessage = "Passwords do not match")]
+    [Compare("NewPassword", ErrorMessage = "Passwords do not match")]
     public string ConfirmPassword { get; set; }
 }
