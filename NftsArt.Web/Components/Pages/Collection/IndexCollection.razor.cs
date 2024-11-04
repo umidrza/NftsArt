@@ -17,7 +17,7 @@ public partial class IndexCollection
     [Inject] MessageService MessageService { get; set; }
 
 
-    private List<CollectionDetailDto>? Collections { get; set; }
+    private IEnumerable<CollectionDetailDto>? Collections { get; set; }
     private List<CollectorDto>? Collectors { get; set; }
 
     private string? UserId { get; set; }
@@ -33,6 +33,8 @@ public partial class IndexCollection
         await LoadCollectors();
         await LoadUserId();
 
+        CurrentPage = QueryModel.PageNumber;
+
         if (Collections != null)
         {
             foreach (var collection in Collections)
@@ -46,6 +48,7 @@ public partial class IndexCollection
                     FollowingStates[id] = collection.Creator.Followers.Exists(f => f.FollowerId == UserId && !f.IsDeleted);
                 }
             }
+
         }
 
         isDataLoaded = true;
@@ -71,7 +74,7 @@ public partial class IndexCollection
 
     private async Task LoadCollections()
     {
-        var res = await ApiClient.GetFromJsonAsync<List<CollectionDetailDto>>(
+        var res = await ApiClient.GetFromJsonAsync<Pagination<CollectionDetailDto>>(
                 $"api/collection" +
                 $"?SearchTerm={QueryModel.SearchTerm}" +
                 $"&Categories={string.Join(",", SelectedCategories)}" +
@@ -82,7 +85,8 @@ public partial class IndexCollection
 
         if (res != null && res.IsSuccess && res.Data != null)
         {
-            Collections = res.Data;
+            Collections = res.Data.Data;
+            TotalPages = (int)Math.Ceiling(res.Data.Count / (double)QueryModel.PageSize);
         }
 
     }
@@ -180,19 +184,25 @@ public partial class IndexCollection
 
 
     //Pagination
-    [Parameter] public int CurrentPage { get; set; }
-    [Parameter] public int TotalPages { get; set; }
-    [Parameter] public EventCallback<int> OnPageChanged { get; set; }
+    public int CurrentPage { get; set; }
+    public int TotalPages { get; set; }
 
     private bool DisabledPrevious => CurrentPage == 1;
     private bool DisabledNext => CurrentPage == TotalPages;
 
+    private async Task LoadPage(int pageNumber)
+    {
+        CurrentPage = pageNumber;
+        QueryModel.PageNumber = pageNumber;
+        await LoadCollections();
+    }
+
     private async Task GoToPage(int pageNumber)
     {
+        Console.WriteLine(pageNumber);
         if (pageNumber != CurrentPage)
         {
-            CurrentPage = pageNumber;
-            await OnPageChanged.InvokeAsync(CurrentPage);
+            await LoadPage(pageNumber);
         }
     }
 
@@ -200,8 +210,7 @@ public partial class IndexCollection
     {
         if (CurrentPage > 1)
         {
-            CurrentPage--;
-            await OnPageChanged.InvokeAsync(CurrentPage);
+            await LoadPage(CurrentPage - 1);
         }
     }
 
@@ -209,8 +218,7 @@ public partial class IndexCollection
     {
         if (CurrentPage < TotalPages)
         {
-            CurrentPage++;
-            await OnPageChanged.InvokeAsync(CurrentPage);
+            await LoadPage(CurrentPage + 1);
         }
     }
 }

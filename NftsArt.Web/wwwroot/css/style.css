@@ -2404,12 +2404,14 @@ tr.spacing td {
     gap: 24px;
 }
 
+.pagination-number{
+    cursor: pointer;
+}
 
 
 /* 
  *  NFT FORM
  */
-
 .form-section {
     padding: 60px 0 120px;
     width: 85%;

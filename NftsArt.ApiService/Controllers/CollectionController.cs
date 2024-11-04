@@ -14,12 +14,11 @@ namespace NftsArt.ApiService.Controllers;
 public class CollectionController(ICollectionRepository collectionRepo) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<Result<List<CollectionDetailDto>>>> GetCollections([FromQuery] CollectionQueryDto query)
+    public async Task<ActionResult<Result<Pagination<CollectionDetailDto>>>> GetCollections([FromQuery] CollectionQueryDto query)
     {
-        var collections = (await collectionRepo.GetAllAsync(query))
-                .Select(c => c.ToDetailDto()).ToList();
+        var collections = await collectionRepo.GetAllAsync(query);
 
-        return Ok(Result<List<CollectionDetailDto>>.Success(collections));
+        return Ok(Result<Pagination<CollectionDetailDto>>.Success(collections));
     }
 
     [HttpGet("{id:int}")]

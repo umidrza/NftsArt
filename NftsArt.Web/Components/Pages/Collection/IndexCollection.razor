@@ -168,13 +168,14 @@
                                         <div class="pagination">
                                             @for (int i = 1; i <= TotalPages; i++)
                                             {
+                                                var pageNumber = i;
                                                 if (i == CurrentPage)
                                                 {
-                                                    <strong class="pagination-number">@i</strong>
+                                                    <strong>@i</strong>
                                                 }
                                                 else
                                                 {
-                                                    <a class="pagination-number" @onclick="() => GoToPage(i)" href="#">@i</a>
+                                                    <a class="pagination-number" @onclick="() => GoToPage(pageNumber)">@i</a>
                                                 }
                                             }
                                         </div>

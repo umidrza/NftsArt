@@ -12,7 +12,7 @@ namespace NftsArt.BL.Repositories;
 
 public interface ICollectionRepository
 {
-    Task<IEnumerable<Collection>> GetAllAsync(CollectionQueryDto query);
+    Task<Pagination<CollectionDetailDto>> GetAllAsync(CollectionQueryDto query);
     Task<Collection?> GetByIdAsync(int id);
     Task<Result<CollectionSummaryDto>> CreateAsync(CollectionCreateDto newCollection, string userId);
     Task<Result<CollectionSummaryDto>> UpdateAsync(int id, CollectionUpdateDto updatedCollection);
@@ -23,7 +23,7 @@ public interface ICollectionRepository
 
 public class CollectionRepository(AppDbContext context) : ICollectionRepository
 {
-    public async Task<IEnumerable<Collection>> GetAllAsync(CollectionQueryDto query)
+    public async Task<Pagination<CollectionDetailDto>> GetAllAsync(CollectionQueryDto query)
     {
         var collections = context.Collections.AsQueryable();
 
@@ -70,21 +70,26 @@ public class CollectionRepository(AppDbContext context) : ICollectionRepository
             };
         }
 
-        return await collections
-            .Skip((query.PageNumber - 1) * query.PageSize)
-            .Take(query.PageSize)
-            .Include(c => c.Creator)
-                .ThenInclude(u => u.Avatar)
-             .Include(c => c.Creator)
-                .ThenInclude(u => u.Followers)
-            .Include(c => c.Creator)
-                .ThenInclude(u => u.Nfts)
-            .Include(c => c.CollectionNfts)
-                .ThenInclude(cn => cn.Nft)
-                    .ThenInclude(n => n.Auction)
-                        .ThenInclude(a => a.Seller)
-            .AsNoTracking()
-            .ToListAsync();
+        return new Pagination<CollectionDetailDto>
+        {
+            Count = await collections.CountAsync(),
+            Data = await collections
+                .Skip((query.PageNumber - 1) * query.PageSize)
+                .Take(query.PageSize)
+                .Include(c => c.Creator)
+                    .ThenInclude(u => u.Avatar)
+                 .Include(c => c.Creator)
+                    .ThenInclude(u => u.Followers)
+                .Include(c => c.Creator)
+                    .ThenInclude(u => u.Nfts)
+                .Include(c => c.CollectionNfts)
+                    .ThenInclude(cn => cn.Nft)
+                        .ThenInclude(n => n.Auction)
+                            .ThenInclude(a => a.Seller)
+                .AsNoTracking()
+                .Select(c => c.ToDetailDto())
+                .ToListAsync()
+        };
     }
 
     public async Task<Collection?> GetByIdAsync(int id)
