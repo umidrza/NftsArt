@@ -17,7 +17,7 @@ public interface ICollectionRepository
     Task<Result<CollectionSummaryDto>> CreateAsync(CollectionCreateDto newCollection, string userId);
     Task<Result<CollectionSummaryDto>> UpdateAsync(int id, CollectionUpdateDto updatedCollection);
     Task<Result<CollectionSummaryDto>> DeleteAsync(int id);
-    Task<IEnumerable<Nft>> GetNftsAsync(int id, NftQueryDto query);
+    Task<Pagination<NftSummaryDto>> GetNftsAsync(int id, NftQueryDto query);
     Task<IEnumerable<Collection>> GetAllByUserAsync(string userId);
 }
 
@@ -153,7 +153,7 @@ public class CollectionRepository(AppDbContext context) : ICollectionRepository
         return Result<CollectionSummaryDto>.Success(null!, "Collection deleted successfully.");
     }
 
-    public async Task<IEnumerable<Nft>> GetNftsAsync(int id, NftQueryDto query)
+    public async Task<Pagination<NftSummaryDto>> GetNftsAsync(int id, NftQueryDto query)
     {
         var collection = await context.Collections
             .Include(c => c.CollectionNfts)
@@ -243,9 +243,14 @@ public class CollectionRepository(AppDbContext context) : ICollectionRepository
             };
         }
 
-        return  nfts
-            .Skip((query.PageNumber - 1) * query.PageSize)
-            .Take(query.PageSize);
+        return new Pagination<NftSummaryDto>
+        {
+            Count = nfts.Count(),
+            Data = nfts
+                .Skip((query.PageNumber - 1) * query.PageSize)
+                .Take(query.PageSize)
+                .Select(n => n.ToSummaryDto())
+        };
     }
 
     public async Task<IEnumerable<Collection>> GetAllByUserAsync(string userId)

@@ -88,15 +88,13 @@ public class CollectionController(ICollectionRepository collectionRepo) : Contro
     }
 
     [HttpGet("{id:int}/nfts")]
-    public async Task<ActionResult<Result<List<NftSummaryDto>>>> GetCollectionNfts([FromRoute] int id, [FromQuery] NftQueryDto query)
+    public async Task<ActionResult<Result<Pagination<NftSummaryDto>>>> GetCollectionNfts([FromRoute] int id, [FromQuery] NftQueryDto query)
     {
         var nfts = await collectionRepo.GetNftsAsync(id, query);
         if (nfts == null)
-            return NotFound(Result<List<NftSummaryDto>>.Failure("Collection not found"));
+            return NotFound(Result<Pagination<NftSummaryDto>>.Failure("Collection not found"));
 
-        var nftsDtos = nfts.Select(n => n.ToSummaryDto()).ToList();
-
-        return Ok(Result<List<NftSummaryDto>>.Success(nftsDtos));
+        return Ok(Result<Pagination<NftSummaryDto>>.Success(nfts));
     }
 
     [HttpGet("my-collections")]

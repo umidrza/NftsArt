@@ -20,7 +20,7 @@ public partial class DetailCollection
 
     [Parameter] public int Id { get; set; }
     private CollectionDetailDto? Collection { get; set; }
-    private List<NftSummaryDto>? Nfts { get; set; }
+    private IEnumerable<NftSummaryDto>? Nfts { get; set; }
 
     private List<CollectorDto>? Collectors { get; set; }
 
@@ -36,6 +36,8 @@ public partial class DetailCollection
         await LoadCollectionNfts();
         await LoadCollectors();
         await LoadUserId();
+
+        CurrentPage = QueryModel.PageNumber;
 
         if (Collection != null && UserId != null)
         {
@@ -81,7 +83,7 @@ public partial class DetailCollection
 
     protected async Task LoadCollectionNfts()
     {
-        var res = await ApiClient.GetFromJsonAsync<List<NftSummaryDto>>(
+        var res = await ApiClient.GetFromJsonAsync<Pagination<NftSummaryDto>>(
             $"api/collection/{Id}/nfts" +
             $"?SearchTerm={QueryModel.SearchTerm}" +
             $"&Statuses={string.Join(",", SelectedStatuses)}" +
@@ -95,7 +97,8 @@ public partial class DetailCollection
 
         if (res != null && res.IsSuccess && res.Data != null)
         {
-            Nfts = res.Data;
+            Nfts = res.Data.Data;
+            TotalPages = (int)Math.Ceiling(res.Data.Count / (double)QueryModel.PageSize);
         }
     }
 
@@ -225,21 +228,26 @@ public partial class DetailCollection
         await ApplyFilters();
     }
 
-
     //Pagination
-    [Parameter] public int CurrentPage { get; set; }
-    [Parameter] public int TotalPages { get; set; }
-    [Parameter] public EventCallback<int> OnPageChanged { get; set; }
+    public int CurrentPage { get; set; }
+    public int TotalPages { get; set; }
 
     private bool DisabledPrevious => CurrentPage == 1;
     private bool DisabledNext => CurrentPage == TotalPages;
 
+    private async Task LoadPage(int pageNumber)
+    {
+        CurrentPage = pageNumber;
+        QueryModel.PageNumber = pageNumber;
+        await LoadCollectionNfts();
+    }
+
     private async Task GoToPage(int pageNumber)
     {
+        Console.WriteLine(pageNumber);
         if (pageNumber != CurrentPage)
         {
-            CurrentPage = pageNumber;
-            await OnPageChanged.InvokeAsync(CurrentPage);
+            await LoadPage(pageNumber);
         }
     }
 
@@ -247,8 +255,7 @@ public partial class DetailCollection
     {
         if (CurrentPage > 1)
         {
-            CurrentPage--;
-            await OnPageChanged.InvokeAsync(CurrentPage);
+            await LoadPage(CurrentPage - 1);
         }
     }
 
@@ -256,8 +263,7 @@ public partial class DetailCollection
     {
         if (CurrentPage < TotalPages)
         {
-            CurrentPage++;
-            await OnPageChanged.InvokeAsync(CurrentPage);
+            await LoadPage(CurrentPage + 1);
         }
     }
 }

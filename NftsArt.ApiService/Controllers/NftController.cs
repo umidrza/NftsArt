@@ -15,12 +15,11 @@ public class NftController(INftRepository nftRepo) : ControllerBase
 {
 
     [HttpGet]
-    public async Task<ActionResult<Result<List<NftSummaryDto>>>> GetNfts([FromQuery] NftQueryDto query)
+    public async Task<ActionResult<Result<Pagination<NftSummaryDto>>>> GetNfts([FromQuery] NftQueryDto query)
     {
-        var nfts = (await nftRepo.GetAllAsync(query))
-                    .Select(c => c.ToSummaryDto()).ToList();
+        var nfts = await nftRepo.GetAllAsync(query);
 
-        return Ok(Result<List<NftSummaryDto>>.Success(nfts));
+        return Ok(Result<Pagination<NftSummaryDto>>.Success(nfts));
     }
 
 

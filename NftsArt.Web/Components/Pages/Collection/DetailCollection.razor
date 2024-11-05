@@ -230,11 +230,11 @@
                         }
                     </div>
 
-                    @if(TotalPages > 1)
+                    @if (TotalPages > 1)
                     {
                         <div class="collection-pagination">
                             <a @onclick="PreviousPage">
-                                <div class="icon-box @(CurrentPage == 1 ? "disabled" : "")"  disabled="@DisabledPrevious">
+                                <div class="icon-box @(CurrentPage == 1 ? "disabled" : "")" disabled="@DisabledPrevious">
                                     <i class="fa-solid fa-chevron-left"></i>
                                 </div>
                             </a>
@@ -242,13 +242,14 @@
                             <div class="pagination">
                                 @for (int i = 1; i <= TotalPages; i++)
                                 {
+                                    var pageNumber = i;
                                     if (i == CurrentPage)
                                     {
-                                        <strong class="pagination-number">@i</strong>
+                                        <strong>@i</strong>
                                     }
                                     else
                                     {
-                                        <a class="pagination-number" @onclick="() => GoToPage(i)" href="#">@i</a>
+                                        <a class="pagination-number" @onclick="() => GoToPage(pageNumber)">@i</a>
                                     }
                                 }
                             </div>

@@ -11,7 +11,7 @@ namespace NftsArt.BL.Repositories;
 
 public interface INftRepository
 {
-    Task<IEnumerable<Nft>> GetAllAsync(NftQueryDto query);
+    Task<Pagination<NftSummaryDto>> GetAllAsync(NftQueryDto query);
     Task<IEnumerable<Nft>> GetAllByUserAsync(string userId);
     Task<IEnumerable<Nft>> GetPopularsAsync();
     Task<Nft?> GetByIdAsync(int id);
@@ -25,7 +25,7 @@ public interface INftRepository
 
 public class NftRepository(AppDbContext context) : INftRepository
 {
-    public async Task<IEnumerable<Nft>> GetAllAsync(NftQueryDto query)
+    public async Task<Pagination<NftSummaryDto>> GetAllAsync(NftQueryDto query)
     {
         var nfts = context.Nfts.AsQueryable();
 
@@ -105,15 +105,20 @@ public class NftRepository(AppDbContext context) : INftRepository
             };
         }
 
-        return await nfts
-            .Skip((query.PageNumber - 1) * query.PageSize)
-            .Take(query.PageSize)
-            .Include(n => n.Creator)
-                .ThenInclude(u => u.Avatar)
-            .Include(n => n.Auction)
-                .ThenInclude(a => a.Seller)
-            .AsNoTracking()
-            .ToListAsync();
+        return new Pagination<NftSummaryDto>
+        {
+            Count = nfts.Count(),
+            Data = await nfts
+                .Skip((query.PageNumber - 1) * query.PageSize)
+                .Take(query.PageSize)
+                .Include(n => n.Creator)
+                    .ThenInclude(u => u.Avatar)
+                .Include(n => n.Auction)
+                    .ThenInclude(a => a.Seller)
+                .AsNoTracking()
+                .Select(n => n.ToSummaryDto())
+                .ToListAsync()
+        };
     }
 
     public async Task<Nft?> GetByIdAsync(int id)
