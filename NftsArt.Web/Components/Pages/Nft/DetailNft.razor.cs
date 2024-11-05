@@ -67,7 +67,7 @@ public partial class DetailNft
             StartTimer();
         }
 
-        if (Bids != null)
+        if (Bids != null && Bids.Count > 2)
         {
             FilterBidChart("4");
             UpdateBidChart();

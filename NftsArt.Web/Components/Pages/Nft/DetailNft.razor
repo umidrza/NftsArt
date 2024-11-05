@@ -169,7 +169,9 @@
                                     {
                                         if (Nft.Collectors.Exists(id => id == UserId))
                                         {
-                                            <button class="auction-button btn-green" disabled="@(!isTermsAccepted)">Buy More</button>
+                                            <a href="@($"nft/{Id}/bid")">
+                                                <button class="auction-button btn-green" disabled="@(!isTermsAccepted)">Buy More</button>
+                                            </a>
                                         }   
                                         else
                                         {
