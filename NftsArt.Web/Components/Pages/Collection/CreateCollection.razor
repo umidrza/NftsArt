@@ -11,30 +11,7 @@
                 </h2> 
                 <EditForm Model="@CollectionCreateDto" OnValidSubmit="HandleValidSubmit" FormName="CollectionCreate" class="form" method="post">
                      <DataAnnotationsValidator />
-                
-                    @if(Nfts != null && Nfts.Count > 0)
-                    {
-                        <div class="form-control">
-                            <label class="form-label">Select NFTs</label>
-                            <div class="form-collections">
-                                @foreach(var nft in Nfts)
-                                {
-                                    <div class="form-collection">
-                                        <input type="checkbox" id="@($"nft-{nft.Id}")" class="hidden"
-                                               @onchange="(e) => HandleNftChange(e, nft.Id)">
-                                        <label for="@($"nft-{nft.Id}")">
-                                            <img src="@nft.ImageUrl" class="form-collection-image">
-                                        </label>
-                                        <label for="@($"nft-{nft.Id}")" class="form-collection-name">
-                                            <span>@nft.Name</span>
-                                        </label>
-                                    </div>
-                                }
-                            </div>
-                            <ValidationMessage For="@(() => CollectionCreateDto.Nfts)" />
-                        </div>
-                    }
-                
+              
                     <div class="form-inputs-container">
                         <div class="form-inputs">
                             <div class="form-control">
@@ -70,6 +47,29 @@
                             <button type="submit" class="form-button btn-green">Create Collection</button>
                         </div>
                     </div>
+
+                    @if (Nfts != null && Nfts.Count > 0)
+                    {
+                        <div class="form-control">
+                            <label class="form-label">Select NFTs</label>
+                            <div class="form-collections">
+                                @foreach (var nft in Nfts)
+                                {
+                                    <div class="form-collection">
+                                        <input type="checkbox" id="@($"nft-{nft.Id}")" class="hidden"
+                                               @onchange="(e) => HandleNftChange(e, nft.Id)">
+                                        <label for="@($"nft-{nft.Id}")">
+                                            <img src="@nft.ImageUrl" class="form-collection-image">
+                                        </label>
+                                        <label for="@($"nft-{nft.Id}")" class="form-collection-name">
+                                            <span>@nft.Name</span>
+                                        </label>
+                                    </div>
+                                }
+                            </div>
+                            <ValidationMessage For="@(() => CollectionCreateDto.Nfts)" />
+                        </div>
+                    }
                 </EditForm>
             </div>
         </div>

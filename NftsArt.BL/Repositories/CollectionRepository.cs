@@ -18,7 +18,7 @@ public interface ICollectionRepository
     Task<Result<CollectionSummaryDto>> UpdateAsync(int id, CollectionUpdateDto updatedCollection);
     Task<Result<CollectionSummaryDto>> DeleteAsync(int id);
     Task<Pagination<NftSummaryDto>> GetNftsAsync(int id, NftQueryDto query);
-    Task<IEnumerable<Collection>> GetAllByUserAsync(string userId);
+    Task<IEnumerable<CollectionDetailDto>> GetAllByUserAsync(string userId);
 }
 
 public class CollectionRepository(AppDbContext context) : ICollectionRepository
@@ -253,7 +253,7 @@ public class CollectionRepository(AppDbContext context) : ICollectionRepository
         };
     }
 
-    public async Task<IEnumerable<Collection>> GetAllByUserAsync(string userId)
+    public async Task<IEnumerable<CollectionDetailDto>> GetAllByUserAsync(string userId)
     {
         return await context.Collections
             .Where(c => c.CreatorId == userId)
@@ -264,6 +264,7 @@ public class CollectionRepository(AppDbContext context) : ICollectionRepository
                     .ThenInclude(n => n.Auction)
                         .ThenInclude(a => a.Seller)
             .AsNoTracking()
+            .Select(c => c.ToDetailDto())
             .ToListAsync();
     }
 }

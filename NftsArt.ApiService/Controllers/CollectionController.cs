@@ -99,15 +99,14 @@ public class CollectionController(ICollectionRepository collectionRepo) : Contro
 
     [HttpGet("my-collections")]
     [Authorize]
-    public async Task<ActionResult<Result<List<CollectionSummaryDto>>>> GetCollectionsByUser()
+    public async Task<ActionResult<Result<IEnumerable<CollectionDetailDto>>>> GetCollectionsByUser()
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (userId == null)
-            return Unauthorized(Result<List<CollectionSummaryDto>>.Failure("User not authenticated"));
+            return Unauthorized(Result<IEnumerable<CollectionDetailDto>>.Failure("User not authenticated"));
 
-        var collections = (await collectionRepo.GetAllByUserAsync(userId))
-                .Select(c => c.ToSummaryDto()).ToList();
+        var collections = await collectionRepo.GetAllByUserAsync(userId);
 
-        return Ok(Result<List<CollectionSummaryDto>>.Success(collections));
+        return Ok(Result<IEnumerable<CollectionDetailDto>>.Success(collections));
     }
 }

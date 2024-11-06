@@ -17,7 +17,7 @@ public partial class CreateNft
     [SupplyParameterFromForm]
     private NftCreateDto NftCreateDto { get; set; } = new NftCreateDto();
 
-    private List<CollectionSummaryDto>? Collections { get; set; }
+    private IEnumerable<CollectionDetailDto>? Collections { get; set; }
 
     private bool hasImage = false;
     private string uploadedImageSrc;
@@ -47,7 +47,7 @@ public partial class CreateNft
 
     protected async Task LoadCollections()
     {
-        var res = await ApiClient.GetFromJsonAsync<List<CollectionSummaryDto>>($"api/collection/my-collections");
+        var res = await ApiClient.GetFromJsonAsync<IEnumerable<CollectionDetailDto>>($"api/collection/my-collections");
 
         if (res != null && res.IsSuccess && res.Data != null)
         {

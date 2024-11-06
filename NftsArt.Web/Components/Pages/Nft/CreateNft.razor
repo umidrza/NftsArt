@@ -73,7 +73,7 @@
                                             <i class="fa-solid fa-plus"></i>
                                         </div>
                                     </a>
-                                    @if (Collections != null && Collections.Count > 0)
+                                    @if (Collections != null && Collections.Count() > 0)
                                     {
                                         @foreach (var collection in Collections)
                                         {
@@ -81,7 +81,14 @@
                                                 <input type="checkbox" id="@($"collection-{collection.Id}")" class="hidden" 
                                                                @onchange="(e) => HandleCollectionChange(e, collection.Id)" />
                                                 <label for="@($"collection-{collection.Id}")">
-                                                    <img src="/img/nfts/image3.jpeg" class="form-collection-image" />
+                                                    @if (collection.Nfts != null && collection.Nfts.Count > 0)
+                                                    {
+                                                        <img src="@collection.Nfts.First().ImageUrl" class="form-collection-image" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <img src="/img/nfts/image3.jpeg" class="form-collection-image" />
+                                                    }
                                                 </label>
                                                 <label for="@($"collection-{collection.Id}")" class="form-collection-name">
                                                     <span>@collection.Name</span>
