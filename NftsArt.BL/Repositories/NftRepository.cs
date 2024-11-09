@@ -12,8 +12,9 @@ namespace NftsArt.BL.Repositories;
 public interface INftRepository
 {
     Task<Pagination<NftSummaryDto>> GetAllAsync(NftQueryDto query);
-    Task<IEnumerable<Nft>> GetAllByUserAsync(string userId);
-    Task<IEnumerable<Nft>> GetPopularsAsync();
+    Task<IEnumerable<NftSummaryDto>> GetAllByUserAsync(string userId);
+    Task<Pagination<NftSummaryDto>> GetAllByCollectionIdAsync(int collectionId, NftQueryDto query);
+    Task<IEnumerable<NftSummaryDto>> GetPopularsAsync();
     Task<Nft?> GetByIdAsync(int id);
     Task<Result<NftSummaryDto>> CreateAsync(NftCreateDto newNft, string userId);
     Task<Result<NftSummaryDto>> UpdateAsync(int id, NftUpdateDto updatedNft);
@@ -29,6 +30,171 @@ public class NftRepository(AppDbContext context) : INftRepository
     {
         var nfts = context.Nfts.AsQueryable();
 
+        nfts = FilterNfts(nfts, query);
+
+        return new Pagination<NftSummaryDto>
+        {
+            Count = nfts.Count(),
+            Data = await nfts
+                .Skip((query.PageNumber - 1) * query.PageSize)
+                .Take(query.PageSize)
+                .Include(n => n.Creator)
+                    .ThenInclude(u => u.Avatar)
+                .Include(n => n.Auction)
+                    .ThenInclude(a => a.Seller)
+                .AsNoTracking()
+                .Select(n => n.ToSummaryDto())
+                .ToListAsync()
+        };
+    }
+
+    public async Task<Nft?> GetByIdAsync(int id)
+    {
+        return await context.Nfts
+            .Include(n => n.Creator)
+                .ThenInclude(u => u.Avatar)
+            .Include(n => n.Auction)
+                .ThenInclude(a => a.Seller)
+            .Include(n => n.NftCollectors)
+            .FirstOrDefaultAsync(n => n.Id == id);
+    }
+
+    public async Task<Result<NftSummaryDto>> CreateAsync(NftCreateDto nftCreateDto, string userId)
+    {
+        var nft = nftCreateDto.ToEntity(userId);
+
+        nft.NftCollectors.Add(new NftCollector { CollectorId = userId, NftId = nft.Id, Quantity = int.MaxValue });
+
+        nft.CollectionNfts = nftCreateDto.Collections
+            .Where(cId => context.Collections.Any(c => c.Id == cId))
+            .Select(cId => new CollectionNft { NftId = nft.Id, CollectionId = cId })
+            .ToList();
+
+        await context.Nfts.AddAsync(nft);
+        await context.SaveChangesAsync();
+
+        return Result<NftSummaryDto>.Success(nft.ToSummaryDto(), "NFT created successfully");
+    }
+
+    public async Task<Result<NftSummaryDto>> UpdateAsync(int id, NftUpdateDto updatedNft)
+    {
+        var nft = await context.Nfts.FindAsync(id);
+        if (nft == null)
+            return Result<NftSummaryDto>.Failure("Nft not found.");
+
+        nft.UpdateEntity(updatedNft);
+
+        nft.CollectionNfts = updatedNft.Collections
+            .Where(cId => context.Collections.Any(c => c.Id == cId))
+            .Select(cId => new CollectionNft { NftId = id, CollectionId = cId })
+            .ToList();
+
+        await context.SaveChangesAsync();
+
+        return Result<NftSummaryDto>.Success(nft.ToSummaryDto(), "Nft updated successfully.");
+    }
+
+    public async Task<Result<NftSummaryDto>> DeleteAsync(int id)
+    {
+        var nft = await context.Nfts.FindAsync(id);
+        if (nft == null) return Result<NftSummaryDto>.Failure("Nft not found.");
+
+        context.Nfts.Remove(nft);
+        await context.SaveChangesAsync();
+
+        return Result<NftSummaryDto>.Success(null!, "Nft deleted successfully.");
+    }
+
+    public async Task<IEnumerable<NftSummaryDto>> GetAllByUserAsync(string userId)
+    {
+        return await context.NftCollectors
+            .Where(nc => nc.CollectorId == userId)
+            .Include(nc => nc.Nft)
+                .ThenInclude(n => n.Creator)
+                    .ThenInclude(u => u.Avatar)
+            .Include(nc => nc.Nft)
+                .ThenInclude(n => n.Auction)
+                    .ThenInclude(a => a.Seller)
+            .Select(nc => nc.Nft.ToSummaryDto())
+            .AsNoTracking()
+            .ToListAsync();
+    }
+
+    public async Task<Pagination<NftSummaryDto>> GetAllByCollectionIdAsync(int collectionId, NftQueryDto query)
+    {
+        var collection = await context.Collections
+            .Include(c => c.CollectionNfts)
+                .ThenInclude(cn => cn.Nft)
+                    .ThenInclude(n => n.Auction)
+                        .ThenInclude(a => a.Seller)
+            .FirstOrDefaultAsync(c => c.Id == collectionId);
+
+        if (collection == null) return null!;
+
+        var nfts = collection.CollectionNfts.Select(cn => cn.Nft).AsQueryable();
+        nfts = FilterNfts(nfts, query);
+
+        return new Pagination<NftSummaryDto>
+        {
+            Count = nfts.Count(),
+            Data = nfts
+                .Skip((query.PageNumber - 1) * query.PageSize)
+                .Take(query.PageSize)
+                .Select(n => n.ToSummaryDto())
+        };
+    }
+
+    public async Task<IEnumerable<NftSummaryDto>> GetPopularsAsync()
+    {
+        return await context.Nfts
+            .Include(n => n.Creator)
+                .ThenInclude(u => u.Avatar)
+            .Include(n => n.Auction)
+                .ThenInclude(a => a.Seller)
+            .Include(n => n.Likes)
+            .AsNoTracking()
+            .OrderByDescending(n => n.Likes.Count())
+            .Take(4)
+            .Select(n => n.ToSummaryDto())
+            .ToListAsync();
+    }
+
+    public async Task<Result<NftLikeDto>> LikeAsync(string userId, int nftId)
+    {
+        var existingLike = await context.Likes
+            .FirstOrDefaultAsync(x => x.NftId == nftId && x.UserId == userId);
+
+        if (existingLike == null)
+        {
+            var like = new Like { NftId = nftId, UserId = userId };
+            await context.Likes.AddAsync(like);
+            await context.SaveChangesAsync();
+
+            return Result<NftLikeDto>.Success(like.ToLikeDto(), "NFT liked successfully");
+        }
+        else
+        {
+            context.Likes.Remove(existingLike);
+            await context.SaveChangesAsync();
+
+            return Result<NftLikeDto>.Success(null!, "NFT unliked successfully");
+        }
+    }
+
+    public async Task<int> GetLikesCountAsync(int nftId)
+    {
+        return await context.Likes.CountAsync(x => x.NftId == nftId);
+    }
+
+    public async Task<bool> HasUserLikedAsync(string userId, int nftId)
+    {
+        return await context.Likes
+            .AnyAsync(x => x.NftId == nftId && x.UserId == userId);
+    }
+
+
+    private static IQueryable<Nft> FilterNfts(IQueryable<Nft> nfts, NftQueryDto query)
+    {
         if (!string.IsNullOrWhiteSpace(query.SearchTerm))
         {
             nfts = nfts.Where(n => n.Name.ToLower().Contains(query.SearchTerm.ToLower()));
@@ -105,138 +271,6 @@ public class NftRepository(AppDbContext context) : INftRepository
             };
         }
 
-        return new Pagination<NftSummaryDto>
-        {
-            Count = nfts.Count(),
-            Data = await nfts
-                .Skip((query.PageNumber - 1) * query.PageSize)
-                .Take(query.PageSize)
-                .Include(n => n.Creator)
-                    .ThenInclude(u => u.Avatar)
-                .Include(n => n.Auction)
-                    .ThenInclude(a => a.Seller)
-                .AsNoTracking()
-                .Select(n => n.ToSummaryDto())
-                .ToListAsync()
-        };
-    }
-
-    public async Task<Nft?> GetByIdAsync(int id)
-    {
-        return await context.Nfts
-            .Include(n => n.Creator)
-                .ThenInclude(u => u.Avatar)
-            .Include(n => n.Auction)
-                .ThenInclude(a => a.Seller)
-            .Include(n => n.NftCollectors)
-            .FirstOrDefaultAsync(n => n.Id == id);
-    }
-
-    public async Task<Result<NftSummaryDto>> CreateAsync(NftCreateDto nftCreateDto, string userId)
-    {
-        var nft = nftCreateDto.ToEntity(userId);
-
-        nft.NftCollectors.Add(new NftCollector { CollectorId = userId, NftId = nft.Id, Quantity = int.MaxValue });
-
-        nft.CollectionNfts = nftCreateDto.Collections
-            .Where(cId => context.Collections.Any(c => c.Id == cId))
-            .Select(cId => new CollectionNft { NftId = nft.Id, CollectionId = cId })
-            .ToList();
-
-        await context.Nfts.AddAsync(nft);
-        await context.SaveChangesAsync();
-
-        return Result<NftSummaryDto>.Success(nft.ToSummaryDto(), "NFT created successfully");
-    }
-
-    public async Task<Result<NftSummaryDto>> UpdateAsync(int id, NftUpdateDto updatedNft)
-    {
-        var nft = await context.Nfts.FindAsync(id);
-        if (nft == null)
-            return Result<NftSummaryDto>.Failure("Nft not found.");
-
-        nft.UpdateEntity(updatedNft);
-
-        nft.CollectionNfts = updatedNft.Collections
-            .Where(cId => context.Collections.Any(c => c.Id == cId))
-            .Select(cId => new CollectionNft { NftId = id, CollectionId = cId })
-            .ToList();
-
-        await context.SaveChangesAsync();
-
-        return Result<NftSummaryDto>.Success(nft.ToSummaryDto(), "Nft updated successfully.");
-    }
-
-    public async Task<Result<NftSummaryDto>> DeleteAsync(int id)
-    {
-        var nft = await context.Nfts.FindAsync(id);
-        if (nft == null) return Result<NftSummaryDto>.Failure("Nft not found.");
-
-        context.Nfts.Remove(nft);
-        await context.SaveChangesAsync();
-
-        return Result<NftSummaryDto>.Success(null!, "Nft deleted successfully.");
-    }
-
-    public async Task<IEnumerable<Nft>> GetAllByUserAsync(string userId)
-    {
-        return await context.NftCollectors
-            .Where(nc => nc.CollectorId == userId)
-            .Include(nc => nc.Nft)
-                .ThenInclude(n => n.Creator)
-                    .ThenInclude(u => u.Avatar)
-            .Include(nc => nc.Nft)
-                .ThenInclude(n => n.Auction)
-                    .ThenInclude(a => a.Seller)
-            .Select(nc => nc.Nft)
-            .AsNoTracking()
-            .ToListAsync();
-    }
-
-    public async Task<IEnumerable<Nft>> GetPopularsAsync()
-    {
-        return await context.Nfts
-            .Include(n => n.Creator)
-                .ThenInclude(u => u.Avatar)
-            .Include(n => n.Auction)
-                .ThenInclude(a => a.Seller)
-            .Include(n => n.Likes)
-            .AsNoTracking()
-            .OrderByDescending(n => n.Likes.Count())
-            .Take(4)
-            .ToListAsync();
-    }
-
-    public async Task<Result<NftLikeDto>> LikeAsync(string userId, int nftId)
-    {
-        var existingLike = await context.Likes
-            .FirstOrDefaultAsync(x => x.NftId == nftId && x.UserId == userId);
-
-        if (existingLike == null)
-        {
-            var like = new Like { NftId = nftId, UserId = userId };
-            await context.Likes.AddAsync(like);
-            await context.SaveChangesAsync();
-
-            return Result<NftLikeDto>.Success(like.ToLikeDto(), "NFT liked successfully");
-        }
-        else
-        {
-            context.Likes.Remove(existingLike);
-            await context.SaveChangesAsync();
-
-            return Result<NftLikeDto>.Success(null!, "NFT unliked successfully");
-        }
-    }
-
-    public async Task<int> GetLikesCountAsync(int nftId)
-    {
-        return await context.Likes.CountAsync(x => x.NftId == nftId);
-    }
-
-    public async Task<bool> HasUserLikedAsync(string userId, int nftId)
-    {
-        return await context.Likes
-            .AnyAsync(x => x.NftId == nftId && x.UserId == userId);
+        return nfts;
     }
 }

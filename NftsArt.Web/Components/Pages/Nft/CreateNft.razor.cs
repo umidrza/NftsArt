@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components;
 using NftsArt.Model.Dtos.Nft;
 using NftsArt.Model.Dtos.Collection;
 using NftsArt.Model.Helpers;
-using NftsArt.Web.Services;
+using NftsArt.BL.Services;
 
 namespace NftsArt.Web.Components.Pages.Nft;
 

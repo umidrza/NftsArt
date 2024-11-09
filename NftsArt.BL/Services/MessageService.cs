@@ -1,6 +1,6 @@
 ﻿using NftsArt.Model.Helpers;
 
-namespace NftsArt.Web.Services;
+namespace NftsArt.BL.Services;
 
 public class MessageService
 {

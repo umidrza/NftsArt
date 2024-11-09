@@ -1,4 +1,6 @@
-﻿namespace NftsArt.Model.Dtos.Collection;
+﻿using NftsArt.Model.Enums;
+
+namespace NftsArt.Model.Dtos.Collection;
 
 public class CollectionQueryDto
 {

@@ -5,7 +5,7 @@ using NftsArt.Model.Dtos.Avatar;
 using NftsArt.Model.Dtos.User;
 using NftsArt.Model.Helpers;
 using NftsArt.Web.Authentication;
-using NftsArt.Web.Services;
+using NftsArt.BL.Services;
 
 namespace NftsArt.Web.Components.Pages.Auth;
 

@@ -22,6 +22,16 @@ public class NftController(INftRepository nftRepo) : ControllerBase
         return Ok(Result<Pagination<NftSummaryDto>>.Success(nfts));
     }
 
+    [HttpGet("collection/{collectionId:int}")]
+    public async Task<ActionResult<Result<Pagination<NftSummaryDto>>>> GetCollectionNfts([FromRoute] int collectionId, [FromQuery] NftQueryDto query)
+    {
+        var nfts = await nftRepo.GetAllByCollectionIdAsync(collectionId, query);
+        if (nfts == null)
+            return NotFound(Result<Pagination<NftSummaryDto>>.Failure("Collection not found"));
+
+        return Ok(Result<Pagination<NftSummaryDto>>.Success(nfts));
+    }
+
 
     [HttpGet("{id:int}")]
     public async Task<ActionResult<Result<NftDetailDto>>> GetNft([FromRoute] int id)
@@ -34,12 +44,11 @@ public class NftController(INftRepository nftRepo) : ControllerBase
     }
 
     [HttpGet("popular")]
-    public async Task<ActionResult<Result<List<NftSummaryDto>>>> GetHomeNfts()
+    public async Task<ActionResult<Result<IEnumerable<NftSummaryDto>>>> GetHomeNfts()
     {
-        var nfts = (await nftRepo.GetPopularsAsync())
-                    .Select(c => c.ToSummaryDto()).ToList();
+        var nfts = await nftRepo.GetPopularsAsync();
 
-        return Ok(Result<List<NftSummaryDto>>.Success(nfts));
+        return Ok(Result<IEnumerable<NftSummaryDto>>.Success(nfts));
     }
 
     [HttpPost]
@@ -100,16 +109,15 @@ public class NftController(INftRepository nftRepo) : ControllerBase
 
     [HttpGet("my-nfts")]
     [Authorize]
-    public async Task<ActionResult<Result<List<NftSummaryDto>>>> GetNftsByUser()
+    public async Task<ActionResult<Result<IEnumerable<NftSummaryDto>>>> GetNftsByUser()
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (userId == null)
-            return Unauthorized(Result<List<NftSummaryDto>>.Failure("User not authenticated"));
+            return Unauthorized(Result<IEnumerable<NftSummaryDto>>.Failure("User not authenticated"));
 
-        var nfts = (await nftRepo.GetAllByUserAsync(userId))
-                .Select(c => c.ToSummaryDto()).ToList();
+        var nfts = await nftRepo.GetAllByUserAsync(userId);
 
-        return Ok(Result<List<NftSummaryDto>>.Success(nfts));
+        return Ok(Result<IEnumerable<NftSummaryDto>>.Success(nfts));
     }
 
     [HttpPost("{id}/like")]

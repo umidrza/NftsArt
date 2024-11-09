@@ -17,7 +17,6 @@ public interface ICollectionRepository
     Task<Result<CollectionSummaryDto>> CreateAsync(CollectionCreateDto newCollection, string userId);
     Task<Result<CollectionSummaryDto>> UpdateAsync(int id, CollectionUpdateDto updatedCollection);
     Task<Result<CollectionSummaryDto>> DeleteAsync(int id);
-    Task<Pagination<NftSummaryDto>> GetNftsAsync(int id, NftQueryDto query);
     Task<IEnumerable<CollectionDetailDto>> GetAllByUserAsync(string userId);
 }
 
@@ -27,49 +26,8 @@ public class CollectionRepository(AppDbContext context) : ICollectionRepository
     {
         var collections = context.Collections.AsQueryable();
 
-
-        if (!string.IsNullOrWhiteSpace(query.SearchTerm))
-        {
-            collections = collections.Where(c => c.Name.ToLower().Contains(query.SearchTerm.ToLower()));
-        }
-
-        if (!string.IsNullOrWhiteSpace(query.BlockchainName))
-        {
-            if (Enum.TryParse<Blockchain>(query.BlockchainName, true, out var blockchainEnum))
-            {
-                collections = collections.Where(c => c.Blockchain == blockchainEnum);
-            }
-        }
-
-        if (!string.IsNullOrEmpty(query.Categories))
-        {
-            var categoryList = query.Categories.Split(',', StringSplitOptions.RemoveEmptyEntries);
-            var validCategories = new List<Category>();
-
-            foreach (var category in categoryList)
-            {
-                if (Enum.TryParse<Category>(category, true, out var categoryEnum))
-                {
-                    validCategories.Add(categoryEnum);
-                }
-            }
-
-            if (validCategories.Count > 0)
-            {
-                collections = collections.Where(c => validCategories.Contains(c.Category));
-            }
-        }
-
-        if (!string.IsNullOrWhiteSpace(query.SortBy))
-        {
-            collections = query.SortBy switch
-            {
-                "name-asc" => collections.OrderBy(c => c.Name),
-                "name-desc" => collections.OrderByDescending(c => c.Name),
-                _ => collections
-            };
-        }
-
+        collections = FilterCollections(collections, query);
+       
         return new Pagination<CollectionDetailDto>
         {
             Count = await collections.CountAsync(),
@@ -153,106 +111,6 @@ public class CollectionRepository(AppDbContext context) : ICollectionRepository
         return Result<CollectionSummaryDto>.Success(null!, "Collection deleted successfully.");
     }
 
-    public async Task<Pagination<NftSummaryDto>> GetNftsAsync(int id, NftQueryDto query)
-    {
-        var collection = await context.Collections
-            .Include(c => c.CollectionNfts)
-                .ThenInclude(cn => cn.Nft)
-                    .ThenInclude(n => n.Auction)
-                        .ThenInclude(a => a.Seller)
-            .FirstOrDefaultAsync(c => c.Id == id);
-
-        if (collection == null) return null!;
-
-
-        var nfts = collection.CollectionNfts.Select(cn => cn.Nft);
-
-        if (!string.IsNullOrWhiteSpace(query.SearchTerm))
-        {
-            nfts = nfts.Where(n => n.Name.ToLower().Contains(query.SearchTerm.ToLower()));
-        }
-
-        if (!string.IsNullOrWhiteSpace(query.Statuses))
-        {
-            var statusList = query.Statuses.Split(',', StringSplitOptions.RemoveEmptyEntries);
-            var validStatuses = new List<NftStatus>();
-
-            foreach (var status in statusList)
-            {
-                if (Enum.TryParse<NftStatus>(status, true, out var statusEnum))
-                {
-                    validStatuses.Add(statusEnum);
-                }
-            }
-
-            if (validStatuses.Count > 0)
-            {
-                nfts = nfts.Where(n => validStatuses.Contains(n.GetAuctionStatus()));
-            }
-        }
-
-        if (!string.IsNullOrWhiteSpace(query.CurrencyName))
-        {
-            if (Enum.TryParse<Currency>(query.CurrencyName, true, out var currencyEnum))
-            {
-                nfts = nfts.Where(n => n.Auction != null && n.Auction.Currency == currencyEnum);
-            }
-        }
-
-        if (!string.IsNullOrWhiteSpace(query.Quantity))
-        {
-            if (Enum.TryParse<NftQuantity>(query.Quantity, true, out var quantityEnum))
-            {
-                nfts = quantityEnum switch
-                {
-                    NftQuantity.Single_Items => nfts = nfts.Where(n => n.Auction != null && n.Auction.Quantity == 1),
-                    NftQuantity.Bundles => nfts = nfts.Where(n => n.Auction != null && n.Auction.Quantity > 1),
-                    _ => nfts
-                };
-            }
-        }
-
-        if (!string.IsNullOrWhiteSpace(query.MinPrice))
-        {
-            if (decimal.TryParse(query.MinPrice, out var minPrice))
-            {
-                nfts = nfts.Where(n => n.Auction != null && n.Auction.Price >= minPrice);
-            }
-        }
-
-        if (!string.IsNullOrWhiteSpace(query.MaxPrice))
-        {
-            if (decimal.TryParse(query.MaxPrice, out var maxPrice))
-            {
-                nfts = nfts.Where(n => n.Auction != null && n.Auction.Price <= maxPrice);
-            }
-        }
-
-
-        if (!string.IsNullOrWhiteSpace(query.SortBy))
-        {
-            nfts = query.SortBy switch
-            {
-                "name-asc" => nfts.OrderBy(n => n.Name),
-                "name-desc" => nfts.OrderByDescending(n => n.Name),
-                "price-asc" => nfts.Where(n => n.Auction != null)
-                                   .OrderBy(n => n.Auction.Price),
-                "price-desc" => nfts.Where(n => n.Auction != null)
-                                   .OrderByDescending(n => n.Auction.Price),
-                _ => nfts
-            };
-        }
-
-        return new Pagination<NftSummaryDto>
-        {
-            Count = nfts.Count(),
-            Data = nfts
-                .Skip((query.PageNumber - 1) * query.PageSize)
-                .Take(query.PageSize)
-                .Select(n => n.ToSummaryDto())
-        };
-    }
-
     public async Task<IEnumerable<CollectionDetailDto>> GetAllByUserAsync(string userId)
     {
         return await context.Collections
@@ -266,5 +124,52 @@ public class CollectionRepository(AppDbContext context) : ICollectionRepository
             .AsNoTracking()
             .Select(c => c.ToDetailDto())
             .ToListAsync();
+    }
+
+    public static IQueryable<Collection> FilterCollections(IQueryable<Collection> collections, CollectionQueryDto query)
+    {
+        if (!string.IsNullOrWhiteSpace(query.SearchTerm))
+        {
+            collections = collections.Where(c => c.Name.ToLower().Contains(query.SearchTerm.ToLower()));
+        }
+
+        if (!string.IsNullOrWhiteSpace(query.BlockchainName))
+        {
+            if (Enum.TryParse<Blockchain>(query.BlockchainName, true, out var blockchainEnum))
+            {
+                collections = collections.Where(c => c.Blockchain == blockchainEnum);
+            }
+        }
+
+        if (!string.IsNullOrEmpty(query.Categories))
+        {
+            var categoryList = query.Categories.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            var validCategories = new List<Category>();
+
+            foreach (var category in categoryList)
+            {
+                if (Enum.TryParse<Category>(category, true, out var categoryEnum))
+                {
+                    validCategories.Add(categoryEnum);
+                }
+            }
+
+            if (validCategories.Count > 0)
+            {
+                collections = collections.Where(c => validCategories.Contains(c.Category));
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(query.SortBy))
+        {
+            collections = query.SortBy switch
+            {
+                "name-asc" => collections.OrderBy(c => c.Name),
+                "name-desc" => collections.OrderByDescending(c => c.Name),
+                _ => collections
+            };
+        }
+
+        return collections;
     }
 }

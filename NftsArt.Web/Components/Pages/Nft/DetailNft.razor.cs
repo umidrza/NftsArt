@@ -8,7 +8,7 @@ using NftsArt.Model.Dtos.Nft;
 using NftsArt.Model.Entities;
 using NftsArt.Model.Enums;
 using NftsArt.Model.Helpers;
-using NftsArt.Web.Services;
+using NftsArt.BL.Services;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace NftsArt.Web.Components.Pages.Nft;

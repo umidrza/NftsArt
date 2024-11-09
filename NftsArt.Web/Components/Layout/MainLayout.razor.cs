@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using NftsArt.Model.Helpers;
-using NftsArt.Web.Services;
+using NftsArt.BL.Services;
 
 namespace NftsArt.Web.Components.Layout;
 

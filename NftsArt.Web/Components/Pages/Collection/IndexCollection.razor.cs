@@ -4,7 +4,7 @@ using Microsoft.JSInterop;
 using NftsArt.Model.Dtos.Collection;
 using NftsArt.Model.Dtos.User;
 using NftsArt.Model.Helpers;
-using NftsArt.Web.Services;
+using NftsArt.BL.Services;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace NftsArt.Web.Components.Pages.Collection;

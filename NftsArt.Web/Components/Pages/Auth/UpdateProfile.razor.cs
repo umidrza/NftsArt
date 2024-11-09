@@ -5,8 +5,7 @@ using NftsArt.Model.Dtos.User;
 using NftsArt.Web.Authentication;
 using NftsArt.Model.Mapping;
 using NftsArt.Model.Helpers;
-using NftsArt.Web.Services;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using NftsArt.BL.Services;
 
 namespace NftsArt.Web.Components.Pages.Auth;
 

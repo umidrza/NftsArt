@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using NftsArt.Web;
 using NftsArt.Web.Authentication;
 using NftsArt.Web.Components;
-using NftsArt.Web.Services;
+using NftsArt.BL.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

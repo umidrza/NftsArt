@@ -5,7 +5,7 @@ using NftsArt.Model.Dtos.Collection;
 using NftsArt.Model.Dtos.Nft;
 using NftsArt.Model.Dtos.User;
 using NftsArt.Model.Helpers;
-using NftsArt.Web.Services;
+using NftsArt.BL.Services;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace NftsArt.Web.Components.Pages.Collection;
@@ -84,7 +84,7 @@ public partial class DetailCollection
     protected async Task LoadCollectionNfts()
     {
         var res = await ApiClient.GetFromJsonAsync<Pagination<NftSummaryDto>>(
-            $"api/collection/{Id}/nfts" +
+            $"api/nft/collection/{Id}" +
             $"?SearchTerm={QueryModel.SearchTerm}" +
             $"&Statuses={string.Join(",", SelectedStatuses)}" +
             $"&CurrencyName={QueryModel.CurrencyName}" +

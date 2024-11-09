@@ -4,7 +4,7 @@ using NftsArt.Model.Dtos.Auction;
 using NftsArt.Model.Dtos.Nft;
 using NftsArt.Model.Dtos.Wallet;
 using NftsArt.Model.Helpers;
-using NftsArt.Web.Services;
+using NftsArt.BL.Services;
 using System.Globalization;
 
 namespace NftsArt.Web.Components.Pages.Nft;

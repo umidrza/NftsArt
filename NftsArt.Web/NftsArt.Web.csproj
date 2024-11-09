@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NftsArt.BL\NftsArt.BL.csproj" />
     <ProjectReference Include="..\NftsArt.Model\NftsArt.Model.csproj" />
     <ProjectReference Include="..\NftsArt.ServiceDefaults\NftsArt.ServiceDefaults.csproj" />
   </ItemGroup>

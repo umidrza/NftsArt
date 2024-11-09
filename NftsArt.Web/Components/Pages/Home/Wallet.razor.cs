@@ -3,7 +3,7 @@ using NftsArt.Model.Dtos.Provider;
 using NftsArt.Model.Dtos.Wallet;
 using NftsArt.Model.Enums;
 using NftsArt.Model.Helpers;
-using NftsArt.Web.Services;
+using NftsArt.BL.Services;
 
 namespace NftsArt.Web.Components.Pages.Home;
 
