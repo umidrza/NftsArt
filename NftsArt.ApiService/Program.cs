@@ -20,7 +20,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAllOrigins",
+    options.AddPolicy("AllowAll",
         builder =>
         {
             builder.AllowAnyOrigin()
@@ -131,6 +131,8 @@ app.UseAuthorization();
 app.UseStaticFiles();
 
 app.MapControllers();
+
+app.UseCors("AllowAll");
 
 if (app.Environment.IsDevelopment())
 {
